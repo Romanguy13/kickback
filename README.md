@@ -11,6 +11,8 @@ KickBack helps to keep track of plans with friends, making the process simple to
 - Expo
 - Firebase
 - TypeScript
+- React Native Testing Library
+- Jest
 
 ## Getting Started
 1. To run the app, you will need Node.js installed.
@@ -22,6 +24,7 @@ KickBack helps to keep track of plans with friends, making the process simple to
    -  To run the app on an exmulator, you must have either [Android Studio](https://developer.android.com/studio) or [Xcode](https://developer.apple.com/xcode/) installed on your computer. Press `a` in the terminal to run the app on an Android emulator or press `i` in the terminal to run the app on an iOS emulator.
    -  Alternatively, you can run the app on your phone by downloading the [Expo Go](https://expo.dev/client) app and scanning the QR code in the terminal.
 5. Alternatively, you can run `npm run ios` to run the app on an iOS emulator or `npm run android` to run the app on an Android emulator.
+6. To run the tests, run `npm test` in the root directory.
 
 ## Team Members
 - Jose Chavez
