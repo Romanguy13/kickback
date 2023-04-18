@@ -4,13 +4,13 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text 
+      <Text
         style={{
           color: '#654321',
           fontSize: 30,
           fontWeight: 'bold',
-        }
-      }>
+        }}
+      >
         KickBack
       </Text>
       <Pressable

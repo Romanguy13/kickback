@@ -10,13 +10,13 @@ import { getAuth } from 'firebase/auth';
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyDfUccImdVEd5SHzXIBs3xN38M_eaD3wtc",
-  authDomain: "kickback-54b8e.firebaseapp.com",
-  projectId: "kickback-54b8e",
-  storageBucket: "kickback-54b8e.appspot.com",
-  messagingSenderId: "976975121634",
-  appId: "1:976975121634:web:a325281a9bf183a0e5e2bb",
-  measurementId: "G-HB1S3H85WJ",
+  apiKey: 'AIzaSyDfUccImdVEd5SHzXIBs3xN38M_eaD3wtc',
+  authDomain: 'kickback-54b8e.firebaseapp.com',
+  projectId: 'kickback-54b8e',
+  storageBucket: 'kickback-54b8e.appspot.com',
+  messagingSenderId: '976975121634',
+  appId: '1:976975121634:web:a325281a9bf183a0e5e2bb',
+  measurementId: 'G-HB1S3H85WJ',
 };
 
 export const FB_APP = initializeApp(firebaseConfig);
