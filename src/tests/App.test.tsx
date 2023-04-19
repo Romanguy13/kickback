@@ -1,19 +1,16 @@
 import { render, screen, fireEvent } from '@testing-library/react-native';
 import App from '../../App';
 
-test('renders learn react link', async () => {
+test('Renders Login Screen', async () => {
   render(<App />);
+  expect(screen.getByText('Welcome to KickBack')).toBeTruthy();
+  expect(screen.getByText('Login')).toBeTruthy();
+});
+
+test('Clicking Login Button', async () => {
+  render(<App />);
+  expect(screen.getByText('Welcome to KickBack')).toBeTruthy();
+  expect(screen.getByText('Login')).toBeTruthy();
+  fireEvent.press(screen.getByText('Login'));
   expect(screen.getByText('KickBack')).toBeTruthy();
-});
-
-test('renders create event button', async () => {
-  render(<App />);
-  expect(screen.getByText('Create Event')).toBeTruthy();
-});
-
-test('clicking create event button', async () => {
-  render(<App />);
-  expect(screen.getByText('Create Event')).toBeTruthy();
-  fireEvent.press(screen.getByText('Create Event'));
-  expect(screen.getByText('Create Event')).toBeTruthy();
 });

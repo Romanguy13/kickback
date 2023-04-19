@@ -1,40 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import Home from './src/screens/Home';
+import Login from './src/screens/Login';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text
-        style={{
-          color: '#654321',
-          fontSize: 30,
-          fontWeight: 'bold',
-        }}
-      >
-        KickBack
-      </Text>
-      <Pressable
-        onPress={() => console.log('Pressed')}
-        style={{
-          backgroundColor: '#654321',
-          padding: 10,
-          borderRadius: 10,
-          marginTop: 10,
-          elevation: 3,
-        }}
-      >
-        <Text
-          style={{
-            color: '#FFA500',
-            fontSize: 20,
-            fontWeight: 'bold',
-          }}
-        >
-          Create Event
-        </Text>
-      </Pressable>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Home" component={Home} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
