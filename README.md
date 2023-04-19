@@ -28,6 +28,26 @@ KickBack helps to keep track of plans with friends, making the process simple to
 5. Alternatively, you can run `npm run ios` to run the app on an iOS emulator or `npm run android` to run the app on an Android emulator.
 6. To run the tests, run `npm test` in the root directory.
 
+## Prettier With VSCode
+- Step 1;
+   - Instal the VSCode extension: Prettier. Should be the most downloaded extension.
+- Step 2:
+   - Press `command + shift + p` and type in `>Format Document`
+-Step 3:
+   - Hit enter. A notification will pop up asking you to configure a formatting style.
+      Press configure and select `Prettier` as the style.
+- Step 4:
+   - Now let us make life easier and format a document on save. Hit `command + ,`
+   - In the search bar, search: `Editor: Format On Save`
+   - Select the check box and hit `command + s` to save your settings.
+- Step 5:
+   - Finally, let us reload VSCode to ensure our updates/changes are applied.
+   -  Hit `command + shift + p`
+   - Type in `>Relod Window` and hit enter.
+- Prettier should now be configured so when we hit save a file, formatting should be 
+   automatically applied for us. 
+
+
 ## Team Members
 
 - Jose Chavez
