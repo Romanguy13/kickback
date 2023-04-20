@@ -8,7 +8,11 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --verbose",
-    "format": "prettier --write ."
+    "test:backend": "jest --verbose ./src/tests/backend",
+    "test:frontend": "jest --verbose ./src/tests/frontend",
+    "format": "prettier --write .",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
     "@react-navigation/native": "^6.1.6",
