@@ -17,15 +17,16 @@ const renderWithNavigation = (component: any) => {
   );
 };
 
-test('Renders Login Screen', async () => {
+test('Rendering Welcome Page', async () => {
   renderWithNavigation(Welcome);
   expect(screen.getByText('Welcome to KickBack')).toBeTruthy();
+  expect(screen.getByText('Login')).toBeTruthy();
+  fireEvent.press(screen.getByText('Login'));
+  expect(screen.getByText('KickBack')).toBeTruthy();
 });
 
 test('Clicking Login Button', async () => {
-  renderWithNavigation(Login);
-  expect(screen.getByText('Welcome to KickBack')).toBeTruthy();
-  expect(screen.getByText('Login')).toBeTruthy();
+  renderWithNavigation(Welcome);
   fireEvent.press(screen.getByText('Login'));
   expect(screen.getByText('KickBack')).toBeTruthy();
 });
