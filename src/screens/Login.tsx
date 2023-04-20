@@ -1,13 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-export default function Login({ navigation }: any) {
+export default function Login() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to KickBack</Text>
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.buttonText}>Login</Text>
-      </Pressable>
+      <Text style={styles.text}>KickBack</Text>
     </View>
   );
 }
@@ -22,17 +19,6 @@ const styles = StyleSheet.create({
   text: {
     color: '#654321',
     fontSize: 30,
-    fontWeight: 'bold',
-  },
-  button: {
-    backgroundColor: '#654321',
-    padding: 10,
-    margin: 10,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: '#FFA500',
-    fontSize: 20,
     fontWeight: 'bold',
   },
 });
