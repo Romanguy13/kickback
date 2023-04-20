@@ -5,6 +5,7 @@ export default function Template() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Hello World</Text>
+      <Text style={styles.text}>This is a test</Text>
     </View>
   );
 }
