@@ -19,8 +19,12 @@ const renderWithNavigation = (component: any) => {
 
 test('Rendering Welcome Page', async () => {
   renderWithNavigation(Welcome);
-  expect(screen.getByText('Welcome to KickBack')).toBeTruthy();
+  expect(screen.getByText('KickBack')).toBeTruthy();
   expect(screen.getByText('Login')).toBeTruthy();
+  fireEvent.press(screen.getByText('Login'));
+  expect(screen.getByText('KickBack')).toBeTruthy();
+  renderWithNavigation(Welcome);
+  expect(screen.getByText('Sign Up')).toBeTruthy();
   fireEvent.press(screen.getByText('Login'));
   expect(screen.getByText('KickBack')).toBeTruthy();
 });
