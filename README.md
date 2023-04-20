@@ -15,6 +15,10 @@ KickBack helps to keep track of plans with friends, making the process simple to
 - React Native Testing Library
 - Jest
 
+## Other Tools
+- Figma
+- Discord
+
 ## Getting Started
 
 1. To run the app, you will need Node.js installed.
