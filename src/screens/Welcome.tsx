@@ -4,10 +4,17 @@ import { StyleSheet, Text, View, Pressable } from 'react-native';
 export default function Welcome({ navigation }: any) {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to KickBack</Text>
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>Login</Text>
-      </Pressable>
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>KickBack</Text>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.buttonText}>Login</Text>
+        </Pressable>
+        <Pressable style={styles.button} onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -15,23 +22,35 @@ export default function Welcome({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FF7000',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  textContainer: {
+    padding: 30,
+  },
   text: {
-    color: '#654321',
-    fontSize: 30,
+    color: '#FFFFFB',
+    fontSize: 70,
     fontWeight: 'bold',
+    padding: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 50,
   },
   button: {
-    backgroundColor: '#654321',
+    width: 300,
+    borderRadius: 50,
+    backgroundColor: '#272222',
     padding: 10,
     margin: 10,
-    borderRadius: 8,
+    alignItems: 'center',
   },
   buttonText: {
-    color: '#FFA500',
+    color: '#FFFFFB',
     fontSize: 20,
     fontWeight: 'bold',
   },

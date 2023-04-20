@@ -1,0 +1,6 @@
+{
+  "ignore_dirs": ["node_modules", "ios/build", "android/build"],
+  "fsevents_latency": 0.05,
+  "fsevents_try_resync": true,
+  "settle_period": 1000
+}
