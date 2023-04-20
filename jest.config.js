@@ -11,7 +11,9 @@ module.exports = {
     '!**/node_modules/**',
     '!**/babel.config.js',
     '!**/jest.setup.js',
+    '!**/jest.config.js',
     '!**/firebaseConfig.ts',
     '!**/metro.config.js',
+    '!**/src/resources/schema/**',
   ],
 };
