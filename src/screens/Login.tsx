@@ -12,8 +12,8 @@ export default function Login({ navigation }: any) {
         <Text style={styles.label}>Email</Text>
         <TextInput
           style={styles.input}
-          //value={email}
-          //onChangeText={handleEmailChange}
+          // value={email}
+          // onChangeText={handleEmailChange}
           aria-label="Email"
           keyboardType="email-address"
           placeholder="kickback@email.com"
@@ -22,8 +22,8 @@ export default function Login({ navigation }: any) {
         <Text style={styles.label}>Password</Text>
         <TextInput
           style={styles.input}
-          //value={email}
-          //onChangeText={handleEmailChange}
+          // value={email}
+          // onChangeText={handleEmailChange}
           aria-label="Email"
           keyboardType="default"
           placeholder="mypassword123"
@@ -36,7 +36,7 @@ export default function Login({ navigation }: any) {
         </Pressable>
       </View>
       <View style={styles.noAccountContainer}>
-        <Text style={styles.noAccountText}>Don't have an account? </Text>
+        <Text style={styles.noAccountText}>Dont have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.noAccountShortcut}>Sign Up!</Text>
         </TouchableOpacity>

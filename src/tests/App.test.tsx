@@ -13,5 +13,5 @@ test('Clicking Login Button', async () => {
   expect(screen.getByText('KickBack')).toBeTruthy();
   expect(screen.getByText('Login')).toBeTruthy();
   fireEvent.press(screen.getByText('Login'));
-  expect(screen.getByText('KickBack')).toBeTruthy();
+  expect(screen.getByText('Login')).toBeTruthy();
 });
