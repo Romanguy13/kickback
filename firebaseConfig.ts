@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";
@@ -18,6 +19,6 @@ const firebaseConfig = {
   appId: '1:976975121634:web:a325281a9bf183a0e5e2bb',
   measurementId: 'G-HB1S3H85WJ',
 };
-
-export const FB_APP = initializeApp(firebaseConfig);
+export const FB_APP = initializeApp(firebaseConfig, 'Production');
 export const FB_AUTH = getAuth(FB_APP);
+export const FB_DB = getFirestore(FB_APP);
