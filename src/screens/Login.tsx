@@ -1,7 +1,26 @@
 import React from 'react';
+import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View, Pressable, TouchableOpacity } from 'react-native';
 
 export default function Login({ navigation }: any) {
+  // Functions to gather input
+  const [userEmail, setUserEmail] = useState('');
+  const [userPassword, setUserPassword] = useState('');
+
+  const handleUserEmailChange = (text: string) => {
+    setUserEmail(text);
+  };
+
+  const handleUserPasswordChange = (text: string) => {
+    setUserPassword(text);
+  };
+
+  const handleContinue = () => {
+    console.log(userEmail);
+    console.log(userPassword);
+    navigation.navigate('Welcome');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -12,8 +31,8 @@ export default function Login({ navigation }: any) {
         <Text style={styles.label}>Email</Text>
         <TextInput
           style={styles.input}
-          // value={email}
-          // onChangeText={handleEmailChange}
+          //value={email}
+          //onChangeText={handleEmailChange}
           aria-label="Email"
           keyboardType="email-address"
           placeholder="kickback@email.com"
@@ -22,16 +41,17 @@ export default function Login({ navigation }: any) {
         <Text style={styles.label}>Password</Text>
         <TextInput
           style={styles.input}
-          // value={email}
-          // onChangeText={handleEmailChange}
+          //value={email}
+          //onChangeText={handleEmailChange}
           aria-label="Email"
           keyboardType="default"
+          secureTextEntry={true}
           placeholder="mypassword123"
           placeholderTextColor="gray"
         />
       </View>
       <View style={styles.inputButtonContainer}>
-        <Pressable style={styles.button} onPress={() => navigation.navigate('Welcome')}>
+        <Pressable style={styles.button} onPress={handleContinue}>
           <Text style={styles.buttonText}>Continue</Text>
         </Pressable>
       </View>
