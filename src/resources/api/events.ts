@@ -1,8 +1,9 @@
 import { Firestore } from 'firebase/firestore';
-import { UserModel } from '../schema/user.model';
-import KickbackFirebase from './kickbackFirebase';
+import { FB_DB } from '../../../firebaseConfig';
 
-export default class Users extends KickbackFirebase {
+export default class Events {
+  private readonly database;
+
   /**
    * Creates a new instance of the Users class.
    * @param testingFirestore : Firestore An optional Firestore instance to use for testing.
@@ -10,14 +11,6 @@ export default class Users extends KickbackFirebase {
    * @constructor Creates a new instance of the Users class.
    */
   constructor(testingFirestore?: Firestore) {
-    super({
-      defaultCollection: 'users',
-      database: testingFirestore,
-    });
-  }
-
-  async create(data: UserModel): Promise<string> {
-    // TODO: Add validation here
-    return super.create(data);
+    this.database = testingFirestore || FB_DB;
   }
 }
