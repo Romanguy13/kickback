@@ -56,7 +56,7 @@ export default function Login({ navigation }: any) {
         </Pressable>
       </View>
       <View style={styles.noAccountContainer}>
-        <Text style={styles.noAccountText}>Dont have an account? </Text>
+        <Text style={styles.noAccountText}>Don't have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.noAccountShortcut}>Sign Up!</Text>
         </TouchableOpacity>
