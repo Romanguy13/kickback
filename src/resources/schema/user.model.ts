@@ -9,3 +9,8 @@ export interface UserReturn {
   email: string;
   name: string;
 }
+
+export interface UpdatedUser {
+  email?: string;
+  name?: string;
+}

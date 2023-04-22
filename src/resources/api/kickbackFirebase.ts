@@ -64,7 +64,7 @@ export default class KickbackFirebase {
     return documents;
   }
 
-  public async get(id: string): Promise<DocumentData | null> {
+  public async get(id: string): Promise<DocumentData | undefined> {
     const docRef = doc(this.database, this.collection, id);
     const docSnap = await getDoc(docRef);
 
@@ -72,11 +72,12 @@ export default class KickbackFirebase {
       return docSnap.data();
     }
 
-    return null;
+    return undefined;
   }
 
-  public async edit(id: string, data: any): Promise<void> {
+  public async edit(id: string, data: any): Promise<any> {
     const docRef = doc(this.database, this.collection, id);
     await updateDoc(docRef, data);
+    return data;
   }
 }
