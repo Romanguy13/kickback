@@ -14,6 +14,9 @@ export default function Welcome({ navigation }: any) {
         <Pressable style={styles.button} onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </Pressable>
+        <Pressable style={styles.button} onPress={() => navigation.navigate('NavBar')}>
+          <Text style={styles.buttonText}>Nav Bar</Text>
+        </Pressable>
       </View>
     </View>
   );
