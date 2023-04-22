@@ -1,12 +1,15 @@
 import {
   doc,
-  getDoc,
-  collection,
   addDoc,
   DocumentReference,
   DocumentData,
+  getDocs,
+  QuerySnapshot,
+  collection,
+  CollectionReference,
 } from 'firebase/firestore';
-import { UserModel } from '../../resources/schema/user.model';
+import { waitFor } from '@testing-library/react-native';
+import { UserModel, UserReturn } from '../../resources/schema/user.model';
 import Users from '../../resources/api/users';
 
 jest.mock('firebase/firestore');
@@ -24,29 +27,57 @@ describe('Firestore Operations', () => {
       email: 'isabella@bells.com',
       password: 'isabella',
     };
-    (doc as jest.Mock).mockResolvedValueOnce({
-      id: 'something',
-    } as DocumentReference<any>);
 
-    (addDoc as jest.Mock).mockResolvedValueOnce({
+    (doc as jest.Mock).mockReturnValue({
+      id: 'something',
+    } as DocumentReference<DocumentData>);
+
+    (addDoc as jest.Mock).mockResolvedValue({
       id: 'testId',
-    } as DocumentReference<any>);
+    } as DocumentReference<DocumentData>);
 
     const returnedId = await userClass.create(data);
+
+    console.log(returnedId);
     expect(returnedId).toEqual('something');
   });
 
   it('should get all documents from a collection', async () => {
-    const expectedData: DocumentData[] = [
+    const expectedData: UserReturn[] = [
       {
+        id: 'doc1',
         name: 'Isabella',
         email: 'isabella@bells.com',
       },
       {
-        name: 'Nook Cranny',
+        id: 'doc2',
+        name: 'Nook Crannny',
         email: 'nookcranny@bells.com',
       },
     ];
+
+    const querySnapshot = [
+      {
+        id: 'doc1',
+        data: () => expectedData[0],
+      },
+      {
+        id: 'doc2',
+        data: () => expectedData[1],
+      },
+    ];
+
+    (getDocs as jest.Mock).mockResolvedValueOnce({
+      docs: querySnapshot,
+      size: expectedData.length,
+      empty: false,
+      forEach: (callback: (value: DocumentData, index: number, array: DocumentData[]) => void) =>
+        querySnapshot.forEach(callback),
+    } as unknown as QuerySnapshot<DocumentData>);
+
+    const returnedData = await userClass.getAll();
+
+    expect(returnedData).toEqual(expectedData);
   });
 
   // it('adds a user to the users collection', async () => {

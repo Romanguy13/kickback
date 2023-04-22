@@ -9,6 +9,7 @@ import {
   getDoc,
   updateDoc,
   getDocs,
+  QuerySnapshot,
 } from 'firebase/firestore';
 import { FB_DB } from '../../../firebaseConfig';
 
@@ -30,26 +31,29 @@ export default class KickbackFirebase {
 
   public async create(data: any): Promise<string> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
-    const newDocRef: DocumentReference<DocumentData> = doc(dbRef);
+    const userId: DocumentReference<DocumentData> = doc(dbRef);
+
+    console.log('newDocRef: ', userId.id);
 
     try {
       const documentData = {
-        id: newDocRef.id,
+        id: userId.id,
         ...data,
       };
       const docRef = await addDoc(dbRef, documentData);
       console.log('Document written with ID: ', docRef.id);
     } catch (e) {
       console.log('Error adding document: ', e);
-      // throw new Error(`Error adding document: ${e}`);
     }
 
-    return newDocRef.id;
+    return userId.id;
   }
 
   public async getAll(): Promise<DocumentData[]> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
-    const querySnapshot = await getDocs(dbRef);
+    const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(dbRef);
+
+    console.log(querySnapshot);
 
     const documents: DocumentData[] = [];
 
