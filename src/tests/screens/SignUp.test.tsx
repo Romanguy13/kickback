@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserCredential, createUserWithEmailAndPassword } from 'firebase/auth';
+import { DocumentData, DocumentReference, addDoc, doc, setDoc } from 'firebase/firestore';
 import { Alert } from 'react-native';
 import SignUp from '../../screens/SignUp';
 import Login from '../../screens/Login';
@@ -10,6 +11,8 @@ import Welcome from '../../screens/Welcome';
 jest.spyOn(Alert, 'alert');
 
 jest.mock('firebase/auth');
+
+jest.mock('firebase/firestore');
 
 const Stack = createNativeStackNavigator();
 
@@ -92,6 +95,13 @@ test('Sign Up', async () => {
       email: 'test@exmaple.com',
     },
   } as UserCredential);
+  (doc as jest.Mock).mockResolvedValue({
+    id: 'something',
+  } as DocumentReference<DocumentData>);
+
+  (addDoc as jest.Mock).mockResolvedValue({
+    id: 'testId',
+  } as DocumentReference<unknown>);
 
   fireEvent.press(signUpButton);
 
