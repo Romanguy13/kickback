@@ -62,7 +62,7 @@ export default function SignUp({ navigation }: any) {
           const newUserClass = new Users();
           const id = await newUserClass.create(newUser);
           console.log(id);
-          navigation.navigate('Welcome');
+          navigation.navigate('EventFeed');
         })
         .catch((error) => {
           console.log(error.code, error.message);
@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 50,
     fontWeight: 'bold',
+    width: '100%',
   },
   subText: {
     color: '#FFFFFB',
