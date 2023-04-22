@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 50,
     fontWeight: 'bold',
+    width: '100%',
   },
   subText: {
     color: '#FFFFFB',

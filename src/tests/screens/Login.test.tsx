@@ -6,6 +6,7 @@ import { Alert } from 'react-native';
 import Login from '../../screens/Login';
 import Welcome from '../../screens/Welcome';
 import SignUp from '../../screens/SignUp';
+import EventFeed from '../../screens/EventFeed';
 
 jest.spyOn(Alert, 'alert');
 
@@ -20,6 +21,7 @@ const renderWithNavigation = (component: React.FC) =>
         <Stack.Screen name="Login" component={component} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="Welcome" component={Welcome} />
+        <Stack.Screen name="EventFeed" component={EventFeed} />
       </Stack.Navigator>
     </NavigationContainer>
   );

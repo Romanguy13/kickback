@@ -42,7 +42,7 @@ export default function Login({ navigation }: any) {
       .then((userCredential) => {
         const { user } = userCredential;
         console.log(user);
-        navigation.navigate('Welcome');
+        navigation.navigate('EventFeed');
       })
       .catch((error) => {
         console.log(error.code, error.message);
