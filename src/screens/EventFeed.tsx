@@ -9,48 +9,49 @@ import {
   Alert,
   ImageBackground,
   Image,
+  Dimensions,
+  PixelRatio,
 } from 'react-native';
 
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
   const [hasEvents, setHasEvents] = useState(true);
 
-  return (
+  return hasEvents ? (
     <View style={styles.container}>
-      {hasEvents ? (
-        <View style={styles.container}>
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Let's start a KickBack!</Text>
-          </View>
-          <View style={styles.imageContainer}>
-            <Image source={require('../../assets/hands.png')} style={styles.handsImage} />
-          </View>
-        </View>
-      ) : (
-        <View style={styles.container}>
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>User's KickBacks</Text>
-          </View>
-        </View>
-      )}
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>Let's start a KickBack!</Text>
+      </View>
+      <View style={styles.imageContainer}>
+        <Image source={require('../../assets/hands.png')} style={styles.handsImage} />
+      </View>
+    </View>
+  ) : (
+    <View style={styles.container}>
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>User's KickBacks</Text>
+      </View>
     </View>
   );
 }
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFB',
-    justifyContent: 'center',
   },
   textContainer: {
     width: '100%',
     margin: 20,
+    alignItems: 'center',
   },
   text: {
     color: '#272222',
-    fontSize: 66,
+    fontSize: Math.round((windowWidth * 0.15) / fontScale),
     fontWeight: 'bold',
-    padding: 10,
     width: '100%',
   },
   imageContainer: {
