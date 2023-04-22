@@ -1,8 +1,9 @@
 import { Firestore } from 'firebase/firestore';
-import { FB_DB } from '../../../firebaseConfig';
+import { EventModel, UpdatedEvent } from '../schema/event.model';
+import KickbackFirebase from './kickbackFirebase';
 
-export default class Events {
-  private readonly database;
+export default class Events extends KickbackFirebase {
+  // private readonly database;
 
   /**
    * Creates a new instance of the Users class.
@@ -11,6 +12,18 @@ export default class Events {
    * @constructor Creates a new instance of the Users class.
    */
   constructor(testingFirestore?: Firestore) {
-    this.database = testingFirestore || FB_DB;
+    // this.database = testingFirestore || FB_DB;
+    super({
+      defaultCollection: 'events',
+      database: testingFirestore
+    });
+  }
+
+  async create(data: EventModel): Promise<string> {
+    return super.create(data);
+  }
+
+  async edit(id: string, data: UpdatedEvent): Promise<void> {
+    return super.edit(id, data);
   }
 }
