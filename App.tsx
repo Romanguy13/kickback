@@ -4,6 +4,7 @@ import React from 'react';
 import Welcome from './src/screens/Welcome';
 import Login from './src/screens/Login';
 import SignUp from './src/screens/SignUp';
+import EventFeed from './src/screens/EventFeed';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ export default function App() {
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="EventFeed" component={EventFeed} />
       </Stack.Navigator>
     </NavigationContainer>
   );

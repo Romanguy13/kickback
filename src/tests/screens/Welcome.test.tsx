@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Welcome from '../../screens/Welcome';
 import Login from '../../screens/Login';
 import SignUp from '../../screens/SignUp';
+import EventFeed from '../../screens/EventFeed';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ const renderWithNavigation = (component: any) =>
         <Stack.Screen name="Welcome" component={component} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="EventFeed" component={EventFeed} />
       </Stack.Navigator>
     </NavigationContainer>
   );
