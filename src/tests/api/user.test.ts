@@ -42,6 +42,25 @@ describe('Firestore Operations', () => {
     expect(returnedId).toEqual('something');
   });
 
+  it('Error while adding document', async () => {
+    const data: UserModel = {
+      name: 'Isabella',
+      email: 'isabella@books.com',
+      password: 'isabella',
+    };
+
+    (doc as jest.Mock).mockReturnValue({
+      id: 'something',
+    } as DocumentReference<DocumentData>);
+    
+    (addDoc as jest.Mock).mockRejectedValue({
+      new: Error('Error while adding document'),
+    } as unknown as DocumentReference<DocumentData>);
+
+    const returnedId = await userClass.create(data);
+    console.log(returnedId);
+  });
+
   it('should get all documents from a collection', async () => {
     const expectedData: UserReturn[] = [
       {

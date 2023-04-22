@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { FB_AUTH, FB_DB } from '../../firebaseConfig';
+import { FB_AUTH } from '../../firebaseConfig';
 import { UserModel } from '../resources/schema/user.model';
 import Users from '../resources/api/users';
 
