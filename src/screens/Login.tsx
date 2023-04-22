@@ -66,6 +66,7 @@ export default function Login({ navigation }: any) {
           keyboardType="email-address"
           placeholder="kickback@email.com"
           placeholderTextColor="gray"
+          autoCapitalize="none"
         />
         <Text style={styles.label}>Password</Text>
         <TextInput
@@ -77,6 +78,7 @@ export default function Login({ navigation }: any) {
           secureTextEntry
           placeholder="mypassword123"
           placeholderTextColor="gray"
+          autoCapitalize="none"
         />
       </View>
       <View style={styles.inputButtonContainer}>
