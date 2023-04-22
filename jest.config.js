@@ -15,5 +15,6 @@ module.exports = {
     '!**/firebaseConfig.ts',
     '!**/metro.config.js',
     '!**/src/resources/schema/**',
+    '!**/src/tests/api/setup/**',
   ],
 };
