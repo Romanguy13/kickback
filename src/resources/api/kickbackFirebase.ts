@@ -40,7 +40,7 @@ export default class KickbackFirebase {
       const docRef = await addDoc(dbRef, documentData);
       console.log('Document written with ID: ', docRef.id);
     } catch (e) {
-      console.error('Error adding document: ', e);
+      console.log('Error adding document: ', e);
       // throw new Error(`Error adding document: ${e}`);
     }
 
