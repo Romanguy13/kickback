@@ -13,7 +13,7 @@ import {
 
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
-  const [hasEvents, setHasEvents] = useState(false);
+  const [hasEvents, setHasEvents] = useState(true);
 
   return (
     <View style={styles.container}>
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFB',
+    justifyContent: 'center',
   },
   textContainer: {
     width: '100%',
