@@ -1,6 +1,9 @@
+// import { createUserWithEmailAndPassword } from 'firebase/auth';
+// import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Firestore } from 'firebase/firestore';
 import { UserModel } from '../schema/user.model';
 import KickbackFirebase from './kickbackFirebase';
+// import { FB_DB } from '../../../firebaseConfig';
 
 export default class Users extends KickbackFirebase {
   /**
@@ -17,7 +20,6 @@ export default class Users extends KickbackFirebase {
   }
 
   async create(data: UserModel): Promise<string> {
-    // TODO: Add validation here
     return super.create(data);
   }
 }

@@ -63,9 +63,18 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.js", "**/*.test.jsx", "**/*.test.ts", "**/*.test.tsx", "**/tests/**/*.js", "**/tests/**/*.jsx", "**/tests/**/*.ts", "**/tests/**/*.tsx"],
+      "files": [
+        "**/*.test.js",
+        "**/*.test.jsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/tests/**/*.js",
+        "**/tests/**/*.jsx",
+        "**/tests/**/*.ts",
+        "**/tests/**/*.tsx"
+      ],
       "rules": {
-        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
+        "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
       }
     }
   ]

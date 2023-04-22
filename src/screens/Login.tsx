@@ -1,24 +1,53 @@
-import React from 'react';
-import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, Pressable, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Pressable,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { FB_AUTH } from '../../firebaseConfig';
 
 export default function Login({ navigation }: any) {
   // Functions to gather input
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
 
+  // useEffect(() => {
+  //   if (FB_AUTH?.currentUser) {
+  //     navigation.navigate('Welcome');
+  //   }
+  // }, [navigation]);
+
   const handleUserEmailChange = (text: string) => {
     setUserEmail(text);
   };
 
+  // convert this to one liner
   const handleUserPasswordChange = (text: string) => {
     setUserPassword(text);
   };
 
   const handleContinue = () => {
+    if (userEmail === '') {
+      Alert.alert('Please enter an email.');
+      return;
+    }
     console.log(userEmail);
     console.log(userPassword);
-    navigation.navigate('Welcome');
+    signInWithEmailAndPassword(FB_AUTH, userEmail, userPassword)
+      .then((userCredential) => {
+        const { user } = userCredential;
+        console.log(user);
+        navigation.navigate('Welcome');
+      })
+      .catch((error) => {
+        console.log(error.code, error.message);
+        Alert.alert('Invalid email or password.');
+      });
   };
 
   return (
@@ -33,7 +62,7 @@ export default function Login({ navigation }: any) {
           style={styles.input}
           value={userEmail}
           onChangeText={handleUserEmailChange}
-          aria-label="Email"
+          accessibilityLabel="Email"
           keyboardType="email-address"
           placeholder="kickback@email.com"
           placeholderTextColor="gray"
@@ -43,9 +72,9 @@ export default function Login({ navigation }: any) {
           style={styles.input}
           value={userPassword}
           onChangeText={handleUserPasswordChange}
-          aria-label="Password"
+          accessibilityLabel="Password"
           keyboardType="default"
-          secureTextEntry={true}
+          secureTextEntry
           placeholder="mypassword123"
           placeholderTextColor="gray"
         />
@@ -56,7 +85,7 @@ export default function Login({ navigation }: any) {
         </Pressable>
       </View>
       <View style={styles.noAccountContainer}>
-        <Text style={styles.noAccountText}>Don't have an account? </Text>
+        <Text style={styles.noAccountText}>Don&apos;t have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.noAccountShortcut}>Sign Up!</Text>
         </TouchableOpacity>

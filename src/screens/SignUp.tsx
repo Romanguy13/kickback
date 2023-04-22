@@ -1,8 +1,17 @@
-import React from 'react';
-import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, Pressable, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Pressable,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { FB_AUTH } from '../../firebaseConfig';
 
-export default function Login({ navigation }: any) {
+export default function SignUp({ navigation }: any) {
   // Functions to gather input
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
@@ -27,7 +36,29 @@ export default function Login({ navigation }: any) {
     console.log(newUserEmail);
     console.log(newUserPassword);
     console.log(newUserConfirmPassword);
-    navigation.navigate('Welcome');
+    if (
+      newUserName === '' ||
+      newUserEmail === '' ||
+      newUserPassword === '' ||
+      newUserConfirmPassword === ''
+    ) {
+      Alert.alert('Please fill in all fields.');
+      return;
+    }
+    if (newUserPassword !== newUserConfirmPassword) {
+      Alert.alert('Passwords do not match.');
+    } else {
+      createUserWithEmailAndPassword(FB_AUTH, newUserEmail, newUserPassword)
+        .then((userCredential) => {
+          const { user } = userCredential;
+          console.log(user);
+          navigation.navigate('Welcome');
+        })
+        .catch((error) => {
+          console.log(error.code, error.message);
+          Alert.alert(error.message);
+        });
+    }
   };
   return (
     <View style={styles.container}>
@@ -63,7 +94,7 @@ export default function Login({ navigation }: any) {
           onChangeText={handleNewUserPasswordChange}
           aria-label="Password"
           keyboardType="default"
-          secureTextEntry={true}
+          secureTextEntry
           placeholder="mypassword123"
           placeholderTextColor="gray"
         />
@@ -74,7 +105,7 @@ export default function Login({ navigation }: any) {
           onChangeText={handleNewUserPasswordConfirmChange}
           aria-label="Confirmed Password"
           keyboardType="default"
-          secureTextEntry={true}
+          secureTextEntry
           placeholder="retype password"
           placeholderTextColor="gray"
         />
