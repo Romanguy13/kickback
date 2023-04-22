@@ -5,11 +5,8 @@ import {
   DocumentData,
   getDocs,
   QuerySnapshot,
-  collection,
-  CollectionReference,
 } from 'firebase/firestore';
-import { waitFor } from '@testing-library/react-native';
-import { UserModel, UserReturn } from '../../resources/schema/user.model';
+import { UpdatedUser, UserModel, UserReturn } from '../../resources/schema/user.model';
 import Users from '../../resources/api/users';
 
 jest.mock('firebase/firestore');
@@ -78,6 +75,13 @@ describe('Firestore Operations', () => {
     const returnedData = await userClass.getAll();
 
     expect(returnedData).toEqual(expectedData);
+  });
+
+  it('should be able to edit an existing document', async () => {
+    const updatedData: UpdatedUser = {
+      name: 'Isabella Bells',
+    };
+    await userClass.edit('doc1', updatedData);
   });
 
   // it('adds a user to the users collection', async () => {
