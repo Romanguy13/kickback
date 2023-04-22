@@ -1,13 +1,13 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import Welcome from './src/screens/Welcome';
 import Login from './src/screens/Login';
 import SignUp from './src/screens/SignUp';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
-export default function App() {
+const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -17,4 +17,6 @@ export default function App() {
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
+
+export default App;
