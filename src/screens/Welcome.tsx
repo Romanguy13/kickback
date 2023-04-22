@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     fontSize: 70,
     fontWeight: 'bold',
     padding: 10,
+    width: '100%',
   },
   buttonContainer: {
     flexDirection: 'column',

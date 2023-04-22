@@ -1,14 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Welcome from '../../screens/Welcome';
 import Login from '../../screens/Login';
 import SignUp from '../../screens/SignUp';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-const renderWithNavigation = (component: any) => {
-  return render(
+const renderWithNavigation = (component: any) =>
+  render(
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Welcome" component={component} />
@@ -17,7 +17,6 @@ const renderWithNavigation = (component: any) => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
 
 test('Rendering Welcome Page', async () => {
   renderWithNavigation(Welcome);
