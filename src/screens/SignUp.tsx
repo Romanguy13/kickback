@@ -7,6 +7,9 @@ import {
   Pressable,
   TouchableOpacity,
   Alert,
+  KeyboardAvoidingView,
+  Dimensions,
+  PixelRatio,
 } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { FB_AUTH } from '../../firebaseConfig';
@@ -72,11 +75,11 @@ export default function SignUp({ navigation }: any) {
   };
   return (
     <View style={styles.container}>
-      <View style={styles.titleContainer}>
+      <KeyboardAvoidingView style={styles.titleContainer} behavior="padding">
         <Text style={styles.text}>Create Account</Text>
         <Text style={styles.subText}>Welcome to KickBack!</Text>
-      </View>
-      <View style={styles.inputContainer}>
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={styles.inputContainer} behavior="padding">
         <Text style={styles.label}>Name</Text>
         <TextInput
           style={styles.input}
@@ -123,22 +126,24 @@ export default function SignUp({ navigation }: any) {
           placeholderTextColor="gray"
           autoCapitalize="none"
         />
-      </View>
-      <View style={styles.inputButtonContainer}>
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={styles.inputButtonContainer} behavior="padding">
         <Pressable style={styles.button} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </Pressable>
-      </View>
-      <View style={styles.noAccountContainer}>
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={styles.noAccountContainer} behavior="padding">
         <Text style={styles.noAccountText}>Already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.noAccountShortcut}>Login!</Text>
         </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }
 
+const windowWidth = Dimensions.get('window').width;
+const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -150,10 +155,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#FFFFFB',
-    textAlign: 'left',
-    fontSize: 50,
+    fontSize: Math.round((windowWidth * 0.12) / fontScale),
     fontWeight: 'bold',
-    width: '100%',
   },
   subText: {
     color: '#FFFFFB',
@@ -162,15 +165,13 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     justifyContent: 'flex-start',
-    padding: 20,
-    width: '100%',
-    paddingBottom: 100,
+    margin: 20,
   },
   label: {
     fontSize: 22,
     textAlign: 'left',
-    paddingTop: 20,
     color: '#FFFFFB',
+    paddingTop: 20,
   },
   input: {
     width: '100%',
@@ -182,8 +183,9 @@ const styles = StyleSheet.create({
   },
   inputButtonContainer: {
     justifyContent: 'flex-start',
-    alignItems: 'center',
     width: '100%',
+    position: 'relative',
+    paddingTop: 40,
   },
   button: {
     width: 300,
@@ -191,6 +193,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#272222',
     padding: 10,
     margin: 10,
+    alignSelf: 'center',
   },
   buttonText: {
     textAlign: 'center',
@@ -203,7 +206,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 40,
+    paddingTop: 30,
   },
   noAccountText: {
     color: '#FFFFFB',
