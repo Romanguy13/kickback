@@ -28,15 +28,30 @@ KickBack helps to keep track of plans with friends, making the process simple to
 2. Clone the repository by running `git clone` in your terminal.
 3. Install the dependencies by running `npm install` in the root directory.
 4. To run the the development server, run `npm start` in the root directory.
-   - To run the app on an exmulator, you must have either [Android Studio](https://developer.android.com/studio) or [Xcode](https://developer.apple.com/xcode/) installed on your computer. Press `a` in the terminal to run the app on an Android emulator or press `i` in the terminal to run the app on an iOS emulator.
+   - To run the app on an emulator, you must have either [Android Studio](https://developer.android.com/studio) or [Xcode](https://developer.apple.com/xcode/) installed on your computer. Press `a` in the terminal to run the app on an Android emulator or press `i` in the terminal to run the app on an iOS emulator.
    - Alternatively, you can run the app on your phone by downloading the [Expo Go](https://expo.dev/client) app and scanning the QR code in the terminal.
 5. Alternatively, you can run `npm run ios` to run the app on an iOS emulator or `npm run android` to run the app on an Android emulator.
 6. To run the tests, run `npm test` in the root directory.
 
+### Setting up an environment
+Before getting started, there are two ways to communicate to the backend: **cloud** and **locally**. This is defined inside of the `.env` file which you can find as `.env.example`. <br>
+
+| Env Variable               | Description                                                                                                                      |
+|----------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| FIREBASE_API_KEY           | The API key of your Firebase project.                                                                                            |
+| FIREBASE_AUTH_DOMAIN       | The authentication domain of your Firebase project.                                                                              |
+| FIREBASE_PROJECT_ID        | The project ID of your Firebase project.                                                                                         |
+| FIREBASE_STORAGE_BUCKET    | The storage bucket of your Firebase project.                                                                                     |
+| FIREBASE_MESSAGE_SENDER_ID | The ID of the message sender for Firebase Cloud Messaging (FCM).                                                                 |
+| FIREBASE_APP_ID            | The ID of the Firebase app in your project.                                                                                      |
+| FIREBASE_MEASUREMENT_ID    | The measurement ID of your Firebase project for Google Analytics.                                                                |
+| NODE_ENV                   | The environment in which the app is running, either "development" or "production". Used for local Firebase emulator credentials. |
+
+
 ## Prettier With VSCode
 
 - Step 1;
-  - Instal the VSCode extension: Prettier. Should be the most downloaded extension.
+  - Install the VSCode extension: Prettier. Should be the most downloaded extension.
 - Step 2:
   - Press `command + shift + p` and type in `>Format Document`
     -Step 3:
@@ -45,7 +60,7 @@ KickBack helps to keep track of plans with friends, making the process simple to
 - Step 4:
   - Now let us make life easier and format a document on save. Hit `command + ,`
   - In the search bar, search: `Editor: Format On Save`
-  - Select the check box and hit `command + s` to save your settings.
+  - Select the checkbox and hit `command + s` to save your settings.
 - Step 5:
   - Finally, let us reload VSCode to ensure our updates/changes are applied.
   - Hit `command + shift + p`
