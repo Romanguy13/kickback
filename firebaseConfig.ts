@@ -32,8 +32,3 @@ const firebaseConfig = {
 export const FB_APP = initializeApp(firebaseConfig, 'Production');
 export const FB_AUTH = getAuth(FB_APP);
 export const FB_DB = getFirestore(FB_APP);
-
-// Connect to the Firestore emulator if running locally
-if (NODE_ENV === 'development') {
-  connectFirestoreEmulator(FB_DB, 'localhost', 8080);
-}
