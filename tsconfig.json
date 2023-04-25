@@ -1,27 +1,7 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "es2018",
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "removeComments": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "typeRoots": ["./types", "./node_modules/@types"]
+    "strict": true
   },
-  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js"],
-  "include": ["./src/**/*", "./types/**/*.d.ts"]
+  "include": ["./src/**/*"]
 }
