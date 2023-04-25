@@ -1,10 +1,13 @@
 export interface UserModel {
   email: string;
+  password: string;
   name: string;
 }
 
-export interface UserReturn extends UserModel {
+export interface UserReturn {
   id: string;
+  email: string;
+  name: string;
 }
 
 export interface UpdatedUser {

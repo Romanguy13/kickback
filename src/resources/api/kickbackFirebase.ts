@@ -29,30 +29,24 @@ export default class KickbackFirebase {
     this.database = database || FB_DB;
   }
 
-  public async create(data: any, overrideId?: string): Promise<string> {
+  public async create(data: any): Promise<string> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
     const returnId: DocumentReference<DocumentData> = doc(dbRef);
 
-    // The new document to add to the collection
-    // With a new ID
-    const documentData = {
-      id: returnId.id,
-      ...data,
-    };
-
-    // If an override ID is provided, use that instead
-    if (overrideId) {
-      documentData.id = overrideId;
-    }
+    console.log('newDocRef: ', returnId.id);
 
     try {
+      const documentData = {
+        id: returnId.id,
+        ...data,
+      };
       const docRef = await addDoc(dbRef, documentData);
       console.log('Document written with ID: ', docRef.id);
     } catch (e) {
       console.log('Error adding document: ', e);
     }
 
-    return overrideId || returnId.id;
+    return returnId.id;
   }
 
   public async getAll(): Promise<DocumentData[]> {

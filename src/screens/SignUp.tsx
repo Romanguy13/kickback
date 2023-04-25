@@ -11,7 +11,7 @@ import {
   Dimensions,
   PixelRatio,
 } from 'react-native';
-import { createUserWithEmailAndPassword, UserCredential } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { FB_AUTH } from '../../firebaseConfig';
 import { UserModel } from '../resources/schema/user.model';
 import Users from '../resources/api/users';
@@ -54,15 +54,17 @@ export default function SignUp({ navigation }: any) {
       Alert.alert('Passwords do not match.');
     } else {
       createUserWithEmailAndPassword(FB_AUTH, newUserEmail, newUserPassword)
-        .then(async (userCredential: UserCredential) => {
+        .then(async (userCredential) => {
           const { user } = userCredential;
           console.log(user);
           const newUser: UserModel = {
             name: newUserName,
             email: newUserEmail,
+            password: newUserPassword,
           };
           const newUserClass = new Users();
-          await newUserClass.create(newUser, user.uid);
+          const id = await newUserClass.create(newUser);
+          console.log(id);
           navigation.navigate('EventFeed');
         })
         .catch((error) => {

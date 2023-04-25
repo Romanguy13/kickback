@@ -1,7 +1,6 @@
 import { Firestore } from 'firebase/firestore';
 import { EventModel, UpdatedEvent } from '../schema/event.model';
 import KickbackFirebase from './kickbackFirebase';
-import { FB_DB } from '../../../firebaseConfig';
 
 export default class Events extends KickbackFirebase {
   // private readonly database;
@@ -16,7 +15,7 @@ export default class Events extends KickbackFirebase {
     // this.database = testingFirestore || FB_DB;
     super({
       defaultCollection: 'events',
-      database: FB_DB,
+      database: testingFirestore
     });
   }
 

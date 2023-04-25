@@ -22,6 +22,7 @@ describe('Firestore Operations', () => {
     const data: UserModel = {
       name: 'Isabella',
       email: 'isabella@bells.com',
+      password: 'isabella',
     };
 
     (doc as jest.Mock).mockReturnValue({
@@ -42,12 +43,13 @@ describe('Firestore Operations', () => {
     const data: UserModel = {
       name: 'Isabella',
       email: 'isabella@books.com',
+      password: 'isabella',
     };
 
     (doc as jest.Mock).mockReturnValue({
       id: 'something',
     } as DocumentReference<DocumentData>);
-
+    
     (addDoc as jest.Mock).mockRejectedValue({
       new: Error('Error while adding document'),
     } as unknown as DocumentReference<DocumentData>);
