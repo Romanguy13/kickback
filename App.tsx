@@ -6,9 +6,10 @@ import Login from './src/screens/Login';
 import SignUp from './src/screens/SignUp';
 import EventFeed from './src/screens/EventFeed';
 import NavBar from './src/screens/NavBar';
+
 const Stack = createNativeStackNavigator();
 
-const App = () => {
+function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -20,6 +21,6 @@ const App = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+}
 
 export default App;
