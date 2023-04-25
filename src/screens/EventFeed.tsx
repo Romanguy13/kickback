@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, PixelRatio } from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, FlatList } from 'react-native';
+
 import NavBar from './NavBar';
+import EventCard from './EventCard';
+//import events from 'somewhere i am going to make event json data'
 
 interface EventFeedProps {
   navigation: any; // Replace with the correct type for your navigation prop
@@ -24,6 +27,13 @@ export default function EventFeed({ navigation }: any) {
     <View style={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.text}>User's KickBacks</Text>
+        <FlatList
+          data={events}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <EventCard event={item} navigation={navigation} />
+          )}
+        />  
       </View>
     </View>
   );
