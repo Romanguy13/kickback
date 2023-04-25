@@ -51,6 +51,7 @@
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     },
+    "import/no-unresolved": [2, { "ignore": ["^@env$"] }],
     "import/no-extraneous-dependencies": [
       "error",
       {
@@ -74,7 +75,8 @@
         "**/tests/**/*.tsx"
       ],
       "rules": {
-        "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
+        "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+        "import/no-unresolved": "error"
       }
     }
   ]

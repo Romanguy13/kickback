@@ -3,7 +3,7 @@
 import { Firestore } from 'firebase/firestore';
 import { UpdatedUser, UserModel } from '../schema/user.model';
 import KickbackFirebase from './kickbackFirebase';
-// import { FB_DB } from '../../../firebaseConfig';
+import { FB_DB } from '../../../firebaseConfig';
 
 export default class Users extends KickbackFirebase {
   /**
@@ -15,12 +15,12 @@ export default class Users extends KickbackFirebase {
   constructor(testingFirestore?: Firestore) {
     super({
       defaultCollection: 'users',
-      database: testingFirestore,
+      database: FB_DB,
     });
   }
 
-  async create(data: UserModel): Promise<string> {
-    return super.create(data);
+  async create(data: UserModel, userId: string): Promise<string> {
+    return super.create(data, userId);
   }
 
   async edit(id: string, data: UpdatedUser): Promise<void> {
