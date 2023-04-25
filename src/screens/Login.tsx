@@ -7,6 +7,7 @@ import {
   Pressable,
   TouchableOpacity,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { FB_AUTH } from '../../firebaseConfig';
@@ -133,8 +134,10 @@ const styles = StyleSheet.create({
     width: '100%',
     borderWidth: 3,
     borderColor: '#272222',
+    borderRadius: 10,
     padding: 10,
-    color: 'white',
+    backgroundColor: 'white',
+    color: '#272222',
     fontSize: 16,
   },
   inputButtonContainer: {

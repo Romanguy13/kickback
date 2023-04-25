@@ -31,13 +31,13 @@ export default class KickbackFirebase {
 
   public async create(data: any): Promise<string> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
-    const userId: DocumentReference<DocumentData> = doc(dbRef);
+    const returnId: DocumentReference<DocumentData> = doc(dbRef);
 
-    console.log('newDocRef: ', userId.id);
+    console.log('newDocRef: ', returnId.id);
 
     try {
       const documentData = {
-        id: userId.id,
+        id: returnId.id,
         ...data,
       };
       const docRef = await addDoc(dbRef, documentData);
@@ -46,7 +46,7 @@ export default class KickbackFirebase {
       console.log('Error adding document: ', e);
     }
 
-    return userId.id;
+    return returnId.id;
   }
 
   public async getAll(): Promise<DocumentData[]> {

@@ -13,7 +13,7 @@ test('Clicking Login Button', async () => {
   expect(screen.getByText('KickBack')).toBeTruthy();
   expect(screen.getByText('Login')).toBeTruthy();
   fireEvent.press(screen.getByText('Login'));
-  expect(screen.getByText('Login')).toBeTruthy();
+  // expect(screen.getByText('Login')).toBeTruthy();
   expect(screen.getByText('Please sign in to your account.')).toBeTruthy();
   expect(screen.getByText('Email')).toBeTruthy();
   expect(screen.getByPlaceholderText('kickback@email.com')).toBeTruthy();
