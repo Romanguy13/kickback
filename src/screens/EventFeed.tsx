@@ -6,6 +6,7 @@ interface EventFeedProps {
   navigation: any;
 }
 
+
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
   const [hasEvents, setHasEvents] = useState(true);
@@ -33,7 +34,8 @@ export default function EventFeed({ navigation }: any) {
 const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
-  container: {
+  container: 
+  {
     flex: 1,
     backgroundColor: '#FFFFFB',
   },
