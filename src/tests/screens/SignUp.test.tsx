@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserCredential, createUserWithEmailAndPassword } from 'firebase/auth';
-import { DocumentData, DocumentReference, addDoc, doc, setDoc } from 'firebase/firestore';
+import { DocumentData, DocumentReference, addDoc, doc } from 'firebase/firestore';
 import { Alert } from 'react-native';
 import SignUp from '../../screens/SignUp';
 import Login from '../../screens/Login';
@@ -97,6 +97,7 @@ test('Sign Up', async () => {
       email: 'test@exmaple.com',
     },
   } as UserCredential);
+
   (doc as jest.Mock).mockResolvedValue({
     id: 'something',
   } as DocumentReference<DocumentData>);
