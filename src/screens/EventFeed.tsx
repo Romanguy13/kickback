@@ -6,7 +6,7 @@ import EventCard from './EventCard';
 //import events from 'somewhere i am going to make event json data'
 
 interface EventFeedProps {
-  navigation: any; // Replace with the correct type for your navigation prop
+  navigation: any;
 }
 
 export default function EventFeed({ navigation }: any) {
@@ -35,6 +35,7 @@ export default function EventFeed({ navigation }: any) {
           )}
         />  
       </View>
+      <NavBar navigation={navigation} />
     </View>
   );
 }
