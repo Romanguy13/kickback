@@ -4,8 +4,20 @@ import { TouchableWithoutFeedback, StyleSheet, Text, View } from 'react-native';
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      flexDirection: 'row',
+      flexDirection: 'column',
       padding: 2,
+      borderTopRightRadius: 60, 
+      borderBottomRightRadius: 60,
+
+    },
+    date: {
+      fontWeight: '700',
+      fontSize: 20,
+      position: 'absolute',
+      width: 169,
+      height: 128,
+      left: 0,
+      top: 274
     },
     item: {
       paddingLeft: 10,
@@ -23,20 +35,21 @@ const styles = StyleSheet.create({
   }
 
 
-  const EventCard = ({event, navigation}) => {
+  const EventCard = ({event, navigation} : any) => {
 
     // accessibility labels 
     let timeLabel = "time of the event";
     let dateLabel = "date";
     let titleLabel = "title of event";
     let statusLabel = "status";
+    let invitedLabel = "# of invites";
     
     return (
         <View>
             <TouchableWithoutFeedback
                 onPress={() => navigation.navigate('Event Detail', {event: event})}>
                 <View style={styles.container}>
-                    <Text
+                    <Text style={styles.container}
                         accessibilityLabel={titleLabel}>
                         {event.title}
                     </Text>
@@ -54,4 +67,6 @@ const styles = StyleSheet.create({
         </View>
     )
 
-}
+};
+
+export default EventCard;

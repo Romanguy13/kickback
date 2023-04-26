@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, PixelRatio } from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, FlatList } from 'react-native';
 import NavBar from './NavBar';
 import { FB_AUTH } from '../../firebaseConfig';
 import Events from '../resources/api/events';
+import EventCard from './EventCard';
 
 
 export default function EventFeed({ navigation }: any) {
