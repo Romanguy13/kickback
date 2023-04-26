@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,9 +7,105 @@ import {
   TextInput,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
+import { EventModel } from '../resources/schema/event.model';
+import { FB_AUTH } from '../../firebaseConfig';
+import Users from '../resources/api/users';
+import Events from '../resources/api/events';
 
 export default function EventCreation({ navigation }: any) {
+  const [eventTitle, setEventTitle] = useState('');
+  const [eventLocation, setEventLocation] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const [eventTime, setEventTime] = useState('');
+  const [inviteUserEmail, setInviteUserEmail] = useState('');
+  const [invitedUsers, setInvitedUsers] = useState<string[]>([]); // [email1, email2, ...
+
+  const handleEventTitleChange = (text: string) => {
+    setEventTitle(text);
+  };
+
+  const handleEventLocationChange = (text: string) => {
+    setEventLocation(text);
+  };
+
+  const handleEventDateChange = (text: string) => {
+    setEventDate(text);
+  };
+
+  const handleEventTimeChange = (text: string) => {
+    setEventTime(text);
+  };
+
+  const handleInviteUserEmailChange = (text: string) => {
+    setInviteUserEmail(text);
+  };
+
+  const handleAddUser = () => {
+    // create user object and check if user exists
+    if (inviteUserEmail === '') {
+      Alert.alert('Please enter an email.');
+      return;
+    }
+    if (invitedUsers.includes(inviteUserEmail)) {
+      Alert.alert('User already invited.');
+      return;
+    }
+    const user = new Users();
+    user.getUserIdByEmail(inviteUserEmail).then((id) => {
+      if (!id) {
+        Alert.alert('User does not exist.');
+      }
+    });
+    setInvitedUsers([...invitedUsers, inviteUserEmail]);
+    setInviteUserEmail('');
+  };
+
+  const handleCreateEvent = () => {
+    console.log(eventTitle);
+    console.log(eventLocation);
+    console.log(eventDate);
+    console.log(eventTime);
+    console.log(invitedUsers);
+    if (eventTitle === '' || eventLocation === '' || eventDate === '' || eventTime === '') {
+      Alert.alert('Please fill in all fields.');
+      return;
+    }
+    // get current user id
+    const userEmail = FB_AUTH.currentUser?.email;
+    if (!userEmail) {
+      Alert.alert('Please log in.');
+      return;
+    }
+    const user = new Users();
+    user.getUserIdByEmail(userEmail).then((id) => {
+      if (!id) {
+        Alert.alert('Please log in.');
+        return;
+      }
+      const event: EventModel = {
+        hostId: id,
+        hostEmail: userEmail,
+        name: eventTitle,
+        location: eventLocation,
+        date: eventDate,
+        time: eventTime,
+        invitedUsers,
+      };
+
+      const Event = new Events();
+      Event.create(event).then((eventId) => {
+        if (!eventId) {
+          Alert.alert('Error creating event.');
+          return;
+        }
+        navigation.navigate('EventFeed');
+      });
+    });
+    // create event
+  };
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <KeyboardAvoidingView behavior="padding">
@@ -20,8 +116,8 @@ export default function EventCreation({ navigation }: any) {
       <KeyboardAvoidingView style={styles.titleContainer}>
         <TextInput
           style={styles.titleInput}
-          //value={userEmail}
-          //onChangeText={handleUserEmailChange}
+          value={eventTitle}
+          onChangeText={handleEventTitleChange}
           keyboardType="default"
           placeholder="Event Title"
           placeholderTextColor="#FF7000"
@@ -32,8 +128,8 @@ export default function EventCreation({ navigation }: any) {
         <Text style={styles.locationLabel}>Location</Text>
         <TextInput
           style={styles.locationInput}
-          //value={userEmail}
-          //onChangeText={handleUserEmailChange}
+          value={eventLocation}
+          onChangeText={handleEventLocationChange}
           keyboardType="default"
           autoCapitalize="none"
         />
@@ -42,8 +138,8 @@ export default function EventCreation({ navigation }: any) {
         <Text style={styles.dateLabel}>Date</Text>
         <TextInput
           style={styles.dateInput}
-          //value={userEmail}
-          //onChangeText={handleUserEmailChange}
+          value={eventDate}
+          onChangeText={handleEventDateChange}
           keyboardType="default"
           autoCapitalize="none"
         />
@@ -52,24 +148,32 @@ export default function EventCreation({ navigation }: any) {
         <Text style={styles.timeLabel}>Time</Text>
         <TextInput
           style={styles.timeInput}
-          //value={userEmail}
-          //onChangeText={handleUserEmailChange}
+          value={eventTime}
+          onChangeText={handleEventTimeChange}
           keyboardType="default"
           autoCapitalize="none"
         />
       </KeyboardAvoidingView>
+      <Text style={styles.invitedLabel}>Invite User</Text>
       <KeyboardAvoidingView style={styles.invitedContainer} behavior="padding">
-        <Text style={styles.invitedLabel}>Who's Invited?</Text>
         <TextInput
           style={styles.invitedInput}
-          //value={userEmail}
-          //onChangeText={handleUserEmailChange}
+          value={inviteUserEmail}
+          onChangeText={handleInviteUserEmailChange}
           keyboardType="default"
           autoCapitalize="none"
         />
+        <Pressable style={styles.addButton} onPress={handleAddUser}>
+          <Text style={styles.buttonText}>Add</Text>
+        </Pressable>
       </KeyboardAvoidingView>
+      {invitedUsers.map((user) => (
+        <Text key={user} style={styles.invitedUser}>
+          {user}
+        </Text>
+      ))}
       <KeyboardAvoidingView style={styles.buttonContainer} behavior="padding">
-        <Pressable style={styles.button}>
+        <Pressable style={styles.button} onPress={handleCreateEvent}>
           <Text style={styles.buttonText}>Create</Text>
         </Pressable>
       </KeyboardAvoidingView>
@@ -180,17 +284,19 @@ const styles = StyleSheet.create({
   },
   invitedContainer: {
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 30,
+    flexDirection: 'row',
+    paddingTop: 10,
   },
   invitedLabel: {
     fontSize: 30,
     color: '#FF7000',
     fontWeight: 'bold',
     flexWrap: 'wrap',
+    marginLeft: 20,
+    marginTop: 20,
   },
   invitedInput: {
-    width: '80%',
+    width: '70%',
     borderWidth: 3,
     borderColor: '#272222',
     borderRadius: 24,
@@ -198,7 +304,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFB',
     fontWeight: 'bold',
     fontSize: 16,
-    padding: 60,
+    padding: 20,
+    marginRight: 10,
   },
   buttonContainer: {
     justifyContent: 'flex-start',
@@ -218,5 +325,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     margin: 5,
     fontWeight: 'bold',
+  },
+  addButton: {
+    width: '20%',
+    justifyContent: 'center',
+    borderRadius: 24,
+    backgroundColor: '#FF7000',
+    padding: 5,
+  },
+  invitedUser: {
+    fontSize: 20,
+    color: '#FF7000',
+    fontWeight: 'bold',
+    flexWrap: 'wrap',
+    marginLeft: 20,
+    marginTop: 5,
   },
 });

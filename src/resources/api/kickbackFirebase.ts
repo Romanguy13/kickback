@@ -10,6 +10,8 @@ import {
   updateDoc,
   getDocs,
   QuerySnapshot,
+  where,
+  query,
 } from 'firebase/firestore';
 import { FB_DB } from '../../../firebaseConfig';
 
@@ -52,9 +54,7 @@ export default class KickbackFirebase {
   public async getAll(): Promise<DocumentData[]> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
     const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(dbRef);
-
-    console.log(querySnapshot);
-
+    
     const documents: DocumentData[] = [];
 
     querySnapshot.forEach((tempDoc) => {

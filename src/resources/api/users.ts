@@ -26,4 +26,14 @@ export default class Users extends KickbackFirebase {
   async edit(id: string, data: UpdatedUser): Promise<void> {
     return super.edit(id, data);
   }
+
+  async getUserIdByEmail(email: string): Promise<string> {
+    const users = await super.getAll();
+    const user = users.find((u) => u.email === email);
+    if (!user) {
+      throw new Error(`User with email ${email} does not exist`);
+    } else {
+      return user.id;
+    }
+  }
 }

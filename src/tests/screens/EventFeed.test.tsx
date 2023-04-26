@@ -5,6 +5,12 @@ import { UserCredential, signInWithEmailAndPassword } from 'firebase/auth';
 import { Alert } from 'react-native';
 import EventFeed from '../../screens/EventFeed';
 
+jest.spyOn(Alert, 'alert');
+
+jest.mock('firebase/auth');
+
+jest.mock('firebase/firestore');
+
 const Stack = createNativeStackNavigator();
 
 const renderWithNavigation = (component: React.FC) =>
