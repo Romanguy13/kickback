@@ -1,9 +1,22 @@
 import React from 'react';
-import { StyleSheet, Text, View, Pressable, TextInput, KeyboardAvoidingView } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  TextInput,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+} from 'react-native';
 
 export default function EventCreation({ navigation }: any) {
   return (
-    <KeyboardAvoidingView style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <KeyboardAvoidingView behavior="padding">
+        <TouchableOpacity onPress={() => navigation.navigate('EventFeed')}>
+          <Text style={styles.noAccountShortcut}>Cancel</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
       <KeyboardAvoidingView style={styles.titleContainer}>
         <TextInput
           style={styles.titleInput}
@@ -15,7 +28,7 @@ export default function EventCreation({ navigation }: any) {
           autoCapitalize="none"
         />
       </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.locationContainer}>
+      <KeyboardAvoidingView style={styles.locationContainer} behavior="padding">
         <Text style={styles.locationLabel}>Location</Text>
         <TextInput
           style={styles.locationInput}
@@ -25,7 +38,7 @@ export default function EventCreation({ navigation }: any) {
           autoCapitalize="none"
         />
       </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.dateContainer}>
+      <KeyboardAvoidingView style={styles.dateContainer} behavior="padding">
         <Text style={styles.dateLabel}>Date</Text>
         <TextInput
           style={styles.dateInput}
@@ -35,7 +48,7 @@ export default function EventCreation({ navigation }: any) {
           autoCapitalize="none"
         />
       </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.timeContainer}>
+      <KeyboardAvoidingView style={styles.timeContainer} behavior="padding">
         <Text style={styles.timeLabel}>Time</Text>
         <TextInput
           style={styles.timeInput}
@@ -44,6 +57,21 @@ export default function EventCreation({ navigation }: any) {
           keyboardType="default"
           autoCapitalize="none"
         />
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={styles.invitedContainer} behavior="padding">
+        <Text style={styles.invitedLabel}>Who's Invited?</Text>
+        <TextInput
+          style={styles.invitedInput}
+          //value={userEmail}
+          //onChangeText={handleUserEmailChange}
+          keyboardType="default"
+          autoCapitalize="none"
+        />
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={styles.buttonContainer} behavior="padding">
+        <Pressable style={styles.button}>
+          <Text style={styles.buttonText}>Create</Text>
+        </Pressable>
       </KeyboardAvoidingView>
     </KeyboardAvoidingView>
   );
@@ -54,15 +82,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFB',
   },
-  textContainer: {
-    padding: 30,
-  },
-  text: {
-    color: '#11111',
-    fontSize: 70,
+  noAccountShortcut: {
+    color: 'red',
+    fontSize: 18,
     fontWeight: 'bold',
-    padding: 10,
-    width: '100%',
+    textDecorationLine: 'underline',
+    textAlign: 'right',
+    marginRight: 20,
   },
   titleContainer: {
     justifyContent: 'flex-start',
@@ -75,9 +101,9 @@ const styles = StyleSheet.create({
     borderColor: '#272222',
     borderRadius: 24,
     backgroundColor: '#272222',
-    color: '#272222',
     fontSize: 30,
     padding: 20,
+    color: '#FFFFFB',
   },
   locationContainer: {
     justifyContent: 'flex-start',
@@ -99,13 +125,15 @@ const styles = StyleSheet.create({
     borderColor: '#272222',
     borderRadius: 24,
     backgroundColor: '#272222',
-    color: '#272222',
+    color: '#FFFFFB',
+    fontWeight: 'bold',
     fontSize: 16,
-    padding: 20,
+    padding: 24,
   },
   dateContainer: {
     justifyContent: 'center',
     flexDirection: 'row',
+    paddingTop: 20,
   },
   dateLabel: {
     fontSize: 30,
@@ -121,7 +149,8 @@ const styles = StyleSheet.create({
     borderColor: '#272222',
     borderRadius: 24,
     backgroundColor: '#272222',
-    color: '#272222',
+    color: '#FFFFFB',
+    fontWeight: 'bold',
     fontSize: 16,
     padding: 20,
   },
@@ -144,8 +173,50 @@ const styles = StyleSheet.create({
     borderColor: '#272222',
     borderRadius: 24,
     backgroundColor: '#272222',
-    color: '#272222',
+    color: '#FFFFFB',
+    fontWeight: 'bold',
     fontSize: 16,
     padding: 20,
+  },
+  invitedContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 30,
+  },
+  invitedLabel: {
+    fontSize: 30,
+    color: '#FF7000',
+    fontWeight: 'bold',
+    flexWrap: 'wrap',
+  },
+  invitedInput: {
+    width: '80%',
+    borderWidth: 3,
+    borderColor: '#272222',
+    borderRadius: 24,
+    backgroundColor: '#272222',
+    color: '#FFFFFB',
+    fontWeight: 'bold',
+    fontSize: 16,
+    padding: 60,
+  },
+  buttonContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '100%',
+    paddingTop: 50,
+  },
+  button: {
+    width: '50%',
+    borderRadius: 16,
+    backgroundColor: '#FF7000',
+    padding: 5,
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#272222',
+    fontSize: 24,
+    margin: 5,
+    fontWeight: 'bold',
   },
 });
