@@ -4,6 +4,7 @@ import NavBar from './NavBar';
 import { FB_AUTH } from '../../firebaseConfig';
 import Events from '../resources/api/events';
 
+
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
   const [events, setEvents] = useState<any[]>([]); // [event1, event2, ...
@@ -52,7 +53,8 @@ export default function EventFeed({ navigation }: any) {
 const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
-  container: {
+  container: 
+  {
     flex: 1,
     backgroundColor: '#FFFFFB',
   },
