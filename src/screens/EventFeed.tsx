@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, Dimensions, PixelRatio } from 'react-nat
 import NavBar from './NavBar';
 
 interface EventFeedProps {
-  navigation: any; // Replace with the correct type for your navigation prop
+  navigation: any;
 }
 
 export default function EventFeed({ navigation }: any) {
@@ -25,6 +25,7 @@ export default function EventFeed({ navigation }: any) {
       <View style={styles.textContainer}>
         <Text style={styles.text}>User's KickBacks</Text>
       </View>
+      <NavBar navigation={navigation} />
     </View>
   );
 }

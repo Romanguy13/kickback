@@ -1,14 +1,6 @@
 //import {StyleSheet, Text, View } from "react-native"
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Pressable,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { StyleSheet, View, Pressable, Image } from 'react-native';
 
 interface NavBarProps {
   navigation: any; // Replace with the correct type for your navigation prop
@@ -16,15 +8,21 @@ interface NavBarProps {
 export default function NavBar({ navigation }: NavBarProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.bottonContainer}>
-        <Pressable style={styles.Button} onPress={() => navigation.navigate('Welcome')}>
-          <Text style={styles.format}> Group </Text>
+      <View style={styles.buttonContainer}>
+        <Pressable style={styles.Button} onPress={() => navigation.navigate('EventGroups')}>
+          <Image source={require('../../assets/groups_button.png')} style={styles.groupsImage} />
         </Pressable>
-        <Pressable style={styles.Button} onPress={() => navigation.navigate('Welcome')}>
-          <Text style={styles.format}> Create </Text>
+        <Pressable style={styles.Button} onPress={() => navigation.navigate('EventCreation')}>
+          <Image source={require('../../assets/add_event_button.png')} style={styles.buttonImage} />
         </Pressable>
-        <Pressable style={styles.Button} onPress={() => navigation.navigate('Welcome')}>
-          <Text style={styles.format}> History </Text>
+        <Pressable style={styles.Button} onPress={() => navigation.navigate('EventFeed')}>
+          <Image
+            source={require('../../assets/event_feed_button.png')}
+            style={styles.buttonImage}
+          />
+        </Pressable>
+        <Pressable style={styles.Button} onPress={() => navigation.navigate('EventHistory')}>
+          <Image source={require('../../assets/history_button.png')} style={styles.buttonImage} />
         </Pressable>
       </View>
     </View>
@@ -39,13 +37,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    height: 100,
+    height: 86,
   },
-  bottonContainer: {
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    paddingTop: 10,
+    alignSelf: 'center',
   },
   format: {
     fontSize: 20,
@@ -54,18 +52,17 @@ const styles = StyleSheet.create({
   },
   Button: {
     flex: 1,
-    maxWidth: 100,
-    height: 75,
-    borderRadius: 50,
-    borderColor: 'blue',
-    borderWidth: 2,
+    width: '100%',
+    height: 80,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingLeft: 5,
-    paddingRight: 5,
+    borderRadius: 20,
   },
-  Icons: {
-    width: 150,
-    height: 50,
+  groupsImage: {
+    flex: 1,
+    resizeMode: 'contain',
+  },
+  buttonImage: {
+    flex: 1,
+    resizeMode: 'contain',
   },
 });
