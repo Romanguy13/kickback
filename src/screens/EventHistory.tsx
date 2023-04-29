@@ -17,30 +17,24 @@ export default function EventHistory({ navigation }: any) {
   );
 }
 
-
 const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();
 
 const styles = StyleSheet.create({
-  container: 
-  {
+  container: {
     flex: 1,
     backgroundColor: '#FF7000',
   },
-  textContainer: 
-  {
+  textContainer: {
     width: '100%',
+    paddingTop: 20,
     margin: 20,
     alignItems: 'center',
-    top: 0
   },
-  text: 
-  {
-    position: 'absolute',
+  text: {
     color: '#272222',
-    fontSize: 70,
+    fontSize: Math.round((windowWidth * 0.15) / fontScale),
     fontWeight: 'bold',
-    //padding: 10,
     width: '100%',
   },
 });

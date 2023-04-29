@@ -1,9 +1,8 @@
-//import {StyleSheet, Text, View } from "react-native"
 import React from 'react';
 import { StyleSheet, View, Pressable, Image } from 'react-native';
 
 interface NavBarProps {
-  navigation: any; // Replace with the correct type for your navigation prop
+  navigation: any;
 }
 export default function NavBar({ navigation }: NavBarProps) {
   return (
@@ -32,7 +31,7 @@ export default function NavBar({ navigation }: NavBarProps) {
 const styles = StyleSheet.create({
   container: {
     borderWidth: 2,
-    borderRadius: 20,
+    borderRadiusTop: 20,
     backgroundColor: '#272222',
     position: 'absolute',
     bottom: 0,
