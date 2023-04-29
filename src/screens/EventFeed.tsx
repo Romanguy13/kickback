@@ -5,7 +5,6 @@ import { FB_AUTH } from '../../firebaseConfig';
 import Events from '../resources/api/events';
 import EventCard from './EventCard';
 
-
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
   const [events, setEvents] = useState<any[]>([]); // [event1, event2, ...
@@ -24,7 +23,7 @@ export default function EventFeed({ navigation }: any) {
       setEvents(eventArray);
       console.log(events);
     });
-  }, [events]);
+  });
 
   return events.length === 0 ? (
     <View style={styles.container}>
@@ -56,13 +55,13 @@ export default function EventFeed({ navigation }: any) {
 const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
-  container: 
-  {
+  container: {
     flex: 1,
     backgroundColor: '#FFFFFB',
   },
   textContainer: {
     width: '100%',
+    paddingTop: 20,
     margin: 20,
     alignItems: 'center',
   },
@@ -75,6 +74,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0)',
+    paddingTop: 70,
     width: '100%',
     position: 'relative',
   },

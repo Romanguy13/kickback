@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { EventModel } from '../resources/schema/event.model';
 import { FB_AUTH } from '../../firebaseConfig';
@@ -105,79 +106,86 @@ export default function EventCreation({ navigation }: any) {
     });
     // create event
   };
-
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <KeyboardAvoidingView behavior="padding">
+    <View style={styles.container}>
+      <View>
         <TouchableOpacity onPress={() => navigation.navigate('EventFeed')}>
-          <Text style={styles.noAccountShortcut}>Cancel</Text>
+          <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
-      </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.titleContainer}>
-        <TextInput
-          style={styles.titleInput}
-          value={eventTitle}
-          onChangeText={handleEventTitleChange}
-          keyboardType="default"
-          placeholder="Event Title"
-          placeholderTextColor="#FF7000"
-          autoCapitalize="none"
-        />
-      </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.locationContainer} behavior="padding">
-        <Text style={styles.locationLabel}>Location</Text>
-        <TextInput
-          style={styles.locationInput}
-          value={eventLocation}
-          onChangeText={handleEventLocationChange}
-          keyboardType="default"
-          autoCapitalize="none"
-        />
-      </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.dateContainer} behavior="padding">
-        <Text style={styles.dateLabel}>Date</Text>
-        <TextInput
-          style={styles.dateInput}
-          value={eventDate}
-          onChangeText={handleEventDateChange}
-          keyboardType="default"
-          autoCapitalize="none"
-        />
-      </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.timeContainer} behavior="padding">
-        <Text style={styles.timeLabel}>Time</Text>
-        <TextInput
-          style={styles.timeInput}
-          value={eventTime}
-          onChangeText={handleEventTimeChange}
-          keyboardType="default"
-          autoCapitalize="none"
-        />
-      </KeyboardAvoidingView>
-      <Text style={styles.invitedLabel}>Invite User</Text>
-      <KeyboardAvoidingView style={styles.invitedContainer} behavior="padding">
-        <TextInput
-          style={styles.invitedInput}
-          value={inviteUserEmail}
-          onChangeText={handleInviteUserEmailChange}
-          keyboardType="default"
-          autoCapitalize="none"
-        />
-        <Pressable style={styles.addButton} onPress={handleAddUser}>
-          <Text style={styles.buttonText}>Add</Text>
-        </Pressable>
-      </KeyboardAvoidingView>
-      {invitedUsers.map((user) => (
-        <Text key={user} style={styles.invitedUser}>
-          {user}
-        </Text>
-      ))}
-      <KeyboardAvoidingView style={styles.buttonContainer} behavior="padding">
-        <Pressable style={styles.button} onPress={handleCreateEvent}>
-          <Text style={styles.buttonText}>Create</Text>
-        </Pressable>
-      </KeyboardAvoidingView>
-    </KeyboardAvoidingView>
+      </View>
+      <ScrollView style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+        <KeyboardAvoidingView behavior="padding" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+          <View style={styles.titleContainer}>
+            <TextInput
+              style={styles.titleInput}
+              value={eventTitle}
+              onChangeText={handleEventTitleChange}
+              keyboardType="default"
+              placeholder="Event Title"
+              placeholderTextColor="#FF7000"
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.locationContainer}>
+            <Text style={styles.locationLabel}>Location</Text>
+            <TextInput
+              style={styles.locationInput}
+              value={eventLocation}
+              onChangeText={handleEventLocationChange}
+              keyboardType="default"
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.dateContainer}>
+            <Text style={styles.dateLabel}>Date</Text>
+            <TextInput
+              style={styles.dateInput}
+              value={eventDate}
+              onChangeText={handleEventDateChange}
+              keyboardType="default"
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={styles.timeLabel}>Time</Text>
+            <TextInput
+              style={styles.timeInput}
+              value={eventTime}
+              onChangeText={handleEventTimeChange}
+              keyboardType="default"
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={styles.invitedLabel}>Who&apos;s Invited</Text>
+          </View>
+          <View style={styles.usersContainer}>
+            <View style={styles.invitedContainer}>
+              <TextInput
+                style={styles.invitedInput}
+                value={inviteUserEmail}
+                onChangeText={handleInviteUserEmailChange}
+                keyboardType="default"
+                autoCapitalize="none"
+              />
+              <Pressable style={styles.addButton} onPress={handleAddUser}>
+                <Text style={styles.addbuttonText}>+</Text>
+              </Pressable>
+            </View>
+            {invitedUsers.map((user) => (
+              <Text key={user} style={styles.invitedUser}>
+                {user}
+              </Text>
+            ))}
+          </View>
+        </KeyboardAvoidingView>
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={handleCreateEvent}>
+            <Text style={styles.buttonText}>Create</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -186,13 +194,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFB',
   },
-  noAccountShortcut: {
+  cancelText: {
     color: 'red',
-    fontSize: 18,
     fontWeight: 'bold',
     textDecorationLine: 'underline',
     textAlign: 'right',
-    marginRight: 20,
+    fontSize: 18,
+    paddingRight: 20,
+    paddingTop: 50,
   },
   titleContainer: {
     justifyContent: 'flex-start',
@@ -201,36 +210,35 @@ const styles = StyleSheet.create({
   },
   titleInput: {
     width: '68%',
-    borderWidth: 3,
     borderColor: '#272222',
-    borderRadius: 24,
     backgroundColor: '#272222',
+    color: '#FFFFFB',
+    borderWidth: 3,
+    borderRadius: 24,
     fontSize: 30,
     padding: 20,
-    color: '#FFFFFB',
   },
   locationContainer: {
     justifyContent: 'flex-start',
-    paddingTop: 0,
-    padding: 20,
-    paddingBottom: 30,
     width: '100%',
+    padding: 20,
+    paddingTop: 0,
+    paddingBottom: 30,
   },
   locationLabel: {
-    fontSize: 30,
     textAlign: 'left',
-    paddingBottom: 10,
     color: '#FF7000',
     fontWeight: 'bold',
+    fontSize: 30,
   },
   locationInput: {
     width: '100%',
-    borderWidth: 3,
     borderColor: '#272222',
-    borderRadius: 24,
     backgroundColor: '#272222',
     color: '#FFFFFB',
     fontWeight: 'bold',
+    borderWidth: 3,
+    borderRadius: 24,
     fontSize: 16,
     padding: 24,
   },
@@ -240,21 +248,21 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   dateLabel: {
-    fontSize: 30,
     color: '#FF7000',
     fontWeight: 'bold',
+    flexWrap: 'wrap',
+    fontSize: 30,
     paddingTop: 10,
     paddingRight: 10,
-    flexWrap: 'wrap',
   },
   dateInput: {
     width: '70%',
-    borderWidth: 3,
     borderColor: '#272222',
-    borderRadius: 24,
     backgroundColor: '#272222',
     color: '#FFFFFB',
     fontWeight: 'bold',
+    borderWidth: 3,
+    borderRadius: 24,
     fontSize: 16,
     padding: 20,
   },
@@ -264,81 +272,98 @@ const styles = StyleSheet.create({
     paddingTop: 14,
   },
   timeLabel: {
-    fontSize: 30,
     color: '#FF7000',
     fontWeight: 'bold',
+    flexWrap: 'wrap',
+    fontSize: 30,
     paddingTop: 10,
     paddingRight: 10,
-    flexWrap: 'wrap',
   },
   timeInput: {
     width: '70%',
-    borderWidth: 3,
     borderColor: '#272222',
-    borderRadius: 24,
     backgroundColor: '#272222',
     color: '#FFFFFB',
     fontWeight: 'bold',
+    borderWidth: 3,
+    borderRadius: 24,
     fontSize: 16,
     padding: 20,
+  },
+  invitedLabel: {
+    color: '#FF7000',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingTop: 20,
+    fontSize: 30,
+  },
+  usersContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#272222',
+    borderWidth: 2,
+    borderRadius: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
   invitedContainer: {
     justifyContent: 'center',
+    alignItems: 'center',
     flexDirection: 'row',
-    paddingTop: 10,
-  },
-  invitedLabel: {
-    fontSize: 30,
-    color: '#FF7000',
-    fontWeight: 'bold',
-    flexWrap: 'wrap',
-    marginLeft: 20,
-    marginTop: 20,
+    backgroundColor: '#272222',
+    borderRadius: 20,
   },
   invitedInput: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     width: '70%',
-    borderWidth: 3,
-    borderColor: '#272222',
-    borderRadius: 24,
-    backgroundColor: '#272222',
     color: '#FFFFFB',
     fontWeight: 'bold',
+    borderColor: '#272222',
+    borderRadius: 24,
+    borderWidth: 3,
     fontSize: 16,
-    padding: 20,
-    marginRight: 10,
+    padding: 10,
+  },
+  invitedUser: {
+    color: '#FFFFFB',
+    fontWeight: 'bold',
+    flexWrap: 'wrap',
+    fontSize: 20,
+    marginTop: 5,
+  },
+  addButton: {
+    backgroundColor: '#FF7000',
+    alignItems: 'center',
+    height: '70%',
+    width: '10%',
+    borderRadius: 24,
+  },
+  addbuttonText: {
+    textAlign: 'center',
+    color: '#FFFFFB',
+    fontWeight: 'bold',
+    fontSize: 24,
   },
   buttonContainer: {
-    justifyContent: 'flex-start',
     alignItems: 'center',
-    width: '100%',
-    paddingTop: 50,
+    paddingTop: 100,
+    paddingBottom: 45,
   },
   button: {
-    width: '50%',
-    borderRadius: 16,
+    width: '40%',
     backgroundColor: '#FF7000',
-    padding: 5,
+    borderRadius: 12,
+    padding: 10,
   },
   buttonText: {
     textAlign: 'center',
     color: '#272222',
+    fontWeight: 'bold',
     fontSize: 24,
     margin: 5,
-    fontWeight: 'bold',
-  },
-  addButton: {
-    width: '20%',
-    justifyContent: 'center',
-    borderRadius: 24,
-    backgroundColor: '#FF7000',
-    padding: 5,
-  },
-  invitedUser: {
-    fontSize: 20,
-    color: '#FF7000',
-    fontWeight: 'bold',
-    flexWrap: 'wrap',
-    marginLeft: 20,
-    marginTop: 5,
   },
 });
