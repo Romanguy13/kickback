@@ -22,7 +22,6 @@ describe('Firestore Operations', () => {
     const data: UserModel = {
       name: 'Isabella',
       email: 'isabella@bells.com',
-      password: 'isabella',
     };
 
     (doc as jest.Mock).mockReturnValue({
@@ -43,19 +42,15 @@ describe('Firestore Operations', () => {
     const data: UserModel = {
       name: 'Isabella',
       email: 'isabella@books.com',
-      password: 'isabella',
     };
 
     (doc as jest.Mock).mockReturnValue({
       id: 'something',
     } as DocumentReference<DocumentData>);
-    
-    (addDoc as jest.Mock).mockRejectedValue({
-      new: Error('Error while adding document'),
-    } as unknown as DocumentReference<DocumentData>);
 
-    const returnedId = await userClass.create(data);
-    console.log(returnedId);
+    (addDoc as jest.Mock).mockRejectedValue(new Error('Error while adding document'));
+
+    await expect(userClass.create(data)).rejects.toThrow('Error while adding document');
   });
 
   it('should get all documents from a collection', async () => {
@@ -91,7 +86,7 @@ describe('Firestore Operations', () => {
         querySnapshot.forEach(callback),
     } as unknown as QuerySnapshot<DocumentData>);
 
-    const returnedData = await userClass.getAll();
+    const returnedData = await userClass.getAll('something', 'else');
 
     expect(returnedData).toEqual(expectedData);
   });

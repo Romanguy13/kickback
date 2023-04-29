@@ -1,6 +1,17 @@
-import { Firestore } from 'firebase/firestore';
-import { EventModel, UpdatedEvent } from '../schema/event.model';
+import {
+  collection,
+  CollectionReference,
+  DocumentData,
+  Firestore,
+  Query,
+  query,
+  QuerySnapshot,
+  where,
+    getDocs
+} from 'firebase/firestore';
+import {EventModel, EventReturn, UpdatedEvent} from '../schema/event.model';
 import KickbackFirebase from './kickbackFirebase';
+import GroupMembers from "./groupMembers";
 
 export default class Events extends KickbackFirebase {
   // private readonly database;
@@ -25,5 +36,32 @@ export default class Events extends KickbackFirebase {
 
   async edit(id: string, data: UpdatedEvent): Promise<void> {
     return super.edit(id, data);
+  }
+
+  async getAll(userId: string): Promise<EventReturn[]> {
+    const events: EventReturn[] = [];
+
+    // Get all events based on hostId
+    const eventsHosted: DocumentData[] = await super.getAll(userId, 'hostId');
+    eventsHosted.forEach((event: DocumentData) => {
+        events.push(event as EventReturn);
+    });
+
+    // Get all events based on the groups that the user is in
+    // First get the groups that the user is in
+    const groups: DocumentData[] = await new GroupMembers().getAll(userId, 'userId');
+
+    const promises = groups.map(async (group: DocumentData) => {
+      const groupEvents: DocumentData[] = await super.getAll(group.groupId, 'gId');
+      groupEvents.forEach((event: DocumentData) => {
+        events.push(event as EventReturn);
+      });
+    });
+
+    await Promise.all(promises);
+
+    console.log('events: ', events);
+
+    return events;
   }
 }

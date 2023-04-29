@@ -59,11 +59,10 @@ export default function SignUp({ navigation }: any) {
           console.log(user);
           const newUser: UserModel = {
             name: newUserName,
-            email: newUserEmail,
-            password: newUserPassword,
+            email: newUserEmail.toLowerCase(),
           };
           const newUserClass = new Users();
-          const id = await newUserClass.create(newUser);
+          const id = await newUserClass.create(newUser, user.uid);
           console.log(id);
           navigation.navigate('EventFeed');
         })

@@ -1,8 +1,18 @@
 // import { createUserWithEmailAndPassword } from 'firebase/auth';
 // import { signInWithEmailAndPassword } from 'firebase/auth';
-import { Firestore } from 'firebase/firestore';
-import { UpdatedUser, UserModel } from '../schema/user.model';
+import {
+  collection,
+  CollectionReference,
+  DocumentData,
+  Firestore,
+  query,
+  where,
+  Query,
+  getDocs, QuerySnapshot, QueryDocumentSnapshot
+} from 'firebase/firestore';
+import {UpdatedUser, UserModel, UserReturn} from '../schema/user.model';
 import KickbackFirebase from './kickbackFirebase';
+
 // import { FB_DB } from '../../../firebaseConfig';
 
 export default class Users extends KickbackFirebase {
@@ -19,21 +29,24 @@ export default class Users extends KickbackFirebase {
     });
   }
 
-  async create(data: UserModel): Promise<string> {
-    return super.create(data);
+  async create(data: UserModel, overrideId?: string): Promise<string> {
+    return super.create(data, overrideId);
   }
 
   async edit(id: string, data: UpdatedUser): Promise<void> {
     return super.edit(id, data);
   }
 
-  async getUserIdByEmail(email: string): Promise<string> {
-    const users = await super.getAll();
-    const user = users.find((u) => u.email === email);
+  async getUserByEmail(email: string): Promise<UserReturn> {
+    const userRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
+    const q: Query<DocumentData> = query(userRef, where('email', '==', email.toLowerCase()));
+    const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+    const user: QueryDocumentSnapshot<DocumentData> = querySnapshot.docs[0];
+
     if (!user) {
-      throw new Error(`User with email ${email} does not exist`);
-    } else {
-      return user.id;
+        throw new Error(`User with email ${email} does not exist`);
     }
+
+    return user.data() as UserReturn;
   }
 }

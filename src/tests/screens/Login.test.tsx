@@ -13,6 +13,7 @@ jest.spyOn(Alert, 'alert');
 jest.mock('firebase/auth');
 
 const Stack = createNativeStackNavigator();
+const MockEventFeed = jest.fn();
 
 const renderWithNavigation = (component: React.FC) =>
   render(
@@ -21,7 +22,7 @@ const renderWithNavigation = (component: React.FC) =>
         <Stack.Screen name="Login" component={component} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="EventFeed" component={EventFeed} />
+        <Stack.Screen name="EventFeed" component={MockEventFeed} />
       </Stack.Navigator>
     </NavigationContainer>
   );

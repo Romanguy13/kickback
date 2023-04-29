@@ -11,14 +11,14 @@ import {
   getDocs,
   QuerySnapshot,
   where,
-  query,
+  query, Query,
 } from 'firebase/firestore';
 import { FB_DB } from '../../../firebaseConfig';
 
 export default class KickbackFirebase {
-  private readonly collection: string;
+  protected readonly collection: string;
 
-  private readonly database: Firestore;
+  protected readonly database: Firestore;
 
   constructor({
     defaultCollection,
@@ -31,29 +31,37 @@ export default class KickbackFirebase {
     this.database = database || FB_DB;
   }
 
-  public async create(data: any): Promise<string> {
+  public async create(data: any, overrideId?: string | undefined, disableId?: boolean): Promise<string> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
     const returnId: DocumentReference<DocumentData> = doc(dbRef);
 
     console.log('newDocRef: ', returnId.id);
 
-    try {
-      const documentData = {
-        id: returnId.id,
-        ...data,
-      };
-      const docRef = await addDoc(dbRef, documentData);
-      console.log('Document written with ID: ', docRef.id);
-    } catch (e) {
-      console.log('Error adding document: ', e);
+    const documentData = {
+      ...data,
+    };
+
+    if (overrideId) {
+      documentData.id = overrideId;
+    } else if (!disableId) {
+      documentData.id = returnId.id;
     }
 
-    return returnId.id;
+    const docRef = await addDoc(dbRef, documentData);
+
+    if (!docRef) {
+        throw new Error('Error creating document');
+    }
+
+    console.log('Document written with ID: ', docRef.id);
+
+    return documentData.id;
   }
 
-  public async getAll(): Promise<DocumentData[]> {
+  public async getAll(userId: string, fieldName: string): Promise<DocumentData[]> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
-    const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(dbRef);
+    const q: Query<DocumentData> = query(dbRef, where(fieldName, '==', userId));
+    const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
     
     const documents: DocumentData[] = [];
 

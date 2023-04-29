@@ -12,6 +12,7 @@ import Events from '../../resources/api/events';
 import { EventReturn, UpdatedEvent, EventModel } from '../../resources/schema/event.model';
 
 jest.mock('firebase/firestore');
+jest.mock('../../resources/api/events');
 
 describe('Firestore Operations', () => {
   let eventClass: Events;
@@ -22,6 +23,8 @@ describe('Firestore Operations', () => {
 
   it('should add a document to a collection of events', async () => {
     const data: EventModel = {
+      gId: '201',
+      time: '12:00',
       hostId: 'something',
       name: 'Isabella',
       location: 'Santa Barbara',
@@ -44,6 +47,8 @@ describe('Firestore Operations', () => {
 
   it('Error while adding document', async () => {
     const data: EventModel = {
+      gId: '201',
+      time: '12:00',
       hostId: 'something',
       name: 'Isabella',
       location: 'Santa Barbara',
@@ -53,18 +58,18 @@ describe('Firestore Operations', () => {
     (doc as jest.Mock).mockReturnValue({
       id: 'something',
     } as DocumentReference<DocumentData>);
-    
-    (addDoc as jest.Mock).mockRejectedValue({
-      new: Error('Error while adding document'),
-    } as unknown as DocumentReference<DocumentData>);
 
-    const returnedId = await eventClass.create(data);
-    console.log(returnedId);
+    (addDoc as jest.Mock).mockRejectedValue(new Error('Error while adding document'));
+
+    // Expecting an error when calling `create`
+    await expect(eventClass.create(data)).rejects.toThrowError('Error while adding document');
   });
 
   it('should get all documents from a collection', async () => {
     const expectedData: EventReturn[] = [
       {
+        gId: '201',
+        time: '12:00',
         id: 'doc1',
         hostId: 'something',
         name: 'Isabella',
@@ -72,6 +77,8 @@ describe('Firestore Operations', () => {
         date: '2021-10-10',
       },
       {
+        gId: '202',
+        time: '12:00',
         id: 'doc2',
         hostId: 'something2',
         name: 'Isabella2',
@@ -91,15 +98,15 @@ describe('Firestore Operations', () => {
       },
     ];
 
-    (getDocs as jest.Mock).mockResolvedValueOnce({
+    (getDocs as jest.Mock).mockResolvedValue({
       docs: querySnapshot,
       size: expectedData.length,
       empty: false,
       forEach: (callback: (value: DocumentData, index: number, array: DocumentData[]) => void) =>
-        querySnapshot.forEach(callback),
+          querySnapshot.forEach(callback),
     } as unknown as QuerySnapshot<DocumentData>);
 
-    const returnedData = await eventClass.getAll();
+    const returnedData: EventReturn[] = await eventClass.getAll('something');
 
     expect(returnedData).toEqual(expectedData);
   });
@@ -113,11 +120,13 @@ describe('Firestore Operations', () => {
 
   it('should be able to get one document by id', async () => {
     const expectedData: EventReturn = {
+      gId: '209',
+      time: '12:00',
       id: 'doc1',
       hostId: 'something',
       name: 'Isabella',
       location: 'Santa Barbara',
-      date: '2021-10-10',
+      date: '2021-10-10'
     };
 
     (doc as jest.Mock).mockReturnValue({

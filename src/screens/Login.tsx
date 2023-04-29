@@ -9,7 +9,7 @@ import {
   Alert,
   KeyboardAvoidingView,
 } from 'react-native';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import {signInWithEmailAndPassword, UserCredential} from 'firebase/auth';
 import { FB_AUTH } from '../../firebaseConfig';
 
 export default function Login({ navigation }: any) {
@@ -37,12 +37,11 @@ export default function Login({ navigation }: any) {
       Alert.alert('Please enter an email.');
       return;
     }
-    console.log(userEmail);
-    console.log(userPassword);
+
     signInWithEmailAndPassword(FB_AUTH, userEmail, userPassword)
-      .then((userCredential) => {
+      .then((userCredential: UserCredential) => {
         const { user } = userCredential;
-        console.log(user);
+        console.log('Logged in as: ', user.email, user.uid);
         navigation.navigate('EventFeed');
       })
       .catch((error) => {
