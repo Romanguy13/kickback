@@ -113,13 +113,13 @@ export default function EventCreation({ navigation }: any) {
 
     // Also add in the host as a group member
     await new GroupMembers().create({
-      userId: userReturned.id,
+      userId: FB_AUTH.currentUser?.uid as string,
       groupId: gId,
     });
 
     // Event Model for later use
     const event: EventModel = {
-      hostId: userReturned.id,
+      hostId: FB_AUTH.currentUser?.uid as string,
       name: eventTitle,
       location: eventLocation,
       date: eventDate,

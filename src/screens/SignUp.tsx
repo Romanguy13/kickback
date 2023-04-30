@@ -62,7 +62,7 @@ export default function SignUp({ navigation }: any) {
             email: newUserEmail.toLowerCase(),
           };
           const newUserClass = new Users();
-          const id = await newUserClass.create(newUser, user.uid);
+          const id = await newUserClass.create(newUser, { overrideId: user.uid});
           console.log(id);
           navigation.navigate('EventFeed');
         })

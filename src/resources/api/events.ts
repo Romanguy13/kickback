@@ -40,7 +40,9 @@ export default class Events extends KickbackFirebase {
 
   async getAll(userId: string): Promise<EventReturn[]> {
     const events: EventReturn[] = [];
+    console.log('userId: ', userId)
     const groups: DocumentData[] = await new GroupMembers().getAll(userId, 'userId');
+    console.log('groups: ', groups);
 
     const promises = groups.map(async (group: DocumentData) => {
       const groupEvents: DocumentData[] = await super.getAll(group.groupId, 'gId');
@@ -51,6 +53,8 @@ export default class Events extends KickbackFirebase {
     });
 
     await Promise.all(promises);
+
+    console.log('events: ', events)
 
     return events;
   }

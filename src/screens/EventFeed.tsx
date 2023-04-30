@@ -14,7 +14,7 @@ export default function EventFeed({ navigation }: any) {
   useEffect(() => {
     const fetchData = async () => {
       const eventList = await new Events().getAll(FB_AUTH.currentUser?.uid as string);
-      console.log(eventList)
+      console.log('Event List:', eventList)
       setEvents(eventList);
     };
 

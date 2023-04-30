@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";
@@ -22,3 +22,6 @@ const firebaseConfig = {
 export const FB_APP = initializeApp(firebaseConfig, 'Production');
 export const FB_AUTH = getAuth(FB_APP);
 export const FB_DB = getFirestore(FB_APP);
+
+// connectFirestoreEmulator(FB_DB, 'localhost', 8080);
+// connectAuthEmulator(FB_AUTH, "http://127.0.0.1:9099");
