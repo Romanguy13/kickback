@@ -111,6 +111,13 @@ export default function EventCreation({ navigation }: any) {
       });
     });
 
+    // Also add in the host as a group member
+    await new GroupMembers().create({
+      userId: userReturned.id,
+      groupId: gId,
+    });
+
+    // Event Model for later use
     const event: EventModel = {
       hostId: userReturned.id,
       name: eventTitle,

@@ -17,6 +17,6 @@ export default class GroupMembers extends KickbackFirebase {
     }
 
     async create(data: GroupMemberModel): Promise<string> {
-        return super.create(data, undefined, true);
+        return super.create(data, {disableId: true});
     }
 }

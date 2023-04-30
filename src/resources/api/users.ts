@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import {UpdatedUser, UserModel, UserReturn} from '../schema/user.model';
 import KickbackFirebase from './kickbackFirebase';
+import {KBFBCreate} from "../schema/kickbackFirebase.model";
 
 // import { FB_DB } from '../../../firebaseConfig';
 
@@ -29,8 +30,11 @@ export default class Users extends KickbackFirebase {
     });
   }
 
-  async create(data: UserModel, overrideId?: string): Promise<string> {
-    return super.create(data, overrideId);
+  async create(data: UserModel, extras?: KBFBCreate): Promise<string> {
+    if (!extras) {
+      return super.create(data);
+    }
+    return super.create(data, {overrideId: extras.overrideId});
   }
 
   async edit(id: string, data: UpdatedUser): Promise<void> {
@@ -41,12 +45,12 @@ export default class Users extends KickbackFirebase {
     const userRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
     const q: Query<DocumentData> = query(userRef, where('email', '==', email.toLowerCase()));
     const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
-    const user: QueryDocumentSnapshot<DocumentData> = querySnapshot.docs[0];
+    const user: QueryDocumentSnapshot<DocumentData>[] = querySnapshot.docs;
 
     if (!user) {
-        throw new Error(`User with email ${email} does not exist`);
+      throw new Error(`User with email ${email} does not exist`);
     }
 
-    return user.data() as UserReturn;
+    return user[0].data() as UserReturn;
   }
 }

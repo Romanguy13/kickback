@@ -40,27 +40,17 @@ export default class Events extends KickbackFirebase {
 
   async getAll(userId: string): Promise<EventReturn[]> {
     const events: EventReturn[] = [];
-
-    // Get all events based on hostId
-    const eventsHosted: DocumentData[] = await super.getAll(userId, 'hostId');
-    eventsHosted.forEach((event: DocumentData) => {
-        events.push(event as EventReturn);
-    });
-
-    // Get all events based on the groups that the user is in
-    // First get the groups that the user is in
     const groups: DocumentData[] = await new GroupMembers().getAll(userId, 'userId');
 
     const promises = groups.map(async (group: DocumentData) => {
       const groupEvents: DocumentData[] = await super.getAll(group.groupId, 'gId');
+      console.log('groupEvents: ', groupEvents)
       groupEvents.forEach((event: DocumentData) => {
         events.push(event as EventReturn);
       });
     });
 
     await Promise.all(promises);
-
-    console.log('events: ', events);
 
     return events;
   }
