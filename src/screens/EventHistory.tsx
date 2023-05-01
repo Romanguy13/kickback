@@ -1,4 +1,3 @@
-//import React from 'react';
 import { StyleSheet, Text, View, Pressable, Dimensions, PixelRatio, Image } from 'react-native';
 import NavBar from './NavBar';
 import { FB_AUTH } from '../../firebaseConfig';
@@ -13,28 +12,22 @@ interface EventHistoryProps {
 
 export default function EventHistory({ navigation }: any) 
 {
-  //gather all the events 
+  // Gather all the events
   const [events, setEvents] = useState<any[]>([]);
-  useEffect(() => 
-  {
-    const eventClass = new Events();
-    eventClass.getAll().then((eventList: any[]) => {
-      const eventArray: any[] = [];
-      eventList.forEach((event) => 
-      {
-        //here would be a if statement to check if the event date is passed 
-        //but for now just show case everything 
-        if (event.invitedUsers.includes(FB_AUTH.currentUser?.email)) {
-          eventArray.push(event);
-        } else if (event.hostEmail === FB_AUTH.currentUser?.email) {
-          eventArray.push(event);
-        }
-      });
-      setEvents(eventArray);
-      console.log(events);
-    });
-  },[]);
-  //what to showcase on the screen
+  const [refresh, setRefresh] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const eventList = await new Events().getAll(FB_AUTH.currentUser?.uid as string);
+      setEvents(eventList);
+    };
+
+    fetchData();
+    setRefresh(false);
+    console.log(events);
+  }, [refresh]);
+
+  // What to showcase on the screen
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>

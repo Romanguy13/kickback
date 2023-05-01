@@ -4,9 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserCredential, createUserWithEmailAndPassword } from 'firebase/auth';
 import { DocumentData, DocumentReference, addDoc, doc } from 'firebase/firestore';
 import {Alert, View} from 'react-native';
-import SignUp from '../../screens/SignUp';
-import Login from '../../screens/Login';
-import Welcome from '../../screens/Welcome';
+import SignUp from '../../../screens/SignUp';
+import Login from '../../../screens/Login';
+import Welcome from '../../../screens/Welcome';
 
 jest.spyOn(Alert, 'alert');
 

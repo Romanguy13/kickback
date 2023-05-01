@@ -3,9 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {Alert, View} from 'react-native';
 import React from "react";
-import EventFeed from '../../screens/EventFeed';
-import {EventReturn} from "../../resources/schema/event.model";
-import Events from "../../resources/api/events";
+import EventFeed from '../../../screens/EventFeed';
+import {EventReturn} from "../../../resources/schema/event.model";
+import Events from "../../../resources/api/events";
 
 jest.spyOn(Alert, 'alert');
 
