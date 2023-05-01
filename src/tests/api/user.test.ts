@@ -4,12 +4,14 @@ import {
   DocumentReference,
   DocumentData,
   getDocs,
-  QuerySnapshot,
+  QuerySnapshot, collection, CollectionReference, query,
 } from 'firebase/firestore';
 import { UpdatedUser, UserModel, UserReturn } from '../../resources/schema/user.model';
 import Users from '../../resources/api/users';
+import KickbackFirebase from "../../resources/api/kickbackFirebase";
 
 jest.mock('firebase/firestore');
+jest.mock('../../resources/api/kickbackFirebase');
 
 describe('Firestore Operations', () => {
   let userClass: Users;
@@ -22,40 +24,26 @@ describe('Firestore Operations', () => {
     const data: UserModel = {
       name: 'Isabella',
       email: 'isabella@bells.com',
-      password: 'isabella',
     };
 
-    (doc as jest.Mock).mockReturnValue({
-      id: 'something',
-    } as DocumentReference<DocumentData>);
-
-    (addDoc as jest.Mock).mockResolvedValue({
-      id: 'testId',
-    } as DocumentReference<DocumentData>);
+    (KickbackFirebase.prototype.create as jest.Mock).mockResolvedValue('something');
 
     const returnedId = await userClass.create(data);
 
-    console.log(returnedId);
     expect(returnedId).toEqual('something');
   });
 
-  it('Error while adding document', async () => {
+  it('should add a document to a collection - Given overrideId', async () => {
     const data: UserModel = {
       name: 'Isabella',
-      email: 'isabella@books.com',
-      password: 'isabella',
+      email: 'isabella@bells.com',
     };
 
-    (doc as jest.Mock).mockReturnValue({
-      id: 'something',
-    } as DocumentReference<DocumentData>);
-    
-    (addDoc as jest.Mock).mockRejectedValue({
-      new: Error('Error while adding document'),
-    } as unknown as DocumentReference<DocumentData>);
+    (KickbackFirebase.prototype.create as jest.Mock).mockResolvedValue('overrideId');
 
-    const returnedId = await userClass.create(data);
-    console.log(returnedId);
+    const returnedId = await userClass.create(data, { overrideId: 'overrideId' });
+
+    expect(returnedId).toEqual('overrideId');
   });
 
   it('should get all documents from a collection', async () => {
@@ -72,26 +60,9 @@ describe('Firestore Operations', () => {
       },
     ];
 
-    const querySnapshot = [
-      {
-        id: 'doc1',
-        data: () => expectedData[0],
-      },
-      {
-        id: 'doc2',
-        data: () => expectedData[1],
-      },
-    ];
+    (KickbackFirebase.prototype.getAll as jest.Mock).mockResolvedValue(expectedData);
 
-    (getDocs as jest.Mock).mockResolvedValueOnce({
-      docs: querySnapshot,
-      size: expectedData.length,
-      empty: false,
-      forEach: (callback: (value: DocumentData, index: number, array: DocumentData[]) => void) =>
-        querySnapshot.forEach(callback),
-    } as unknown as QuerySnapshot<DocumentData>);
-
-    const returnedData = await userClass.getAll();
+    const returnedData = await userClass.getAll('something', 'else');
 
     expect(returnedData).toEqual(expectedData);
   });
@@ -101,6 +72,53 @@ describe('Firestore Operations', () => {
       name: 'Isabella Bells',
     };
     await userClass.edit('doc1', updatedData);
+  });
+
+  it('Should be able to get user by email', async () => {
+    const expectedUser: UserReturn = {
+      id: 'isa45',
+      name: 'Isabella',
+      email: 'isabella@kickback.com',
+    };
+
+    // Make sure that there is no connection with the database
+    (collection as jest.Mock).mockReturnValue({
+      id: 'randomCollectionId',
+      path: 'randomCollectionPath',
+      parent: null,
+    } as unknown as CollectionReference<DocumentData>);
+
+    (query as jest.Mock).mockResolvedValue({
+      id: 'randomQueryId',
+    } as unknown as QuerySnapshot<DocumentData>);
+
+    (getDocs as jest.Mock).mockResolvedValue({
+      docs: [{ data: () => expectedUser }],
+    } as unknown as QuerySnapshot<DocumentData>);
+
+    const returnedUser = await userClass.getUserByEmail('isabella@kickback.com');
+
+    expect(returnedUser).toEqual(expectedUser);
+  });
+
+  it('Should NOT be able to get user by email', async () => {
+    // Make sure that there is no connection with the database
+    (collection as jest.Mock).mockReturnValue({
+      id: 'randomCollectionId',
+      path: 'randomCollectionPath',
+      parent: null,
+    } as unknown as CollectionReference<DocumentData>);
+
+    (query as jest.Mock).mockResolvedValue({
+      id: 'randomQueryId',
+    } as unknown as QuerySnapshot<DocumentData>);
+
+    (getDocs as jest.Mock).mockResolvedValue({
+      docs: undefined
+    } as unknown as QuerySnapshot<DocumentData>);
+
+    await expect(userClass.getUserByEmail('mimis@kickback.com'))
+        .rejects.toThrowError('User with email mimis@kickback.com does not exist');
   });
 
   // it('adds a user to the users collection', async () => {

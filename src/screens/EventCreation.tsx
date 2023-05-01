@@ -14,6 +14,9 @@ import { EventModel } from '../resources/schema/event.model';
 import { FB_AUTH } from '../../firebaseConfig';
 import Users from '../resources/api/users';
 import Events from '../resources/api/events';
+import Groups from "../resources/api/groups";
+import GroupMembers from "../resources/api/groupMembers";
+import {UserReturn} from "../resources/schema/user.model";
 
 export default function EventCreation({ navigation }: any) {
   const [eventTitle, setEventTitle] = useState('');
@@ -21,7 +24,7 @@ export default function EventCreation({ navigation }: any) {
   const [eventDate, setEventDate] = useState('');
   const [eventTime, setEventTime] = useState('');
   const [inviteUserEmail, setInviteUserEmail] = useState('');
-  const [invitedUsers, setInvitedUsers] = useState<string[]>([]); // [email1, email2, ...
+  const [invitedUsers, setInvitedUsers] = useState<UserReturn[]>([]); // [email1, email2, ...
 
   const handleEventTitleChange = (text: string) => {
     setEventTitle(text);
@@ -49,21 +52,26 @@ export default function EventCreation({ navigation }: any) {
       Alert.alert('Please enter an email.');
       return;
     }
-    if (invitedUsers.includes(inviteUserEmail)) {
+    if (invitedUsers.find((user: UserReturn) => user.email === inviteUserEmail)) {
       Alert.alert('User already invited.');
       return;
     }
+    if (inviteUserEmail === FB_AUTH.currentUser?.email) {
+      Alert.alert('You cannot invite yourself, silly goose.');
+      return;
+    }
+
     const user = new Users();
-    user.getUserIdByEmail(inviteUserEmail).then((id) => {
-      if (!id) {
-        Alert.alert('User does not exist.');
-      }
+    user.getUserByEmail(inviteUserEmail).then((currUser: UserReturn) => {
+      setInvitedUsers([...invitedUsers, currUser]);
+      setInviteUserEmail('');
+    }).catch(() => {
+      Alert.alert('User does not exist.');
+      setInviteUserEmail('');
     });
-    setInvitedUsers([...invitedUsers, inviteUserEmail]);
-    setInviteUserEmail('');
   };
 
-  const handleCreateEvent = () => {
+  const handleCreateEvent = async (): Promise<void> => {
     console.log(eventTitle);
     console.log(eventLocation);
     console.log(eventDate);
@@ -79,32 +87,54 @@ export default function EventCreation({ navigation }: any) {
       Alert.alert('Please log in.');
       return;
     }
-    const user = new Users();
-    user.getUserIdByEmail(userEmail).then((id) => {
-      if (!id) {
-        Alert.alert('Please log in.');
-        return;
-      }
-      const event: EventModel = {
-        hostId: id,
-        hostEmail: userEmail,
-        name: eventTitle,
-        location: eventLocation,
-        date: eventDate,
-        time: eventTime,
-        invitedUsers,
-      };
 
-      const Event = new Events();
-      Event.create(event).then((eventId) => {
-        if (!eventId) {
-          Alert.alert('Error creating event.');
-          return;
-        }
-        navigation.navigate('EventFeed');
+    // Gets user id from email
+    const user = new Users();
+    let userReturned: UserReturn;
+
+    // Get user id from email; Throws error if user does not exist
+    try {
+      // Trim the ends and make all lowercase
+      userReturned = await user.getUserByEmail(userEmail.trim());
+    } catch (e) {
+      Alert.alert('Cannot find user.');
+      return;
+    }
+
+    // Create Group
+    const gId: string = await new Groups().create({name: 'Same Group Name'});
+
+    // Add the users to GroupMember
+    invitedUsers.map(async (currUser: UserReturn) => {
+      await new GroupMembers().create({
+        userId: currUser.id,
+        groupId: gId,
       });
     });
-    // create event
+
+    // Also add in the host as a group member
+    await new GroupMembers().create({
+      userId: FB_AUTH.currentUser?.uid as string,
+      groupId: gId,
+    });
+
+    // Event Model for later use
+    const event: EventModel = {
+      hostId: FB_AUTH.currentUser?.uid as string,
+      name: eventTitle,
+      location: eventLocation,
+      date: eventDate,
+      time: eventTime,
+      gId,
+    };
+
+    // Create event
+    const Event = new Events();
+    Event.create(event).then(() => {
+      navigation.navigate('EventFeed');
+    }).catch(() => {
+      Alert.alert('Error creating event.');
+    });
   };
   return (
     <View style={styles.container}>
@@ -112,80 +142,72 @@ export default function EventCreation({ navigation }: any) {
         <TouchableOpacity onPress={() => navigation.navigate('EventFeed')}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
-      </View>
-      <ScrollView style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
-        <KeyboardAvoidingView behavior="padding" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
-          <View style={styles.titleContainer}>
-            <TextInput
-              style={styles.titleInput}
-              value={eventTitle}
-              onChangeText={handleEventTitleChange}
-              keyboardType="default"
-              placeholder="Event Title"
-              placeholderTextColor="#FF7000"
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.locationContainer}>
-            <Text style={styles.locationLabel}>Location</Text>
-            <TextInput
-              style={styles.locationInput}
-              value={eventLocation}
-              onChangeText={handleEventLocationChange}
-              keyboardType="default"
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.dateContainer}>
-            <Text style={styles.dateLabel}>Date</Text>
-            <TextInput
-              style={styles.dateInput}
-              value={eventDate}
-              onChangeText={handleEventDateChange}
-              keyboardType="default"
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.timeContainer}>
-            <Text style={styles.timeLabel}>Time</Text>
-            <TextInput
-              style={styles.timeInput}
-              value={eventTime}
-              onChangeText={handleEventTimeChange}
-              keyboardType="default"
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.timeContainer}>
-            <Text style={styles.invitedLabel}>Who&apos;s Invited</Text>
-          </View>
-          <View style={styles.usersContainer}>
-            <View style={styles.invitedContainer}>
-              <TextInput
-                style={styles.invitedInput}
-                value={inviteUserEmail}
-                onChangeText={handleInviteUserEmailChange}
-                keyboardType="default"
-                autoCapitalize="none"
-              />
-              <Pressable style={styles.addButton} onPress={handleAddUser}>
-                <Text style={styles.addbuttonText}>+</Text>
-              </Pressable>
-            </View>
-            {invitedUsers.map((user) => (
-              <Text key={user} style={styles.invitedUser}>
-                {user}
-              </Text>
-            ))}
-          </View>
-        </KeyboardAvoidingView>
-        <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={handleCreateEvent}>
-            <Text style={styles.buttonText}>Create</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-    </View>
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={styles.titleContainer}>
+        <TextInput
+          style={styles.titleInput}
+          value={eventTitle}
+          onChangeText={handleEventTitleChange}
+          keyboardType="default"
+          placeholder="Event Title"
+          placeholderTextColor="#FF7000"
+          autoCapitalize="none"
+        />
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={styles.locationContainer} behavior="padding">
+        <Text style={styles.locationLabel}>Location</Text>
+        <TextInput
+          style={styles.locationInput}
+          value={eventLocation}
+          onChangeText={handleEventLocationChange}
+          keyboardType="default"
+          autoCapitalize="none"
+        />
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={styles.dateContainer} behavior="padding">
+        <Text style={styles.dateLabel}>Date</Text>
+        <TextInput
+          style={styles.dateInput}
+          value={eventDate}
+          onChangeText={handleEventDateChange}
+          keyboardType="default"
+          autoCapitalize="none"
+        />
+      </KeyboardAvoidingView>
+      <KeyboardAvoidingView style={styles.timeContainer} behavior="padding">
+        <Text style={styles.timeLabel}>Time</Text>
+        <TextInput
+          style={styles.timeInput}
+          value={eventTime}
+          onChangeText={handleEventTimeChange}
+          keyboardType="default"
+          autoCapitalize="none"
+        />
+      </KeyboardAvoidingView>
+      <Text style={styles.invitedLabel}>Invite User</Text>
+      <KeyboardAvoidingView style={styles.invitedContainer} behavior="padding">
+        <TextInput
+          style={styles.invitedInput}
+          value={inviteUserEmail}
+          onChangeText={handleInviteUserEmailChange}
+          keyboardType="default"
+          autoCapitalize="none"
+        />
+        <Pressable style={styles.addButton} onPress={handleAddUser}>
+          <Text style={styles.buttonText}>Add</Text>
+        </Pressable>
+      </KeyboardAvoidingView>
+      {invitedUsers.map((user: UserReturn) => (
+        <Text key={user.id} style={styles.invitedUser}>
+          {user.name}
+        </Text>
+      ))}
+      <KeyboardAvoidingView style={styles.buttonContainer} behavior="padding">
+        <Pressable style={styles.button} onPress={handleCreateEvent}>
+          <Text style={styles.buttonText}>Create</Text>
+        </Pressable>
+      </KeyboardAvoidingView>
+    </KeyboardAvoidingView>
   );
 }
 
