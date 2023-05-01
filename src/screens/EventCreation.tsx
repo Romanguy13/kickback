@@ -14,9 +14,9 @@ import { EventModel } from '../resources/schema/event.model';
 import { FB_AUTH } from '../../firebaseConfig';
 import Users from '../resources/api/users';
 import Events from '../resources/api/events';
-import Groups from "../resources/api/groups";
-import GroupMembers from "../resources/api/groupMembers";
-import {UserReturn} from "../resources/schema/user.model";
+import Groups from '../resources/api/groups';
+import GroupMembers from '../resources/api/groupMembers';
+import { UserReturn } from '../resources/schema/user.model';
 
 export default function EventCreation({ navigation }: any) {
   const [eventTitle, setEventTitle] = useState('');
@@ -62,13 +62,16 @@ export default function EventCreation({ navigation }: any) {
     }
 
     const user = new Users();
-    user.getUserByEmail(inviteUserEmail).then((currUser: UserReturn) => {
-      setInvitedUsers([...invitedUsers, currUser]);
-      setInviteUserEmail('');
-    }).catch(() => {
-      Alert.alert('User does not exist.');
-      setInviteUserEmail('');
-    });
+    user
+      .getUserByEmail(inviteUserEmail)
+      .then((currUser: UserReturn) => {
+        setInvitedUsers([...invitedUsers, currUser]);
+        setInviteUserEmail('');
+      })
+      .catch(() => {
+        Alert.alert('User does not exist.');
+        setInviteUserEmail('');
+      });
   };
 
   const handleCreateEvent = async (): Promise<void> => {
@@ -102,7 +105,7 @@ export default function EventCreation({ navigation }: any) {
     }
 
     // Create Group
-    const gId: string = await new Groups().create({name: 'Same Group Name'});
+    const gId: string = await new Groups().create({ name: 'Same Group Name' });
 
     // Add the users to GroupMember
     invitedUsers.map(async (currUser: UserReturn) => {
@@ -130,15 +133,17 @@ export default function EventCreation({ navigation }: any) {
 
     // Create event
     const Event = new Events();
-    Event.create(event).then(() => {
-      navigation.navigate('EventFeed');
-    }).catch(() => {
-      Alert.alert('Error creating event.');
-    });
+    Event.create(event)
+      .then(() => {
+        navigation.navigate('EventFeed');
+      })
+      .catch(() => {
+        Alert.alert('Error creating event.');
+      });
   };
   return (
-    <View style={styles.container}>
-      <View>
+    <KeyboardAvoidingView style={styles.container}>
+      <KeyboardAvoidingView>
         <TouchableOpacity onPress={() => navigation.navigate('EventFeed')}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
