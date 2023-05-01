@@ -7,7 +7,6 @@ import {
   Pressable,
   TouchableOpacity,
   Alert,
-  KeyboardAvoidingView,
 } from 'react-native';
 import {signInWithEmailAndPassword, UserCredential} from 'firebase/auth';
 import { FB_AUTH } from '../../firebaseConfig';

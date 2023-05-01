@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, Text, View, Image, Dimensions, PixelRatio, Button} from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, Button } from 'react-native';
 import NavBar from './NavBar';
 import { FB_AUTH } from '../../firebaseConfig';
 import Events from '../resources/api/events';
-import {EventReturn} from "../resources/schema/event.model";
-
+import { EventReturn } from '../resources/schema/event.model';
 
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
@@ -14,7 +13,7 @@ export default function EventFeed({ navigation }: any) {
   useEffect(() => {
     const fetchData = async () => {
       const eventList = await new Events().getAll(FB_AUTH.currentUser?.uid as string);
-      console.log('Event List:', eventList)
+      console.log('Event List:', eventList);
       setEvents(eventList);
     };
 
@@ -53,13 +52,13 @@ export default function EventFeed({ navigation }: any) {
 const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
-  container: 
-  {
+  container: {
     flex: 1,
     backgroundColor: '#FFFFFB',
   },
   textContainer: {
     width: '100%',
+    paddingTop: 20,
     margin: 20,
     alignItems: 'center',
   },
@@ -72,6 +71,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0)',
+    paddingTop: 70,
     width: '100%',
     position: 'relative',
   },
