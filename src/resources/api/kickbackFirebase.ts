@@ -74,11 +74,10 @@ export default class KickbackFirebase {
   }
 
   public async get(id: string): Promise<DocumentData | undefined> {
-    const docRef: DocumentReference<DocumentData> = doc(this.database, this.collection, id);
-    const docSnap: DocumentSnapshot<DocumentData> = await getDoc(docRef);
+    const data: DocumentData[] = await this.getAll(id, 'id');
 
-    if (docSnap.exists()) {
-      return docSnap.data();
+    if (data.length > 0) {
+      return data[0];
     }
 
     return undefined;
