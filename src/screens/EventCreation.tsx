@@ -142,77 +142,85 @@ export default function EventCreation({ navigation }: any) {
       });
   };
   return (
-    <KeyboardAvoidingView style={styles.container}>
-      <KeyboardAvoidingView>
+    <View style={styles.container}>
+      <View>
         <TouchableOpacity onPress={() => navigation.navigate('EventFeed')}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
-      </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.titleContainer}>
-        <TextInput
-          style={styles.titleInput}
-          value={eventTitle}
-          onChangeText={handleEventTitleChange}
-          keyboardType="default"
-          placeholder="Event Title"
-          placeholderTextColor="#FF7000"
-          autoCapitalize="none"
-        />
-      </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.locationContainer} behavior="padding">
-        <Text style={styles.locationLabel}>Location</Text>
-        <TextInput
-          style={styles.locationInput}
-          value={eventLocation}
-          onChangeText={handleEventLocationChange}
-          keyboardType="default"
-          autoCapitalize="none"
-        />
-      </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.dateContainer} behavior="padding">
-        <Text style={styles.dateLabel}>Date</Text>
-        <TextInput
-          style={styles.dateInput}
-          value={eventDate}
-          onChangeText={handleEventDateChange}
-          keyboardType="default"
-          autoCapitalize="none"
-        />
-      </KeyboardAvoidingView>
-      <KeyboardAvoidingView style={styles.timeContainer} behavior="padding">
-        <Text style={styles.timeLabel}>Time</Text>
-        <TextInput
-          style={styles.timeInput}
-          value={eventTime}
-          onChangeText={handleEventTimeChange}
-          keyboardType="default"
-          autoCapitalize="none"
-        />
-      </KeyboardAvoidingView>
-      <Text style={styles.invitedLabel}>Invite User</Text>
-      <KeyboardAvoidingView style={styles.invitedContainer} behavior="padding">
-        <TextInput
-          style={styles.invitedInput}
-          value={inviteUserEmail}
-          onChangeText={handleInviteUserEmailChange}
-          keyboardType="default"
-          autoCapitalize="none"
-        />
-        <Pressable style={styles.addButton} onPress={handleAddUser}>
-          <Text style={styles.buttonText}>Add</Text>
-        </Pressable>
-      </KeyboardAvoidingView>
-      {invitedUsers.map((user: UserReturn) => (
-        <Text key={user.id} style={styles.invitedUser}>
-          {user.name}
-        </Text>
-      ))}
-      <KeyboardAvoidingView style={styles.buttonContainer} behavior="padding">
-        <Pressable style={styles.button} onPress={handleCreateEvent}>
-          <Text style={styles.buttonText}>Create</Text>
-        </Pressable>
-      </KeyboardAvoidingView>
-    </KeyboardAvoidingView>
+      </View>
+      <ScrollView style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+        <KeyboardAvoidingView behavior="padding" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+          <View style={styles.titleContainer}>
+            <TextInput
+              style={styles.titleInput}
+              value={eventTitle}
+              onChangeText={handleEventTitleChange}
+              keyboardType="default"
+              placeholder="Event Title"
+              placeholderTextColor="#FF7000"
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.locationContainer}>
+            <Text style={styles.locationLabel}>Location</Text>
+            <TextInput
+              style={styles.locationInput}
+              value={eventLocation}
+              onChangeText={handleEventLocationChange}
+              keyboardType="default"
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.dateContainer}>
+            <Text style={styles.dateLabel}>Date</Text>
+            <TextInput
+              style={styles.dateInput}
+              value={eventDate}
+              onChangeText={handleEventDateChange}
+              keyboardType="default"
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={styles.timeLabel}>Time</Text>
+            <TextInput
+              style={styles.timeInput}
+              value={eventTime}
+              onChangeText={handleEventTimeChange}
+              keyboardType="default"
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={styles.invitedLabel}>Who&apos;s Invited</Text>
+          </View>
+          <View style={styles.usersContainer}>
+            <View style={styles.invitedContainer}>
+              <TextInput
+                style={styles.invitedInput}
+                value={inviteUserEmail}
+                onChangeText={handleInviteUserEmailChange}
+                keyboardType="default"
+                autoCapitalize="none"
+              />
+              <Pressable style={styles.addButton} onPress={handleAddUser}>
+                <Text style={styles.addbuttonText}>+</Text>
+              </Pressable>
+            </View>
+            {invitedUsers.map((user: UserReturn) => (
+              <Text key={user.id} style={styles.invitedUser}>
+                {user.name}
+              </Text>
+            ))}
+          </View>
+        </KeyboardAvoidingView>
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={handleCreateEvent}>
+            <Text style={styles.buttonText}>Create</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
