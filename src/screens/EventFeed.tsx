@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, Button } from 'react-native';
+import {StyleSheet, Text, View, Image, Dimensions, PixelRatio, Button, ScrollView} from 'react-native';
 import NavBar from './NavBar';
 import { FB_AUTH } from '../../firebaseConfig';
 import Events from '../resources/api/events';
@@ -24,18 +24,19 @@ export default function EventFeed({ navigation }: any) {
 
   return events.length === 0 ? (
     <View style={styles.container}>
-      <Button title="Refresh" onPress={() => setRefresh(true)} />
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>Let&apos;s start a KickBack!</Text>
-      </View>
-      <View style={styles.imageContainer}>
-        <Image source={require('../../assets/hands.png')} style={styles.handsImage} />
-      </View>
+      <ScrollView>
+        <View style={styles.textContainer}>
+          <Button title="Refresh" onPress={() => setRefresh(true)} />
+          <Text style={styles.text}>Let&apos;s start a KickBack!</Text>
+          </View>
+          <View style={styles.imageContainer}>
+            <Image source={require('../../assets/hands.png')} style={styles.handsImage} />
+          </View>
+      </ScrollView>
       <NavBar navigation={navigation} />
     </View>
   ) : (
     <View style={styles.container}>
-      <Button title="Refresh" onPress={() => setRefresh(true)} />
       <View style={styles.textContainer}>
         <Text style={styles.text}>User&apos;s KickBacks</Text>
         {events.map((event) => (
@@ -44,6 +45,7 @@ export default function EventFeed({ navigation }: any) {
           </Text>
         ))}
       </View>
+      <Button title="Refresh" onPress={() => setRefresh(true)} />
       <NavBar navigation={navigation} />
     </View>
   );
