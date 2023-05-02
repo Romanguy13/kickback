@@ -1,33 +1,6 @@
 import React from 'react';
 import { TouchableWithoutFeedback, StyleSheet, Text, View } from 'react-native';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    padding: 2,
-    borderTopRightRadius: 60,
-    borderBottomRightRadius: 60,
-  },
-  date: {
-    fontWeight: '700',
-    fontSize: 20,
-    position: 'absolute',
-    width: 169,
-    height: 128,
-    left: 0,
-    top: 274,
-  },
-  item: {
-    paddingLeft: 10,
-    fontSize: 18,
-    fontWeight: 'bold',
-    paddingBottom: 5,
-  },
-  count: {
-    paddingLeft: 15,
-  },
-});
 
 interface NavBarProps {
   navigation: any;
@@ -39,22 +12,34 @@ function EventCard({ event, navigation }: any) {
   let dateLabel = 'date';
   let titleLabel = 'title of event';
   let statusLabel = 'status';
-  let invitedLabel = '# of invites';
+  let locationLabel = 'location of event';
 
   return (
-    <View>
+    <View style={styles.rectangle}>
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Event Detail', { event })}>
-        <View style={styles.container}>
-          <Text style={styles.container} accessibilityLabel={titleLabel}>
-            {event.title}
+        <View>
+          <Text accessibilityLabel={titleLabel}>
+            {event.name}
           </Text>
           <Text accessibilityLabel={dateLabel}>{event.date}</Text>
           <Text accessibilityLabel={timeLabel}>{event.time}</Text>
           <Text accessibilityLabel={statusLabel}>{event.status}</Text>
+          <Text accessibilityLabel={locationLabel}>{event.location}</Text>
         </View>
       </TouchableWithoutFeedback>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  rectangle: {
+    backgroundColor: "#B5B4B1",
+    padding: 50,
+    borderTopLeftRadius: 30,
+    borderBottomRightRadius: 30, 
+    borderTopRightRadius: 30,
+    borderBottomLeftRadius: 30
+  }
+});
 
 export default EventCard;
