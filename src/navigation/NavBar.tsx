@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 import React from 'react';
 import { StyleSheet, View, Pressable, Image } from 'react-native';
 
@@ -9,19 +10,35 @@ export default function NavBar({ navigation }: NavBarProps) {
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Pressable style={styles.Button} onPress={() => navigation.navigate('EventGroups')}>
+        <Pressable
+          style={styles.Button}
+          onPress={() => navigation.navigate('EventGroups')}
+          accessibilityLabel="Groups"
+        >
           <Image source={require('../../assets/groups_button.png')} style={styles.groupsImage} />
         </Pressable>
-        <Pressable style={styles.Button} onPress={() => navigation.navigate('EventCreation')}>
+        <Pressable
+          style={styles.Button}
+          onPress={() => navigation.navigate('EventCreation')}
+          accessibilityLabel="Create Event"
+        >
           <Image source={require('../../assets/add_event_button.png')} style={styles.buttonImage} />
         </Pressable>
-        <Pressable style={styles.Button} onPress={() => navigation.navigate('EventFeed')}>
+        <Pressable
+          style={styles.Button}
+          onPress={() => navigation.navigate('EventFeed')}
+          accessibilityLabel="Feed"
+        >
           <Image
             source={require('../../assets/event_feed_button.png')}
             style={styles.buttonImage}
           />
         </Pressable>
-        <Pressable style={styles.Button} onPress={() => navigation.navigate('EventHistory')}>
+        <Pressable
+          style={styles.Button}
+          onPress={() => navigation.navigate('EventHistory')}
+          accessibilityLabel="History"
+        >
           <Image source={require('../../assets/history_button.png')} style={styles.buttonImage} />
         </Pressable>
       </View>

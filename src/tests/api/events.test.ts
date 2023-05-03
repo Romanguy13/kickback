@@ -1,18 +1,9 @@
-import {
-  doc,
-  addDoc,
-  DocumentReference,
-  DocumentData,
-  getDocs,
-  QuerySnapshot,
-  getDoc,
-  DocumentSnapshot,
-} from 'firebase/firestore';
+import { DocumentData } from 'firebase/firestore';
 import Events from '../../resources/api/events';
 import { EventReturn, UpdatedEvent, EventModel } from '../../resources/schema/event.model';
-import KickbackFirebase from "../../resources/api/kickbackFirebase";
-import GroupMembers from "../../resources/api/groupMembers";
-import {GroupMemberModel} from "../../resources/schema/group.model";
+import KickbackFirebase from '../../resources/api/kickbackFirebase';
+import GroupMembers from '../../resources/api/groupMembers';
+import { GroupMemberModel } from '../../resources/schema/group.model';
 
 jest.mock('firebase/firestore');
 jest.mock('../../resources/api/kickbackFirebase');
@@ -65,13 +56,16 @@ describe('Firestore Operations', () => {
       },
     ];
     // Groups that the user is in
-    const groups: GroupMemberModel[] = [{
-      groupId: '201',
-      userId: 'something',
-    }, {
-      groupId: '202',
-      userId: 'something',
-    }];
+    const groups: GroupMemberModel[] = [
+      {
+        groupId: '201',
+        userId: 'something',
+      },
+      {
+        groupId: '202',
+        userId: 'something',
+      },
+    ];
 
     (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groups);
     (KickbackFirebase.prototype.getAll as jest.Mock).mockResolvedValueOnce([expectedData[0]]);
@@ -99,11 +93,11 @@ describe('Firestore Operations', () => {
       hostId: 'something',
       name: 'Isabella',
       location: 'Santa Barbara',
-      date: '2021-10-10'
+      date: '2021-10-10',
     };
 
     (KickbackFirebase.prototype.get as jest.Mock).mockReturnValueOnce(expectedData);
-    
+
     const returnedData: DocumentData | undefined = await eventClass.get('doc1');
     expect(returnedData).toEqual(expectedData);
   });
@@ -114,5 +108,4 @@ describe('Firestore Operations', () => {
     const returnedData = await eventClass.get('doc1');
     expect(returnedData).toEqual(undefined);
   });
-
 });

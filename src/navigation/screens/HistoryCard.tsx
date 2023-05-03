@@ -1,22 +1,26 @@
 import React from 'react';
-import { StyleSheet, View, Pressable, Image,Dimensions, PixelRatio,Text } from 'react-native';
+import { StyleSheet, View, Dimensions, PixelRatio, Text } from 'react-native';
 
-
-//export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
-export default function HistoryCard ({eventName, eventId,eventLocation}  : {eventName:string, eventLocation:string, eventId:string} )
-{
-    return (
-    <View style={styles.container} key={eventId }> 
-        <View style = {styles.textContainer}> 
-            <Text style={styles.text}>
-                {eventName} , {eventLocation} 
-            </Text>
-        </View>
+// export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
+export default function HistoryCard({
+  eventName,
+  eventId,
+  eventLocation,
+}: {
+  eventName: string;
+  eventLocation: string;
+  eventId: string;
+}) {
+  return (
+    <View style={styles.container} key={eventId}>
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>
+          {eventName} , {eventLocation}
+        </Text>
+      </View>
     </View>
-    );
+  );
 }
-
-
 
 const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();

@@ -1,17 +1,7 @@
-import {
-  collection,
-  CollectionReference,
-  DocumentData,
-  Firestore,
-  Query,
-  query,
-  QuerySnapshot,
-  where,
-    getDocs
-} from 'firebase/firestore';
-import {EventModel, EventReturn, UpdatedEvent} from '../schema/event.model';
+import { DocumentData, Firestore } from 'firebase/firestore';
+import { EventModel, EventReturn, UpdatedEvent } from '../schema/event.model';
 import KickbackFirebase from './kickbackFirebase';
-import GroupMembers from "./groupMembers";
+import GroupMembers from './groupMembers';
 
 export default class Events extends KickbackFirebase {
   // private readonly database;
@@ -26,7 +16,7 @@ export default class Events extends KickbackFirebase {
     // this.database = testingFirestore || FB_DB;
     super({
       defaultCollection: 'events',
-      database: testingFirestore
+      database: testingFirestore,
     });
   }
 
@@ -40,13 +30,13 @@ export default class Events extends KickbackFirebase {
 
   async getAll(userId: string): Promise<EventReturn[]> {
     const events: EventReturn[] = [];
-    console.log('userId: ', userId)
+    console.log('userId: ', userId);
     const groups: DocumentData[] = await new GroupMembers().getAll(userId, 'userId');
     console.log('groups: ', groups);
 
     const promises = groups.map(async (group: DocumentData) => {
       const groupEvents: DocumentData[] = await super.getAll(group.groupId, 'gId');
-      console.log('groupEvents: ', groupEvents)
+      console.log('groupEvents: ', groupEvents);
       groupEvents.forEach((event: DocumentData) => {
         events.push(event as EventReturn);
       });
@@ -54,7 +44,7 @@ export default class Events extends KickbackFirebase {
 
     await Promise.all(promises);
 
-    console.log('events: ', events)
+    console.log('events: ', events);
 
     return events;
   }

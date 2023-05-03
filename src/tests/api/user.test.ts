@@ -1,14 +1,14 @@
 import {
-  doc,
-  addDoc,
-  DocumentReference,
   DocumentData,
   getDocs,
-  QuerySnapshot, collection, CollectionReference, query,
+  QuerySnapshot,
+  collection,
+  CollectionReference,
+  query,
 } from 'firebase/firestore';
 import { UpdatedUser, UserModel, UserReturn } from '../../resources/schema/user.model';
 import Users from '../../resources/api/users';
-import KickbackFirebase from "../../resources/api/kickbackFirebase";
+import KickbackFirebase from '../../resources/api/kickbackFirebase';
 
 jest.mock('firebase/firestore');
 jest.mock('../../resources/api/kickbackFirebase');
@@ -114,11 +114,12 @@ describe('Firestore Operations', () => {
     } as unknown as QuerySnapshot<DocumentData>);
 
     (getDocs as jest.Mock).mockResolvedValue({
-      docs: undefined
+      docs: undefined,
     } as unknown as QuerySnapshot<DocumentData>);
 
-    await expect(userClass.getUserByEmail('mimis@kickback.com'))
-        .rejects.toThrowError('User with email mimis@kickback.com does not exist');
+    await expect(userClass.getUserByEmail('mimis@kickback.com')).rejects.toThrowError(
+      'User with email mimis@kickback.com does not exist'
+    );
   });
 
   // it('adds a user to the users collection', async () => {

@@ -10,13 +10,13 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import { EventModel } from '../resources/schema/event.model';
-import { FB_AUTH } from '../../firebaseConfig';
-import Users from '../resources/api/users';
-import Events from '../resources/api/events';
-import Groups from '../resources/api/groups';
-import GroupMembers from '../resources/api/groupMembers';
-import { UserReturn } from '../resources/schema/user.model';
+import { EventModel } from '../../resources/schema/event.model';
+import { FB_AUTH } from '../../../firebaseConfig';
+import Users from '../../resources/api/users';
+import Events from '../../resources/api/events';
+import Groups from '../../resources/api/groups';
+import GroupMembers from '../../resources/api/groupMembers';
+import { UserReturn } from '../../resources/schema/user.model';
 
 export default function EventCreation({ navigation }: any) {
   const [eventTitle, setEventTitle] = useState('');
@@ -99,6 +99,7 @@ export default function EventCreation({ navigation }: any) {
     try {
       // Trim the ends and make all lowercase
       userReturned = await user.getUserByEmail(userEmail.trim());
+      console.log(userReturned);
     } catch (e) {
       Alert.alert('Cannot find user.');
       return;
@@ -135,7 +136,7 @@ export default function EventCreation({ navigation }: any) {
     const Event = new Events();
     Event.create(event)
       .then(() => {
-        navigation.navigate('EventFeed');
+        navigation.navigate('Feed');
       })
       .catch(() => {
         Alert.alert('Error creating event.');
@@ -144,7 +145,7 @@ export default function EventCreation({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity onPress={() => navigation.navigate('EventFeed')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Feed')}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>
@@ -239,7 +240,6 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   titleContainer: {
-    justifyContent: 'flex-start',
     padding: 20,
     width: '100%',
   },
