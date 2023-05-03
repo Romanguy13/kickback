@@ -1,11 +1,12 @@
 /* eslint-disable global-require */
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 // import NavBar from '../NavBar';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 import { EventReturn } from '../../resources/schema/event.model';
+import  EventCard  from '../../components/EventCard'
 
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
@@ -40,22 +41,19 @@ export default function EventFeed({ navigation }: any) {
     </View>
   ) : (
     <View style={styles.container}>
-      {/* <Button title="Refresh" onPress={() => setRefresh(true)} /> */}
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>KickBacks</Text>
-      </View>
-
-      <ScrollView style={styles.container}>
-        <View style={styles.textContainer}>
-          {events.map((event) => (
-            <Text style={styles.eventText} key={event.id}>
-              {event.name}
-            </Text>
-          ))}
-        </View>
-        {/* <NavBar navigation={navigation} /> */}
-      </ScrollView>
+    <Button title="Refresh" onPress={() => setRefresh(true)} />
+    <View style={styles.textContainer}>
+      <Text style={styles.text}>User's KickBacks</Text>
+      <FlatList
+        data={events}
+        keyExtractor={item => item.id}
+        renderItem={({item}) => (
+          <EventCard event={item} navigation={navigation} />
+        )}
+      />  
     </View>
+
+  </View>
   );
 }
 
