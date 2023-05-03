@@ -136,7 +136,7 @@ export default function EventCreation({ navigation }: any) {
     const Event = new Events();
     Event.create(event)
       .then(() => {
-        navigation.navigate('EventFeed');
+        navigation.navigate('Feed');
       })
       .catch(() => {
         Alert.alert('Error creating event.');
@@ -145,7 +145,7 @@ export default function EventCreation({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity onPress={() => navigation.navigate('EventFeed')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Feed')}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>
