@@ -23,5 +23,3 @@ export interface UpdatedEvent {
   date?: string;
   time?: string;
 }
-
-

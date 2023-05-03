@@ -1,5 +1,4 @@
-import { render } from '@testing-library/react-native';
-import { fireEvent, screen } from '@testing-library/react-native';
+import { render, fireEvent, screen } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import NavBar from '../../../navigation/NavBar';

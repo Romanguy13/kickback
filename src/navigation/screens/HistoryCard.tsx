@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Pressable, Image, Dimensions, PixelRatio, Text } from 'react-native';
+import { StyleSheet, View, Dimensions, PixelRatio, Text } from 'react-native';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
 export default function HistoryCard({

@@ -99,6 +99,7 @@ export default function EventCreation({ navigation }: any) {
     try {
       // Trim the ends and make all lowercase
       userReturned = await user.getUserByEmail(userEmail.trim());
+      console.log(userReturned);
     } catch (e) {
       Alert.alert('Cannot find user.');
       return;

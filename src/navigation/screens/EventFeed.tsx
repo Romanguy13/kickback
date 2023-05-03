@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import NavBar from '../NavBar';
+// import NavBar from '../NavBar';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 import { EventReturn } from '../../resources/schema/event.model';

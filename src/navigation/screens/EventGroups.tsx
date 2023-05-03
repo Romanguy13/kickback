@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
-import NavBar from '../NavBar';
+import { StyleSheet, Text, View } from 'react-native';
+// import NavBar from '../NavBar';
 
 interface EventGroupsProps {
   navigation: any;

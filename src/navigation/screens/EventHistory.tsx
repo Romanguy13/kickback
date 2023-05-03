@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, Pressable, Dimensions, PixelRatio, Image } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, PixelRatio } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import NavBar from '../NavBar';
+// import NavBar from '../NavBar';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 

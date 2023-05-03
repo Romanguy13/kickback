@@ -6,7 +6,6 @@ import { Alert } from 'react-native';
 import Login from '../../../navigation/screens/Login';
 import Welcome from '../../../navigation/screens/Welcome';
 import SignUp from '../../../navigation/screens/SignUp';
-import EventFeed from '../../../navigation/screens/EventFeed';
 
 jest.spyOn(Alert, 'alert');
 
