@@ -1,19 +1,11 @@
 /* eslint-disable global-require */
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD:src/screens/EventFeed.tsx
-import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
-import NavBar from './NavBar';
-import { FB_AUTH } from '../../firebaseConfig';
-import Events from '../resources/api/events';
-import EventCard from './EventCard';import { EventReturn } from '../resources/schema/event.model';
-=======
 import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 // import NavBar from '../NavBar';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 import { EventReturn } from '../../resources/schema/event.model';
->>>>>>> main:src/navigation/screens/EventFeed.tsx
 
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
@@ -48,22 +40,9 @@ export default function EventFeed({ navigation }: any) {
     </View>
   ) : (
     <View style={styles.container}>
-<<<<<<< HEAD:src/screens/EventFeed.tsx
-      <Button title="Refresh" onPress={() => setRefresh(true)} />
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>User's KickBacks</Text>
-        <FlatList
-          data={events}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => (
-            <EventCard event={item} navigation={navigation} />
-          )}
-        />  
-=======
       {/* <Button title="Refresh" onPress={() => setRefresh(true)} /> */}
       <View style={styles.headerContainer}>
         <Text style={styles.header}>KickBacks</Text>
->>>>>>> main:src/navigation/screens/EventFeed.tsx
       </View>
 
       <ScrollView style={styles.container}>
