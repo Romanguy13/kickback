@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, Pressable, Dimensions, PixelRatio, Image } from 'react-native';
-import NavBar from './NavBar';
-import { FB_AUTH } from '../../firebaseConfig';
-import Events from '../resources/api/events';
+import { StyleSheet, Text, View, Dimensions, PixelRatio } from 'react-native';
 import React, { useEffect, useState } from 'react';
+// import NavBar from '../NavBar';
+import { FB_AUTH } from '../../../firebaseConfig';
+import Events from '../../resources/api/events';
 
 import HistoryCard from './HistoryCard';
 
@@ -10,8 +10,7 @@ interface EventHistoryProps {
   navigation: any;
 }
 
-export default function EventHistory({ navigation }: any) 
-{
+export default function EventHistory({ navigation }: any) {
   // Gather all the events
   const [events, setEvents] = useState<any[]>([]);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -25,6 +24,7 @@ export default function EventHistory({ navigation }: any)
     fetchData();
     setRefresh(false);
     console.log(events);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   // What to showcase on the screen
@@ -33,23 +33,19 @@ export default function EventHistory({ navigation }: any)
       <View style={styles.textContainer}>
         <Text style={styles.text}>Previous {'\n'}KickBacks </Text>
 
-         {events.map((event) => 
-          (
-            <View key={event.id}> 
+        {events.map((event) => (
+          <View key={event.id}>
             <HistoryCard eventName={event.name} eventLocation={event.location} eventId={event.id} />
-            </View>
-          ))}
+          </View>
+        ))}
       </View>
-      <NavBar navigation={navigation} />
+      {/* <NavBar navigation={navigation} /> */}
     </View>
   );
 }
 
 const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();
-
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -86,5 +82,5 @@ const styles = StyleSheet.create({
     width: '100%',
     resizeMode: 'contain',
     transform: [{ rotate: '-.2deg' }],
-  }
+  },
 });

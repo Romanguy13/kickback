@@ -1,32 +1,20 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// import { NavigationContainer } from '@react-navigation/native';
+// import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import Welcome from './src/screens/Welcome';
-import Login from './src/screens/Login';
-import SignUp from './src/screens/SignUp';
-import EventFeed from './src/screens/EventFeed';
-import EventGroups from './src/screens/EventGroups';
-import EventHistory from './src/screens/EventHistory';
-import EventCreation from './src/screens/EventCreation';
-import NavBar from './src/screens/NavBar';
+import AppContainer from './src/navigation/AppContainer';
+// import Welcome from './src/navigation/screens/Welcome';
+// import Login from './src/navigation/screens/Login';
+// import SignUp from './src/navigation/screens/SignUp';
+// import EventFeed from './src/navigation/screens/EventFeed';
+// import EventGroups from './src/navigation/screens/EventGroups';
+// import EventHistory from './src/navigation/screens/EventHistory';
+// import EventCreation from './src/navigation/screens/EventCreation';
+// import NavBar from './src/navigation/screens/NavBar';
 
-const Stack = createNativeStackNavigator();
+// const Stack = createNativeStackNavigator();
 
 function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="EventFeed" component={EventFeed} />
-        <Stack.Screen name="EventGroups" component={EventGroups} />
-        <Stack.Screen name="EventHistory" component={EventHistory} />
-        <Stack.Screen name="EventCreation" component={EventCreation} />
-        <Stack.Screen name="NavBar" component={NavBar} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  return <AppContainer />;
 }
 
 export default App;
