@@ -10,13 +10,13 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import { EventModel } from '../resources/schema/event.model';
-import { FB_AUTH } from '../../firebaseConfig';
-import Users from '../resources/api/users';
-import Events from '../resources/api/events';
-import Groups from '../resources/api/groups';
-import GroupMembers from '../resources/api/groupMembers';
-import { UserReturn } from '../resources/schema/user.model';
+import { EventModel } from '../../resources/schema/event.model';
+import { FB_AUTH } from '../../../firebaseConfig';
+import Users from '../../resources/api/users';
+import Events from '../../resources/api/events';
+import Groups from '../../resources/api/groups';
+import GroupMembers from '../../resources/api/groupMembers';
+import { UserReturn } from '../../resources/schema/user.model';
 
 export default function EventCreation({ navigation }: any) {
   const [eventTitle, setEventTitle] = useState('');
@@ -239,7 +239,6 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   titleContainer: {
-    justifyContent: 'flex-start',
     padding: 20,
     width: '100%',
   },

@@ -3,10 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserCredential, signInWithEmailAndPassword } from 'firebase/auth';
 import { Alert } from 'react-native';
-import Login from '../../../screens/Login';
-import Welcome from '../../../screens/Welcome';
-import SignUp from '../../../screens/SignUp';
-import EventFeed from '../../../screens/EventFeed';
+import Login from '../../../navigation/screens/Login';
+import Welcome from '../../../navigation/screens/Welcome';
+import SignUp from '../../../navigation/screens/SignUp';
+import EventFeed from '../../../navigation/screens/EventFeed';
 
 jest.spyOn(Alert, 'alert');
 

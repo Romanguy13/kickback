@@ -3,10 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserCredential, createUserWithEmailAndPassword } from 'firebase/auth';
 import { DocumentData, DocumentReference, addDoc, doc } from 'firebase/firestore';
-import {Alert, View} from 'react-native';
-import SignUp from '../../../screens/SignUp';
-import Login from '../../../screens/Login';
-import Welcome from '../../../screens/Welcome';
+import { Alert, View } from 'react-native';
+import SignUp from '../../../navigation/screens/SignUp';
+import Login from '../../../navigation/screens/Login';
+import Welcome from '../../../navigation/screens/Welcome';
 
 jest.spyOn(Alert, 'alert');
 
@@ -16,7 +16,7 @@ jest.mock('firebase/firestore');
 
 const Stack = createNativeStackNavigator();
 function MockEventFeed(): JSX.Element {
-  return <View />
+  return <View />;
 }
 
 const renderWithNavigation = () =>

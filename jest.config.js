@@ -16,5 +16,6 @@ module.exports = {
     '!**/metro.config.js',
     '!**/src/resources/schema/**',
     '!**/src/tests/api/setup/**',
+    '!**/src/navigation/AppContainer.tsx',
   ],
 };

@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import {signInWithEmailAndPassword, UserCredential} from 'firebase/auth';
-import { FB_AUTH } from '../../firebaseConfig';
+import { signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
+import { FB_AUTH } from '../../../firebaseConfig';
 
 export default function Login({ navigation }: any) {
   // Functions to gather input
@@ -41,7 +41,7 @@ export default function Login({ navigation }: any) {
       .then((userCredential: UserCredential) => {
         const { user } = userCredential;
         console.log('Logged in as: ', user.email, user.uid);
-        navigation.navigate('EventFeed');
+        navigation.navigate('TabBar');
       })
       .catch((error) => {
         console.log(error.code, error.message);
