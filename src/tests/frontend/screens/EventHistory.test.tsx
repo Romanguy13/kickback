@@ -1,9 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react-native';
+import { render, waitFor } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Alert, View } from 'react-native';
 import React from 'react';
-import EventFeed from '../../../navigation/screens/EventFeed';
+import EventHistory from '../../../navigation/screens/EventHistory';
 import { EventReturn } from '../../../resources/schema/event.model';
 import Events from '../../../resources/api/events';
 
@@ -45,25 +45,13 @@ const renderWithNavigation = () =>
   render(
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="EventFeed" component={EventFeed} />
+        <Stack.Screen name="EventFeed" component={EventHistory} />
         <Stack.Screen name="Login" component={MockLogin} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 
-test('Renders Login Screen - No events', async () => {
-  // Set up the mock return value for getAll
-  (Events.prototype.getAll as jest.Mock).mockResolvedValue([] as EventReturn[]);
-
-  renderWithNavigation();
-
-  // Required to wait for the screen to load
-  await waitFor(() => {
-    expect(screen.getByText("Let's start a KickBack!")).toBeTruthy();
-  });
-});
-
-test('Renders Login Screen - With events', async () => {
+test('Renders History Screen - With events', async () => {
   // Set up the mock return value for getAll
   (Events.prototype.getAll as jest.Mock).mockResolvedValueOnce([
     {

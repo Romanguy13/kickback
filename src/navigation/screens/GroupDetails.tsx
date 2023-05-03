@@ -1,8 +1,8 @@
 import React from "react";
 import {Text, View} from "react-native";
 import {StackScreenProps} from "@react-navigation/stack";
-import {GroupReturnModel} from "../resources/schema/group.model";
-import NavBar from "./NavBar";
+import {GroupReturnModel} from "../../resources/schema/group.model";
+import NavBar from "../NavBar";
 
 
 type GroupDetailsProps = StackScreenProps<

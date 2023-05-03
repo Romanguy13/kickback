@@ -12,9 +12,9 @@ import {
   PixelRatio,
 } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { FB_AUTH } from '../../firebaseConfig';
-import { UserModel } from '../resources/schema/user.model';
-import Users from '../resources/api/users';
+import { FB_AUTH } from '../../../firebaseConfig';
+import { UserModel } from '../../resources/schema/user.model';
+import Users from '../../resources/api/users';
 
 export default function SignUp({ navigation }: any) {
   // Functions to gather input
@@ -62,7 +62,7 @@ export default function SignUp({ navigation }: any) {
             email: newUserEmail.toLowerCase(),
           };
           const newUserClass = new Users();
-          const id = await newUserClass.create(newUser, { overrideId: user.uid});
+          const id = await newUserClass.create(newUser, { overrideId: user.uid });
           console.log(id);
           navigation.navigate('EventFeed');
         })

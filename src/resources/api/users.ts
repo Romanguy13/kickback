@@ -8,11 +8,13 @@ import {
   query,
   where,
   Query,
-  getDocs, QuerySnapshot, QueryDocumentSnapshot
+  getDocs,
+  QuerySnapshot,
+  QueryDocumentSnapshot,
 } from 'firebase/firestore';
-import {UpdatedUser, UserModel, UserReturn} from '../schema/user.model';
+import { UpdatedUser, UserModel, UserReturn } from '../schema/user.model';
 import KickbackFirebase from './kickbackFirebase';
-import {KBFBCreate} from "../schema/kickbackFirebase.model";
+import { KBFBCreate } from '../schema/kickbackFirebase.model';
 
 // import { FB_DB } from '../../../firebaseConfig';
 
@@ -34,7 +36,7 @@ export default class Users extends KickbackFirebase {
     if (!extras) {
       return super.create(data);
     }
-    return super.create(data, {overrideId: extras.overrideId});
+    return super.create(data, { overrideId: extras.overrideId });
   }
 
   async edit(id: string, data: UpdatedUser): Promise<void> {

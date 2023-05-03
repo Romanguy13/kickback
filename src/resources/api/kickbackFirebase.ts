@@ -11,10 +11,12 @@ import {
   getDocs,
   QuerySnapshot,
   where,
-  query, Query, DocumentSnapshot,
+  query,
+  Query,
+  DocumentSnapshot,
 } from 'firebase/firestore';
 import { FB_DB } from '../../../firebaseConfig';
-import {KBFBCreate} from "../schema/kickbackFirebase.model";
+import { KBFBCreate } from '../schema/kickbackFirebase.model';
 
 export default class KickbackFirebase {
   protected readonly collection: string;
@@ -56,7 +58,7 @@ export default class KickbackFirebase {
 
     console.log(documentData.id);
 
-    return (extra && extra.disableId) ? '' : documentData.id;
+    return extra && extra.disableId ? '' : documentData.id;
   }
 
   public async getAll(userId: string, fieldName: string): Promise<DocumentData[]> {
