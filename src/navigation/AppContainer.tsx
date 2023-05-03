@@ -25,12 +25,14 @@ function TabBar() {
       initialRouteName="EventFeed"
       screenOptions={{
         tabBarActiveTintColor: 'white',
-        tabBarInactiveTintColor: 'black',
+        tabBarInactiveTintColor: '#FF7000',
         tabBarStyle: {
-          backgroundColor: '#FF7000',
+          backgroundColor: '#272222',
           height: 100,
           borderTopColor: 'black',
           borderTopWidth: 2,
+          borderTopLeftRadius: 18,
+          borderTopRightRadius: 18,
         },
       }}
     >
