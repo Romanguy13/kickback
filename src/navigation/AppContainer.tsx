@@ -13,18 +13,9 @@ import EventFeed from './screens/EventFeed';
 import EventGroups from './screens/EventGroups';
 import EventHistory from './screens/EventHistory';
 import EventCreation from './screens/EventCreation';
-import GroupDetails from "./screens/GroupDetails";
-import {GroupReturnModel} from "../resources/schema/group.model";
+import GroupDetails from './screens/GroupDetails';
 
-type RootStackParamList = {
-    YourCurrentScreen: undefined;
-    Welcome: undefined;
-    Login: undefined;
-    SignUp: undefined;
-    GroupDetails: { group: GroupReturnModel };
-    TabBar: undefined;
-};
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
@@ -94,7 +85,7 @@ function AppContainer() {
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="GroupDetails" component={GroupDetails} />
+        <Stack.Screen name="GroupDetails" component={GroupDetails} />
         <Stack.Screen name="TabBar" component={TabBar} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>

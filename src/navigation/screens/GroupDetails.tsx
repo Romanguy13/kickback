@@ -1,29 +1,41 @@
-import React from "react";
-import {Text, View} from "react-native";
-import {StackScreenProps} from "@react-navigation/stack";
-import {GroupReturnModel} from "../../resources/schema/group.model";
-import NavBar from "../NavBar";
+import React from 'react';
+import { Pressable, Text, View } from 'react-native';
 
+// type GroupDetailsProps = StackScreenProps<
+//     { GroupDetails: { group: GroupReturnModel } },
+//     'GroupDetails'
+// >;
 
-type GroupDetailsProps = StackScreenProps<
-    { GroupDetails: { group: GroupReturnModel } },
-    'GroupDetails'
->;
+export default function GroupDetails({ navigation, route }: { navigation: any; route: any }) {
+  const { group } = route.params;
 
-export default function GroupDetails({ navigation, route }: GroupDetailsProps) {
-    const { group } = route.params;
-
-    return (
-        <View style={{
-            flex: 1,
-        }}>
-            <View style={{
-                marginTop: 30,
-                padding: 30,
-            }}>
-                <Text>{group.name}</Text>
-            </View>
-            <NavBar navigation={navigation} />
-        </View>
-    );
+  return (
+    <View
+      style={{
+        flex: 1,
+        marginTop: 60,
+      }}
+    >
+      <Pressable
+        onPress={() => {
+          navigation.goBack();
+        }}
+        style={{
+          backgroundColor: '#FF7000',
+          borderRadius: 10,
+          borderWidth: 2,
+        }}
+      >
+        <Text>CLICK ME TO GO BACK PLEASE</Text>
+      </Pressable>
+      <View
+        style={{
+          marginTop: 30,
+          padding: 30,
+        }}
+      >
+        <Text>{group.name}</Text>
+      </View>
+    </View>
+  );
 }

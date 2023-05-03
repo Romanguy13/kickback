@@ -1,16 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
-import GroupMembers from "../../resources/api/groupMembers";
-import {FB_AUTH} from "../../../firebaseConfig";
-import Groups from "../../resources/api/groups";
-import {GroupReturnModel} from "../../resources/schema/group.model";
-import GroupDetails from "./GroupDetails";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import GroupMembers from '../../resources/api/groupMembers';
+import { FB_AUTH } from '../../../firebaseConfig';
+import Groups from '../../resources/api/groups';
+import { GroupReturnModel } from '../../resources/schema/group.model';
+import GroupCard from '../../components/GroupCard';
 
 export default function EventGroups({ navigation }: any) {
   const [groups, setGroups] = useState<GroupReturnModel[]>([]);
   useEffect(() => {
     const fetchData = async () => {
-      const groupIds = await new GroupMembers().getAll(FB_AUTH.currentUser?.uid as string, 'userId');
+      const groupIds = await new GroupMembers().getAll(
+        FB_AUTH.currentUser?.uid as string,
+        'userId'
+      );
       const groupsArr: GroupReturnModel[] = [];
 
       const promises = groupIds.map(async (group) => {
@@ -21,9 +24,9 @@ export default function EventGroups({ navigation }: any) {
       await Promise.all(promises);
 
       setGroups(groupsArr);
-      console.log('Groups Arr:', groupsArr)
-    }
-
+      console.log('Groups Arr:', groupsArr);
+    };
+    console.log('Groups outside fetch:', groups);
     fetchData();
   }, []);
 
@@ -31,11 +34,7 @@ export default function EventGroups({ navigation }: any) {
     <View style={styles.container}>
       <View style={styles.textContainer}>
         {groups.map((group) => (
-            <Pressable style={styles.pressable} onPress={() => {
-                navigation.navigate('GroupDetails', { group });
-            }} >
-                <Text style={styles.text}>{group.name}</Text>
-            </Pressable>
+          <GroupCard key={group.id} group={group} navigation={navigation} />
         ))}
       </View>
     </View>
@@ -53,18 +52,4 @@ const styles = StyleSheet.create({
   textContainer: {
     padding: 30,
   },
-  text: {
-    color: '#FFFFFB',
-    fontSize: 20,
-    fontWeight: 'bold',
-    padding: 10,
-    width: '100%',
-  },
-  pressable: {
-    backgroundColor: '#FF7000',
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#FFFFFB',
-    margin: 10,
-  }
 });
