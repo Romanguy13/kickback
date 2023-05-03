@@ -8,8 +8,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --verbose",
-    "test:backend": "jest ./src/tests/backend",
-    "test:frontend": "jest ./src/tests/frontend",
+    "test:backend": "jest --testPathPattern=./src/tests/api/ --testMatch=**/*.test.ts",
+    "test:frontend": "jest --testPathPattern=./src/tests/frontend/ --testMatch=**/*.test.tsx",
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"

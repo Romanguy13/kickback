@@ -11,14 +11,15 @@ import {
   getDocs,
   QuerySnapshot,
   where,
-  query,
+  query, Query, DocumentSnapshot,
 } from 'firebase/firestore';
 import { FB_DB } from '../../../firebaseConfig';
+import {KBFBCreate} from "../schema/kickbackFirebase.model";
 
 export default class KickbackFirebase {
-  private readonly collection: string;
+  protected readonly collection: string;
 
-  private readonly database: Firestore;
+  protected readonly database: Firestore;
 
   constructor({
     defaultCollection,
@@ -31,30 +32,38 @@ export default class KickbackFirebase {
     this.database = database || FB_DB;
   }
 
-  public async create(data: any): Promise<string> {
+  public async create(data: any, extra?: KBFBCreate): Promise<string> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
     const returnId: DocumentReference<DocumentData> = doc(dbRef);
 
     console.log('newDocRef: ', returnId.id);
 
-    try {
-      const documentData = {
-        id: returnId.id,
-        ...data,
-      };
-      const docRef = await addDoc(dbRef, documentData);
-      console.log('Document written with ID: ', docRef.id);
-    } catch (e) {
-      console.log('Error adding document: ', e);
+    const documentData = {
+      id: returnId.id,
+      ...data,
+    };
+
+    if (extra) {
+      if (extra.overrideId) {
+        documentData.id = extra.overrideId;
+      }
+      if (extra.disableId) {
+        delete documentData.id;
+      }
     }
 
-    return returnId.id;
+    const docRef: DocumentReference<any> = await addDoc(dbRef, documentData);
+
+    console.log(documentData.id);
+
+    return (extra && extra.disableId) ? '' : documentData.id;
   }
 
-  public async getAll(): Promise<DocumentData[]> {
+  public async getAll(userId: string, fieldName: string): Promise<DocumentData[]> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
-    const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(dbRef);
-    
+    const q: Query<DocumentData> = query(dbRef, where(fieldName, '==', userId));
+    const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+
     const documents: DocumentData[] = [];
 
     querySnapshot.forEach((tempDoc) => {
@@ -65,8 +74,8 @@ export default class KickbackFirebase {
   }
 
   public async get(id: string): Promise<DocumentData | undefined> {
-    const docRef = doc(this.database, this.collection, id);
-    const docSnap = await getDoc(docRef);
+    const docRef: DocumentReference<DocumentData> = doc(this.database, this.collection, id);
+    const docSnap: DocumentSnapshot<DocumentData> = await getDoc(docRef);
 
     if (docSnap.exists()) {
       return docSnap.data();
@@ -76,7 +85,7 @@ export default class KickbackFirebase {
   }
 
   public async edit(id: string, data: any): Promise<any> {
-    const docRef = doc(this.database, this.collection, id);
+    const docRef: DocumentReference<DocumentData> = doc(this.database, this.collection, id);
     await updateDoc(docRef, data);
     return data;
   }

@@ -3,31 +3,32 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UserCredential, signInWithEmailAndPassword } from 'firebase/auth';
 import { Alert } from 'react-native';
-import Login from '../../screens/Login';
-import Welcome from '../../screens/Welcome';
-import SignUp from '../../screens/SignUp';
-import EventFeed from '../../screens/EventFeed';
+import Login from '../../../screens/Login';
+import Welcome from '../../../screens/Welcome';
+import SignUp from '../../../screens/SignUp';
+import EventFeed from '../../../screens/EventFeed';
 
 jest.spyOn(Alert, 'alert');
 
 jest.mock('firebase/auth');
 
 const Stack = createNativeStackNavigator();
+const MockEventFeed = jest.fn();
 
-const renderWithNavigation = (component: React.FC) =>
+const renderWithNavigation = () =>
   render(
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Login" component={component} />
+        <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="EventFeed" component={EventFeed} />
+        <Stack.Screen name="EventFeed" component={MockEventFeed} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 
 test('Renders Login Screen', async () => {
-  renderWithNavigation(Login);
+  renderWithNavigation();
   expect(screen.getByText('Login')).toBeTruthy();
   expect(screen.getByText('Please sign in to your account.')).toBeTruthy();
   expect(screen.getByText('Email')).toBeTruthy();
@@ -39,21 +40,21 @@ test('Renders Login Screen', async () => {
 });
 
 test('Navigate to Sign Up', async () => {
-  renderWithNavigation(Login);
+  renderWithNavigation();
   const signUpButton = screen.getByText('Sign Up!');
   fireEvent.press(signUpButton);
   expect(screen.getByText('Create Account')).toBeTruthy();
 });
 
 test('Login with no email', async () => {
-  renderWithNavigation(Login);
+  renderWithNavigation();
   const loginButton = screen.getByText('Continue');
   fireEvent.press(loginButton);
   expect(Alert.alert).toHaveBeenCalled();
 });
 
 test('Login', async () => {
-  renderWithNavigation(Login);
+  renderWithNavigation();
   // Mock the signInWithEmailAndPassword function
   (signInWithEmailAndPassword as jest.Mock).mockResolvedValue({
     user: {
@@ -75,7 +76,7 @@ test('Login', async () => {
 });
 
 test('Login with error', async () => {
-  renderWithNavigation(Login);
+  renderWithNavigation();
   // Mock the signInWithEmailAndPassword function
   (signInWithEmailAndPassword as jest.Mock).mockRejectedValue(
     new Error('Invalid email or password')

@@ -1,32 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
 import NavBar from './NavBar';
 import { FB_AUTH } from '../../firebaseConfig';
 import Events from '../resources/api/events';
-import EventCard from './EventCard';
+import EventCard from './EventCard';import { EventReturn } from '../resources/schema/event.model';
 
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
-  const [events, setEvents] = useState<any[]>([]); // [event1, event2, ...
+  const [events, setEvents] = useState<EventReturn[]>([]); // [event1, event2, ...
+  const [refresh, setRefresh] = useState<boolean>(false);
 
   useEffect(() => {
-    const eventClass = new Events();
-    eventClass.getAll().then((eventList: any[]) => {
-      const eventArray: any[] = [];
-      eventList.forEach((event) => {
-        if (event.invitedUsers.includes(FB_AUTH.currentUser?.email)) {
-          eventArray.push(event);
-        } else if (event.hostEmail === FB_AUTH.currentUser?.email) {
-          eventArray.push(event);
-        }
-      });
-      setEvents(eventArray);
-      console.log(events);
-    });
-  });
+    const fetchData = async () => {
+      const eventList = await new Events().getAll(FB_AUTH.currentUser?.uid as string);
+      console.log('Event List:', eventList);
+      setEvents(eventList);
+    };
+
+    fetchData();
+    setRefresh(false);
+    console.log(events);
+  }, [refresh]);
 
   return events.length === 0 ? (
     <View style={styles.container}>
+      <Button title="Refresh" onPress={() => setRefresh(true)} />
       <View style={styles.textContainer}>
         <Text style={styles.text}>Let&apos;s start a KickBack!</Text>
       </View>
@@ -37,6 +35,7 @@ export default function EventFeed({ navigation }: any) {
     </View>
   ) : (
     <View style={styles.container}>
+      <Button title="Refresh" onPress={() => setRefresh(true)} />
       <View style={styles.textContainer}>
         <Text style={styles.text}>User's KickBacks</Text>
         <FlatList
@@ -56,11 +55,13 @@ const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
   container: {
+  container: {
     flex: 1,
     backgroundColor: '#FFFFFB',
   },
   textContainer: {
     width: '100%',
+    paddingTop: 20,
     paddingTop: 20,
     margin: 20,
     alignItems: 'center',

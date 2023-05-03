@@ -3,6 +3,7 @@ import { StyleSheet, View, Pressable, Image } from 'react-native';
 
 interface NavBarProps {
   navigation: any;
+  navigation: any;
 }
 export default function NavBar({ navigation }: NavBarProps) {
   return (
@@ -30,13 +31,12 @@ export default function NavBar({ navigation }: NavBarProps) {
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 2,
-    borderRadiusTop: 20,
     backgroundColor: '#272222',
     position: 'absolute',
-    bottom: 0,
     width: '100%',
-    height: 86,
+    bottom: 0,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
   },
   buttonContainer: {
     flexDirection: 'row',

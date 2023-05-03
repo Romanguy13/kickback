@@ -14,6 +14,9 @@ import { EventModel } from '../resources/schema/event.model';
 import { FB_AUTH } from '../../firebaseConfig';
 import Users from '../resources/api/users';
 import Events from '../resources/api/events';
+import Groups from '../resources/api/groups';
+import GroupMembers from '../resources/api/groupMembers';
+import { UserReturn } from '../resources/schema/user.model';
 
 export default function EventCreation({ navigation }: any) {
   const [eventTitle, setEventTitle] = useState('');
@@ -21,7 +24,7 @@ export default function EventCreation({ navigation }: any) {
   const [eventDate, setEventDate] = useState('');
   const [eventTime, setEventTime] = useState('');
   const [inviteUserEmail, setInviteUserEmail] = useState('');
-  const [invitedUsers, setInvitedUsers] = useState<string[]>([]); // [email1, email2, ...
+  const [invitedUsers, setInvitedUsers] = useState<UserReturn[]>([]); // [email1, email2, ...
 
   const handleEventTitleChange = (text: string) => {
     setEventTitle(text);
@@ -49,21 +52,29 @@ export default function EventCreation({ navigation }: any) {
       Alert.alert('Please enter an email.');
       return;
     }
-    if (invitedUsers.includes(inviteUserEmail)) {
+    if (invitedUsers.find((user: UserReturn) => user.email === inviteUserEmail)) {
       Alert.alert('User already invited.');
       return;
     }
+    if (inviteUserEmail === FB_AUTH.currentUser?.email) {
+      Alert.alert('You cannot invite yourself, silly goose.');
+      return;
+    }
+
     const user = new Users();
-    user.getUserIdByEmail(inviteUserEmail).then((id) => {
-      if (!id) {
+    user
+      .getUserByEmail(inviteUserEmail)
+      .then((currUser: UserReturn) => {
+        setInvitedUsers([...invitedUsers, currUser]);
+        setInviteUserEmail('');
+      })
+      .catch(() => {
         Alert.alert('User does not exist.');
-      }
-    });
-    setInvitedUsers([...invitedUsers, inviteUserEmail]);
-    setInviteUserEmail('');
+        setInviteUserEmail('');
+      });
   };
 
-  const handleCreateEvent = () => {
+  const handleCreateEvent = async (): Promise<void> => {
     console.log(eventTitle);
     console.log(eventLocation);
     console.log(eventDate);
@@ -79,32 +90,56 @@ export default function EventCreation({ navigation }: any) {
       Alert.alert('Please log in.');
       return;
     }
-    const user = new Users();
-    user.getUserIdByEmail(userEmail).then((id) => {
-      if (!id) {
-        Alert.alert('Please log in.');
-        return;
-      }
-      const event: EventModel = {
-        hostId: id,
-        hostEmail: userEmail,
-        name: eventTitle,
-        location: eventLocation,
-        date: eventDate,
-        time: eventTime,
-        invitedUsers,
-      };
 
-      const Event = new Events();
-      Event.create(event).then((eventId) => {
-        if (!eventId) {
-          Alert.alert('Error creating event.');
-          return;
-        }
-        navigation.navigate('EventFeed');
+    // Gets user id from email
+    const user = new Users();
+    let userReturned: UserReturn;
+
+    // Get user id from email; Throws error if user does not exist
+    try {
+      // Trim the ends and make all lowercase
+      userReturned = await user.getUserByEmail(userEmail.trim());
+    } catch (e) {
+      Alert.alert('Cannot find user.');
+      return;
+    }
+
+    // Create Group
+    const gId: string = await new Groups().create({ name: 'Same Group Name' });
+
+    // Add the users to GroupMember
+    invitedUsers.map(async (currUser: UserReturn) => {
+      await new GroupMembers().create({
+        userId: currUser.id,
+        groupId: gId,
       });
     });
-    // create event
+
+    // Also add in the host as a group member
+    await new GroupMembers().create({
+      userId: FB_AUTH.currentUser?.uid as string,
+      groupId: gId,
+    });
+
+    // Event Model for later use
+    const event: EventModel = {
+      hostId: FB_AUTH.currentUser?.uid as string,
+      name: eventTitle,
+      location: eventLocation,
+      date: eventDate,
+      time: eventTime,
+      gId,
+    };
+
+    // Create event
+    const Event = new Events();
+    Event.create(event)
+      .then(() => {
+        navigation.navigate('EventFeed');
+      })
+      .catch(() => {
+        Alert.alert('Error creating event.');
+      });
   };
   return (
     <View style={styles.container}>
@@ -172,9 +207,9 @@ export default function EventCreation({ navigation }: any) {
                 <Text style={styles.addbuttonText}>+</Text>
               </Pressable>
             </View>
-            {invitedUsers.map((user) => (
-              <Text key={user} style={styles.invitedUser}>
-                {user}
+            {invitedUsers.map((user: UserReturn) => (
+              <Text key={user.id} style={styles.invitedUser}>
+                {user.name}
               </Text>
             ))}
           </View>

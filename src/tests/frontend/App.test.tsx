@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react-native';
-import App from '../../App';
+import App from '../../../App';
 
 test('Renders Welcome Screen', async () => {
   render(<App />);

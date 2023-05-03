@@ -1,10 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Welcome from '../../screens/Welcome';
-import Login from '../../screens/Login';
-import SignUp from '../../screens/SignUp';
-import EventFeed from '../../screens/EventFeed';
+import Welcome from '../../../screens/Welcome';
+import Login from '../../../screens/Login';
+import SignUp from '../../../screens/SignUp';
+import EventFeed from '../../../screens/EventFeed';
 
 const Stack = createNativeStackNavigator();
 
