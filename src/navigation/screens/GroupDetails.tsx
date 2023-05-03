@@ -17,7 +17,12 @@ export default function GroupDetails({ navigation, route }: GroupDetailsProps) {
         <View style={{
             flex: 1,
         }}>
-            <Text>{group.name}</Text>
+            <View style={{
+                marginTop: 30,
+                padding: 30,
+            }}>
+                <Text>{group.name}</Text>
+            </View>
             <NavBar navigation={navigation} />
         </View>
     );

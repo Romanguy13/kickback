@@ -1,13 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import GroupMembers from "../../resources/api/groupMembers";
 import {FB_AUTH} from "../../../firebaseConfig";
 import Groups from "../../resources/api/groups";
 import {GroupReturnModel} from "../../resources/schema/group.model";
-
-interface EventGroupsProps {
-  navigation: any;
-}
+import GroupDetails from "./GroupDetails";
 
 export default function EventGroups({ navigation }: any) {
   const [groups, setGroups] = useState<GroupReturnModel[]>([]);
@@ -30,14 +27,17 @@ export default function EventGroups({ navigation }: any) {
     fetchData();
   }, []);
 
-  console.log('Groups:', groups);
-
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>Groups</Text>
+        {groups.map((group) => (
+            <Pressable style={styles.pressable} onPress={() => {
+                navigation.navigate('GroupDetails', { group });
+            }} >
+                <Text style={styles.text}>{group.name}</Text>
+            </Pressable>
+        ))}
       </View>
-      {/* <NavBar navigation={navigation} /> */}
     </View>
   );
 }
@@ -48,15 +48,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF7000',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 30,
   },
   textContainer: {
     padding: 30,
   },
   text: {
     color: '#FFFFFB',
-    fontSize: 70,
+    fontSize: 20,
     fontWeight: 'bold',
     padding: 10,
     width: '100%',
   },
+  pressable: {
+    backgroundColor: '#FF7000',
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#FFFFFB',
+    margin: 10,
+  }
 });
