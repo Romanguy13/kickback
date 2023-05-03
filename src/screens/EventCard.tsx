@@ -15,10 +15,10 @@ function EventCard({ event, navigation }: any) {
   let locationLabel = 'location of event';
 
   return (
-    <View style={styles.rectangle}>
+    <View style={[styles.card, styles.shadowProp]}>
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Event Detail', { event })}>
         <View>
-          <Text accessibilityLabel={titleLabel}>
+          <Text style={styles.heading} accessibilityLabel={titleLabel}>
             {event.name}
           </Text>
           <Text accessibilityLabel={dateLabel}>{event.date}</Text>
@@ -32,14 +32,25 @@ function EventCard({ event, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  rectangle: {
-    backgroundColor: "#B5B4B1",
-    padding: 50,
-    borderTopLeftRadius: 30,
-    borderBottomRightRadius: 30, 
-    borderTopRightRadius: 30,
-    borderBottomLeftRadius: 30
-  }
+  heading: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 13,
+  },
+  card: {
+    backgroundColor: 'grey',
+    borderRadius: 8,
+    paddingVertical: 45,
+    paddingHorizontal: 25,
+    width: '100%',
+    marginVertical: 10,
+  },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
 });
 
 export default EventCard;
