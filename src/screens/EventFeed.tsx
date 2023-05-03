@@ -55,13 +55,11 @@ const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
   container: {
-  container: {
     flex: 1,
     backgroundColor: '#FFFFFB',
   },
   textContainer: {
     width: '100%',
-    paddingTop: 20,
     paddingTop: 20,
     margin: 20,
     alignItems: 'center',
