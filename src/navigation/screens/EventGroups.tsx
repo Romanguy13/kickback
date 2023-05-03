@@ -26,8 +26,8 @@ export default function EventGroups({ navigation }: any) {
       setGroups(groupsArr);
       console.log('Groups Arr:', groupsArr);
     };
-    console.log('Groups outside fetch:', groups);
     fetchData();
+    console.log('Groups outside fetch:', groups);
   }, []);
 
   return (
