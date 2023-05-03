@@ -1,5 +1,5 @@
-import KickbackFirebase from "./kickbackFirebase";
 import {Firestore} from "firebase/firestore";
+import KickbackFirebase from "./kickbackFirebase";
 import {GroupModel} from "../schema/group.model";
 
 export default class Groups extends KickbackFirebase {
