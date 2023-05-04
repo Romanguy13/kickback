@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
     left: 70,
     fontWeight: "700",
     fontSize: 20,
-    lineHeight: 25,
-    textAlign: 'right'
+    textAlign: 'center',
+    paddingLeft: 70
   },
   card: {
     backgroundColor: '#FFFDF8',
