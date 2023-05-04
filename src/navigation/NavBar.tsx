@@ -4,7 +4,6 @@ import { StyleSheet, View, Pressable, Image } from 'react-native';
 
 interface NavBarProps {
   navigation: any;
-  navigation: any;
 }
 export default function NavBar({ navigation }: NavBarProps) {
   return (

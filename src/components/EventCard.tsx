@@ -2,10 +2,6 @@ import React from 'react';
 import { TouchableWithoutFeedback, StyleSheet, Text, View } from 'react-native';
 
 
-interface NavBarProps {
-  navigation: any;
-}
-
 function EventCard({ event, navigation }: any) {
   // accessibility labels
   let timeLabel = 'time of the event';
@@ -16,7 +12,7 @@ function EventCard({ event, navigation }: any) {
 
   return (
     <View style={[styles.card, styles.shadowProp]}>
-      <TouchableWithoutFeedback onPress={() => navigation.navigate('Event Detail', { event })}>
+      <TouchableWithoutFeedback onPress={() => navigation.navigate('EventDetail',{event: event})}>
         <View>
           <View style={styles.headingContainer}>
             <Text style={[styles.heading]} accessibilityLabel={titleLabel}> {event.name} </Text>
