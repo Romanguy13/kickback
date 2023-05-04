@@ -25,7 +25,9 @@ function EventCard({ event, navigation }: any) {
             <Text style={styles.datetext}accessibilityLabel={dateLabel}>{event.date}</Text>
             <Text style={[styles.timetext]} accessibilityLabel={timeLabel}>{event.time}</Text>
           </View>
-          <Text accessibilityLabel={statusLabel}>{event.status}</Text>
+          <View style={styles.statusContainer}>
+            <Text accessibilityLabel={statusLabel}>{event.status}</Text>
+          </View>
           <Text style={styles.locationtext} accessibilityLabel={locationLabel}>{event.location}</Text>
         </View> 
       </TouchableWithoutFeedback>
@@ -109,8 +111,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
-
-  
+  statusContainer: {
+    position: 'absolute',
+    width: 84,
+    height: 21.66,
+    borderRadius: 25,
+    backgroundColor: '#ff7000' 
+  }
 });
 
 export default EventCard;
