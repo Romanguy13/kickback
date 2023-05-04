@@ -18,7 +18,9 @@ function EventCard({ event, navigation }: any) {
     <View style={[styles.card, styles.shadowProp]}>
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Event Detail', { event })}>
         <View>
-          <Text style={[styles.heading]} accessibilityLabel={titleLabel}> {event.name} </Text>
+          <View style={styles.headingContainer}>
+            <Text style={[styles.heading]} accessibilityLabel={titleLabel}> {event.name} </Text>
+          </View>  
           <View style={styles.dateTimeContainer}>
             <Text style={styles.datetext}accessibilityLabel={dateLabel}>{event.date}</Text>
             <Text style={[styles.timetext]} accessibilityLabel={timeLabel}>{event.time}</Text>
@@ -33,18 +35,20 @@ function EventCard({ event, navigation }: any) {
 
 
 const styles = StyleSheet.create({
+  headingContainer: {
+    position: 'absolute',
+    width: 322,
+    height: 44,
+    backgroundColor: '#ff7000',
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18
+  },
   heading: {
     fontSize: 20,
+    paddingTop: 10,
     fontWeight: "700",
-    marginBottom: 10,
-    lineHeight: 125,
     textAlign: "center",
-    top: -30
-  },
-  rectangle_wrapper: {
-    height: 50,
-    width: 200,
-    position: 'relative'
+    color: '#272222'
   },
   labelbox:{
     position: 'absolute',
@@ -67,11 +71,10 @@ const styles = StyleSheet.create({
   },
   dateTimeContainer: {
     backgroundColor: '#272222',
-    borderTopLeftRadius: 18,
     borderBottomLeftRadius: 18,
-    height: 130,
-    width: 125,
-    bottom: 89,
+    height: 133,
+    width: 128,
+    bottom: -43,
     alignItems: 'center'
   },
   timetext: {
