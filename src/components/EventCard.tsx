@@ -18,14 +18,14 @@ function EventCard({ event, navigation }: any) {
     <View style={[styles.card, styles.shadowProp]}>
       <TouchableWithoutFeedback onPress={() => navigation.navigate('Event Detail', { event })}>
         <View>
-          <Text style={[styles.heading]} accessibilityLabel={titleLabel}>
-            {event.name}
-          </Text>
-          <Text style={styles.datetext}accessibilityLabel={dateLabel}>{event.date}</Text>
-          <Text style={styles.timetext} accessibilityLabel={timeLabel}>{event.time}</Text>
+          <Text style={[styles.heading]} accessibilityLabel={titleLabel}> {event.name} </Text>
+          <View style={styles.dateTimeContainer}>
+            <Text style={styles.datetext}accessibilityLabel={dateLabel}>{event.date}</Text>
+            <Text style={[styles.timetext]} accessibilityLabel={timeLabel}>{event.time}</Text>
+          </View>
           <Text accessibilityLabel={statusLabel}>{event.status}</Text>
           <Text style={styles.locationtext} accessibilityLabel={locationLabel}>{event.location}</Text>
-        </View>
+        </View> 
       </TouchableWithoutFeedback>
     </View>
   );
@@ -58,21 +58,31 @@ const styles = StyleSheet.create({
   },
   datetext: {
     position: "absolute",
-    top: 70,
-    right: 110,
+    paddingTop: 20,
     fontWeight: "700",
-    fontSize: 20,
+    fontSize: 30,
     lineHeight: 25,
-    textAlign: 'center'
+    textAlign: 'center',
+    color: '#FFFDF8'
+  },
+  dateTimeContainer: {
+    backgroundColor: '#272222',
+    borderTopLeftRadius: 18,
+    borderBottomLeftRadius: 18,
+    height: 130,
+    width: 125,
+    bottom: 89,
+    alignItems: 'center'
   },
   timetext: {
     position: "absolute",
-    top: 100,
-    right: 100,
+    //right: 100,
     fontWeight: "700",
-    fontSize: 20,
+    fontSize: 25,
     lineHeight: 25,
-    textAlign: 'center'
+    paddingTop: 52,
+    textAlign: 'center',
+    color: '#FFFDF8'
   },
   locationtext: {
     position: "absolute",
@@ -81,14 +91,13 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 20,
     lineHeight: 25,
-    textAlign: 'center'
+    textAlign: 'right'
   },
   card: {
     backgroundColor: '#FFFDF8',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 100,
-    width: '100%',
+    borderRadius: 18,
+    width: 322, 
+    height: 176,
     marginVertical: 10,
   },
   shadowProp: {
