@@ -1,7 +1,8 @@
 {
   "emulators": {
     "firestore": {
-      "port": 8080
+      "port": 8080,
+      "indexes": "firestore.indexes.json"
     },
     "auth": {
       "port": 9099

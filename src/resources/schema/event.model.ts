@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 export interface EventModel {
   hostId: string;
   name: string;
@@ -15,6 +17,8 @@ export interface EventReturn {
   date: string;
   time: string;
   gId: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
 export interface UpdatedEvent {

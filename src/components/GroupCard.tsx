@@ -1,13 +1,10 @@
 import { Pressable, View, Text } from 'react-native';
-import React from 'react';
-import { GroupReturnModel } from '../resources/schema/group.model';
+import React, { useEffect } from 'react';
+import { GroupCardProps } from '../navigation/screens/EventGroups';
 
-interface GroupCardProps {
-  group: GroupReturnModel;
-  navigation: any;
-}
+export default function GroupCard({ item }: { item: GroupCardProps }) {
+  const { group, navigation } = item;
 
-export default function GroupCard({ group, navigation }: GroupCardProps) {
   return (
     <Pressable
       style={styles.pressable}
