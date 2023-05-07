@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { GroupCardProps } from './EventGroups';
 
 // type GroupDetailsProps = StackScreenProps<
 //     { GroupDetails: { group: GroupReturnModel } },
@@ -7,7 +8,7 @@ import { Pressable, Text, View } from 'react-native';
 // >;
 
 export default function GroupDetails({ navigation, route }: { navigation: any; route: any }) {
-  const { group } = route.params;
+  const { group }: GroupCardProps = route.params;
 
   return (
     <View

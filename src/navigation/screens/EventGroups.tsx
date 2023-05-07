@@ -8,10 +8,11 @@ import GroupCard from '../../components/GroupCard';
 import Events from '../../resources/api/events';
 import { UserModel } from '../../resources/schema/user.model';
 import Users from '../../resources/api/users';
+import { EventModel, EventReturn } from '../../resources/schema/event.model';
 
 export interface GroupCardProps {
   group: GroupReturnModel;
-  events: Events[];
+  events: EventReturn[];
   topMembers: UserModel[];
   extraMembers: number;
   navigation: any;
@@ -19,8 +20,8 @@ export interface GroupCardProps {
 
 export default function EventGroups({ navigation }: any) {
   const [groups, setGroups] = useState<GroupCardProps[]>([]);
-  const [lastGroup, setLastGroup] = useState<GroupReturnModel | undefined>(undefined);
-  const [loadMore, setLoadMore] = useState<boolean>(true);
+  // const [lastGroup, setLastGroup] = useState<GroupReturnModel | undefined>(undefined);
+  // const [loadMore, setLoadMore] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,8 +63,8 @@ export default function EventGroups({ navigation }: any) {
         // Get the top 3 members of the group
         const topMembers: UserModel[] = [];
         const innerPromise = members.map(async (member, i) => {
-          // Break out of the loop after 3 members
-          if (i > 3) return false;
+          // Break out of the loop after 4 members
+          if (i > 4) return false;
 
           const user = await new Users().get(member.userId);
           topMembers.push(user as UserModel);
@@ -79,9 +80,9 @@ export default function EventGroups({ navigation }: any) {
         groupsArr.push({
           group: currGroup as GroupReturnModel,
           navigation,
-          events: events as Events[],
+          events: events as EventReturn[],
           topMembers,
-          extraMembers: members.length > 3 ? members.length - 3 : 0,
+          extraMembers: members.length > 4 ? members.length - 4 : 0,
         });
       });
 
@@ -89,25 +90,29 @@ export default function EventGroups({ navigation }: any) {
 
       setGroups(groupsArr);
 
-      console.log('Here are some of the data for the Group');
-      console.log('Groups:', groupsArr[0].group);
-      console.log('Events:', groupsArr[0].events);
-      console.log('Top Members:', groupsArr[0].topMembers);
-      console.log('Extra Members:', groupsArr[0].extraMembers);
-      console.log('---------------------------------------');
+      // if (groupsArr.length > 0) {
+      //   console.log('Here are some of the data for the Group');
+      //   console.log('Groups:', groupsArr[0].group);
+      //   console.log('Events:', groupsArr[0].events);
+      //   console.log('Top Members:', groupsArr[0].topMembers);
+      //   console.log('Extra Members:', groupsArr[0].extraMembers);
+      //   console.log('---------------------------------------');
+      // }
     };
     fetchData();
-    console.log('Groups outside fetch:', groups.length);
-  }, [loadMore]);
+  }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.textContainer}>
+      <View style={styles.listContainer}>
         <FlatList
           data={groups}
           renderItem={GroupCard}
-          onEndReached={() => setLoadMore(true)}
+          // onEndReached={() => setLoadMore(true)}
           onEndReachedThreshold={0.01}
+          style={{
+            display: 'flex',
+          }}
         />
       </View>
     </View>
@@ -117,12 +122,16 @@ export default function EventGroups({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FF7000',
+    backgroundColor: '#FFFFFB',
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 30,
   },
-  textContainer: {
-    padding: 30,
+  listContainer: {
+    width: '100%',
+    height: '100%',
+    paddingLeft: 20,
+    paddingRight: 20,
+    display: 'flex',
   },
 });

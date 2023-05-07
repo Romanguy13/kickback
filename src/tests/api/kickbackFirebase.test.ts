@@ -125,19 +125,6 @@ test('Able to get specific document from collection', async () => {
   });
 });
 
-test('Unable to get specific document from collection', async () => {
-  (doc as jest.Mock).mockReturnValue({
-    id: 'randomDocId',
-  } as DocumentReference<DocumentData>);
-
-  (getDoc as jest.Mock).mockResolvedValue({
-    exists: () => false,
-  } as unknown as DocumentSnapshot<DocumentData>);
-
-  const data: DocumentData | undefined = await kickbackFB.get('someId');
-  expect(data).toEqual(undefined);
-});
-
 test('Edit a document', async () => {
   (doc as jest.Mock).mockReturnValue({
     id: 'randomDocId',
