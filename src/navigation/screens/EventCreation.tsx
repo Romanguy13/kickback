@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -23,7 +23,7 @@ import { UserReturn } from '../../resources/schema/user.model';
 export default function EventCreation({ navigation }: any) {
   const [eventTitle, setEventTitle] = useState('');
   const [eventLocation, setEventLocation] = useState('');
-  const [eventDate, setEventDate] = useState(moment().format('YYYY-MM-DD'));
+  const [eventDate, setEventDate] = useState(moment().format('MMM DD, YYYY'));
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [eventTime, setEventTime] = useState(moment().format('h:mm A'));
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -42,7 +42,7 @@ export default function EventCreation({ navigation }: any) {
   const handleEventDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || eventDate;
     setShowDatePicker(false);
-    setEventDate(moment(currentDate).format('YYYY-MM-DD'));
+    setEventDate(moment(currentDate).format('MMM DD, YYYY'));
   };
 
   const showDatepicker = () => {
@@ -205,7 +205,7 @@ export default function EventCreation({ navigation }: any) {
                 value={new Date()}
                 minimumDate={new Date()}
                 mode="date"
-                display="spinner"
+                display="default"
                 textColor="dark"
                 onChange={handleEventDateChange}
               />
@@ -222,7 +222,7 @@ export default function EventCreation({ navigation }: any) {
               <DateTimePicker
                 value={new Date()}
                 mode="time"
-                display="spinner"
+                display="default"
                 is24Hour={false}
                 onChange={handleEventTimeChange}
               />
@@ -279,6 +279,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     padding: 20,
     width: '100%',
+    flexDirection: 'row',
   },
   titleInput: {
     width: '68%',

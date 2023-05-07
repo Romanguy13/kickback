@@ -11,9 +11,7 @@ function EventCard({ event, navigation }: any) {
 
   return (
     <View style={[styles.card, styles.shadowProp]}>
-      <TouchableWithoutFeedback
-        onPress={() => navigation.navigate('EventDetail', { event: event })}
-      >
+      <TouchableWithoutFeedback onPress={() => navigation.navigate('EventDetail')}>
         <View>
           <View style={styles.headingContainer}>
             <Text style={[styles.heading]} accessibilityLabel={titleLabel}>
@@ -71,7 +69,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     paddingTop: 20,
     fontWeight: '700',
-    fontSize: 30,
+    fontSize: 20,
     lineHeight: 25,
     textAlign: 'center',
     color: '#FFFDF8',
@@ -86,10 +84,9 @@ const styles = StyleSheet.create({
   },
   timetext: {
     position: 'absolute',
-    //right: 100,
     fontWeight: '700',
-    fontSize: 25,
-    lineHeight: 25,
+    fontSize: 22,
+    lineHeight: 70,
     paddingTop: 52,
     textAlign: 'center',
     color: '#FFFDF8',
