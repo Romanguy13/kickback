@@ -158,6 +158,13 @@ export default function EventCreation({ navigation }: any) {
       .catch(() => {
         Alert.alert('Error creating event.');
       });
+
+    // Clear input fields for next Creation
+    setEventTitle('');
+    setEventLocation('');
+    setEventDate(moment().format('MMM DD, YYYY'));
+    setEventTime(moment().format('h:mm A'));
+    setInvitedUsers([]);
   };
   return (
     <View style={styles.container}>
@@ -220,7 +227,7 @@ export default function EventCreation({ navigation }: any) {
           <View style={styles.timePicker}>
             {showTimePicker && (
               <DateTimePicker
-                value={new Date()}
+                value={moment(eventTime, 'hh:mm A').toDate()}
                 mode="time"
                 display="default"
                 is24Hour={false}
