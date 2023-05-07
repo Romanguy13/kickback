@@ -44,7 +44,6 @@ test('Write in input fields and check they are not empty', async () => {
   const timeInput = screen.getByTestId('time-input');
   const invitedInput = screen.getByTestId('invited-input');
   const inviteButton = screen.getByTestId('invite-button');
-  //const invitedContainer = screen.getByTestId('user-container');
 
   // Title
   fireEvent.changeText(titleInput, 'Test Event');
@@ -70,4 +69,7 @@ test('Write in input fields and check they are not empty', async () => {
   expect(invitedInput).not.toBeNull();
   fireEvent.press(inviteButton);
   expect(invitedInput).not.toBeNull();
+  await waitFor(() => {
+    expect(screen.getByText('first last')).toBeTruthy();
+  });
 });
