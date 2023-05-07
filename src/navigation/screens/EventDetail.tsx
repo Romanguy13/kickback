@@ -1,19 +1,20 @@
 import React from 'react';
-import { Button, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-export default function EventDetail({ navigation }: any) {
+function EventDetail({ route }: any) {
+  const { event } = route.params;
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <Text style={styles.titleText}>Title</Text>
+        <Text style={styles.titleText}>{event.name}</Text>
       </View>
       <View style={styles.bottomContainer}>
         <View style={styles.datetimeContainer}>
           <View style={styles.dateContainer}>
-            <Text style={styles.dateText}>Date</Text>
+            <Text style={styles.dateText}>{event.date}</Text>
           </View>
           <View style={styles.timeContainer}>
-            <Text style={styles.timeText}>Time</Text>
+            <Text style={styles.timeText}>{event.time}</Text>
           </View>
           <View style={styles.voteContainer}>
             <Pressable style={styles.voteButton}>
@@ -26,11 +27,10 @@ export default function EventDetail({ navigation }: any) {
         </View>
         <View style={styles.locationpeopleContainer}>
           <View style={styles.locationContainer}>
-            <Text style={styles.locationTitleText}>Santa Cruz Cinema</Text>
-            <Text style={styles.locationText}>1405 Pacific Ave, Santa Cruz, CA 95060</Text>
+            <Text style={styles.locationTitleText}>{event.location}</Text>
           </View>
           <View style={styles.usersContainer}>
-            <Text>Users</Text>
+            <Text style={styles.usersText}>{event.user}</Text>
           </View>
         </View>
       </View>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     color: '#FFFFFB',
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: 'bold',
     paddingTop: 20,
     width: '100%',
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   locationTitleText: {
     color: '#272222',
     textAlign: 'center',
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: 'bold',
     paddingTop: 20,
   },
@@ -142,4 +142,13 @@ const styles = StyleSheet.create({
     top: 150,
     borderRadius: 20,
   },
+  usersText: {
+    color: '#FFFFFB',
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingTop: 20,
+  },
 });
+
+export default EventDetail;

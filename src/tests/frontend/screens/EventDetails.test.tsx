@@ -15,11 +15,25 @@ const renderWithNavigation = () =>
     </NavigationContainer>
   );
 
-test('Renders Event Screen', async () => {
-  renderWithNavigation();
-  // Find the input fields by their labels
-  expect(screen.getByText('Title')).toBeTruthy();
-  expect(screen.getByText('Santa Cruz Cinema')).toBeTruthy();
-  expect(screen.getByText('Date')).toBeTruthy();
-  expect(screen.getByText('1405 Pacific Ave, Santa Cruz, CA 95060')).toBeTruthy();
+const mockRoute = {
+  params: {
+    event: {
+      name: 'Test Event',
+      date: '2022-01-01',
+      time: '12:00 PM',
+      location: 'Test Location',
+      user: 'Test User',
+    },
+  },
+};
+
+describe('EventDetail', () => {
+  it('renders event details correctly', () => {
+    const { getByText } = render(<EventDetail route={mockRoute} />);
+    expect(getByText('Test Event')).toBeTruthy();
+    expect(getByText('2022-01-01')).toBeTruthy();
+    expect(getByText('12:00 PM')).toBeTruthy();
+    expect(getByText('Test Location')).toBeTruthy();
+    expect(getByText('Test User')).toBeTruthy();
+  });
 });
