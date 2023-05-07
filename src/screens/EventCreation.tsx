@@ -10,6 +10,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
+import DatePicker from 'react-native-datepicker';
 import { EventModel } from '../resources/schema/event.model';
 import { FB_AUTH } from '../../firebaseConfig';
 import Users from '../resources/api/users';
@@ -149,7 +150,7 @@ export default function EventCreation({ navigation }: any) {
         </TouchableOpacity>
       </View>
       <ScrollView style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
-        <KeyboardAvoidingView behavior="padding" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+        <KeyboardAvoidingView behavior="position" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
           <View style={styles.titleContainer}>
             <TextInput
               style={styles.titleInput}
