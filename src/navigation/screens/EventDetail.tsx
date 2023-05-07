@@ -18,10 +18,10 @@ function EventDetail({ route }: any) {
           </View>
           <View style={styles.voteContainer}>
             <Pressable style={styles.voteButton}>
-              <Text>+</Text>
+              <Text>Yes</Text>
             </Pressable>
             <Pressable style={styles.voteButton}>
-              <Text>+</Text>
+              <Text>No</Text>
             </Pressable>
           </View>
         </View>
