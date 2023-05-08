@@ -14,6 +14,8 @@ import EventGroups from './screens/EventGroups';
 import EventHistory from './screens/EventHistory';
 import EventCreation from './screens/EventCreation';
 import GroupDetails from './screens/GroupDetails';
+import EventDetail from './screens/EventDetail';
+// import NavBar from './screens/NavBar';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,12 +27,14 @@ function TabBar() {
       initialRouteName="EventFeed"
       screenOptions={{
         tabBarActiveTintColor: 'white',
-        tabBarInactiveTintColor: 'black',
+        tabBarInactiveTintColor: '#FF7000',
         tabBarStyle: {
-          backgroundColor: '#FF7000',
+          backgroundColor: '#272222',
           height: 100,
           borderTopColor: 'black',
           borderTopWidth: 2,
+          borderTopLeftRadius: 18,
+          borderTopRightRadius: 18,
         },
       }}
     >
@@ -87,6 +91,11 @@ function AppContainer() {
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="GroupDetails" component={GroupDetails} />
         <Stack.Screen name="TabBar" component={TabBar} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="EventDetail"
+          component={EventDetail}
+          options={{ headerShown: true, title: 'Details' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

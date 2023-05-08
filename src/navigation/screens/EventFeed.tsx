@@ -1,11 +1,21 @@
 /* eslint-disable global-require */
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  PixelRatio,
+  FlatList,
+  Button,
+} from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 // import NavBar from '../NavBar';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 import { EventReturn } from '../../resources/schema/event.model';
+import EventCard from '../../components/EventCard';
 
 export default function EventFeed({ navigation }: any) {
   // Boolean to decide if user has events or none in feed page
@@ -31,7 +41,7 @@ export default function EventFeed({ navigation }: any) {
   return events.length === 0 ? (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>Let&apos;s start a KickBack!</Text>
+        <Text style={styles.newText}>Let&apos;s start a KickBack!</Text>
       </View>
       <View style={styles.imageContainer}>
         <Image source={require('../../../assets/hands.png')} style={styles.handsImage} />
@@ -40,21 +50,16 @@ export default function EventFeed({ navigation }: any) {
     </View>
   ) : (
     <View style={styles.container}>
-      {/* <Button title="Refresh" onPress={() => setRefresh(true)} /> */}
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>KickBacks</Text>
+      <Button title="Refresh" onPress={() => setRefresh(true)} />
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>User's KickBacks</Text>
+        <FlatList
+          style={styles.cardList}
+          data={events}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <EventCard event={item} navigation={navigation} />}
+        />
       </View>
-
-      <ScrollView style={styles.container}>
-        <View style={styles.textContainer}>
-          {events.map((event) => (
-            <Text style={styles.eventText} key={event.id}>
-              {event.name}
-            </Text>
-          ))}
-        </View>
-        {/* <NavBar navigation={navigation} /> */}
-      </ScrollView>
     </View>
   );
 }
@@ -65,6 +70,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFB',
+    alignItems: 'center',
   },
   header: {
     color: '#272222',
@@ -83,6 +89,14 @@ const styles = StyleSheet.create({
     margin: 20,
     alignItems: 'center',
   },
+  newText: {
+    color: '#272222',
+    fontSize: Math.round((windowWidth * 0.15) / fontScale),
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'center',
+    top: 20,
+  },
   text: {
     color: '#272222',
     fontSize: Math.round((windowWidth * 0.15) / fontScale),
@@ -100,13 +114,21 @@ const styles = StyleSheet.create({
   handsImage: {
     flex: 1,
     width: '100%',
-    resizeMode: 'contain',
-    transform: [{ rotate: '-.2deg' }],
+    resizeMode: 'stretch',
+    transform: [{ rotate: '2deg' }],
+    top: 50,
+    left: 5,
   },
   eventText: {
     color: '#272222',
     fontSize: Math.round((windowWidth * 0.1) / fontScale),
     fontWeight: 'bold',
     width: '100%',
+  },
+  cardList: {
+    width: '100%',
+    height: '78%',
+    paddingLeft: 50,
+    paddingRight: 50,
   },
 });

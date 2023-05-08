@@ -11,6 +11,8 @@ import {
   ScrollView,
 } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 import { EventModel } from '../../resources/schema/event.model';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Users from '../../resources/api/users';
@@ -22,8 +24,10 @@ import { UserReturn } from '../../resources/schema/user.model';
 export default function EventCreation({ navigation, route }: { navigation: any; route: any }) {
   const [eventTitle, setEventTitle] = useState('');
   const [eventLocation, setEventLocation] = useState('');
-  const [eventDate, setEventDate] = useState('');
-  const [eventTime, setEventTime] = useState('');
+  const [eventDate, setEventDate] = useState(moment().format('MMM DD, YYYY'));
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [eventTime, setEventTime] = useState(moment().format('h:mm A'));
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [inviteUserEmail, setInviteUserEmail] = useState('');
   const [invitedUsers, setInvitedUsers] = useState<UserReturn[]>([]); // [email1, email2, ...'
   const isFocused = useIsFocused();
@@ -36,12 +40,25 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
     setEventLocation(text);
   };
 
-  const handleEventDateChange = (text: string) => {
-    setEventDate(text);
+  // Date Picker Config
+  const handleEventDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || eventDate;
+    setShowDatePicker(false);
+    setEventDate(moment(currentDate).format('MMM DD, YYYY'));
   };
 
-  const handleEventTimeChange = (text: string) => {
-    setEventTime(text);
+  const showDatepicker = () => {
+    setShowDatePicker(true);
+  };
+  // Time Picker Config
+  const handleEventTimeChange = (event, selectedTime) => {
+    const currentTime = selectedTime || eventTime;
+    setShowTimePicker(false);
+    setEventTime(moment(currentTime).format('h:mm A'));
+  };
+
+  const showTimepicker = () => {
+    setShowTimePicker(true);
   };
 
   const handleInviteUserEmailChange = (text: string) => {
@@ -167,6 +184,13 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
       .catch(() => {
         Alert.alert('Error creating event.');
       });
+
+    // Clear input fields for next Creation
+    setEventTitle('');
+    setEventLocation('');
+    setEventDate(moment().format('MMM DD, YYYY'));
+    setEventTime(moment().format('h:mm A'));
+    setInvitedUsers([]);
   };
 
   const userId = FB_AUTH.currentUser?.uid as string;
@@ -180,16 +204,25 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
       setInvitedUsers(filteredTopMembers);
     }
   }, [isFocused, route.params, userId]);
+  // Handle the onPress fo the cancel button
+  const handleCancel = () => {
+    navigation.navigate('Feed');
+    setEventTitle('');
+    setEventLocation('');
+    setEventDate(moment().format('MMM DD, YYYY'));
+    setEventTime(moment().format('h:mm A'));
+    setInvitedUsers([]);
+  };
 
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity onPress={() => navigation.navigate('Feed')}>
+        <TouchableOpacity onPress={handleCancel}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>
       <ScrollView style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
-        <KeyboardAvoidingView behavior="padding" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+        <KeyboardAvoidingView behavior="position" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
           <View style={styles.titleContainer}>
             <TextInput
               style={styles.titleInput}
@@ -199,6 +232,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
               placeholder="Event Title"
               placeholderTextColor="#FF7000"
               autoCapitalize="none"
+              testID="title-input"
             />
           </View>
           <View style={styles.locationContainer}>
@@ -209,32 +243,60 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
               onChangeText={handleEventLocationChange}
               keyboardType="default"
               autoCapitalize="none"
+              testID="location-input"
             />
           </View>
           <View style={styles.dateContainer}>
             <Text style={styles.dateLabel}>Date</Text>
-            <TextInput
+            <TouchableOpacity
               style={styles.dateInput}
-              value={eventDate}
-              onChangeText={handleEventDateChange}
-              keyboardType="default"
-              autoCapitalize="none"
-            />
+              onPress={showDatepicker}
+              testID="date-appear"
+            >
+              <Text style={styles.dateText} testID="date-input">
+                {eventDate}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.datePicker}>
+            {showDatePicker && (
+              <DateTimePicker
+                value={new Date()}
+                minimumDate={new Date()}
+                mode="date"
+                display="default"
+                textColor="dark"
+                onChange={handleEventDateChange}
+              />
+            )}
           </View>
           <View style={styles.timeContainer}>
             <Text style={styles.timeLabel}>Time</Text>
-            <TextInput
+            <TouchableOpacity
               style={styles.timeInput}
-              value={eventTime}
-              onChangeText={handleEventTimeChange}
-              keyboardType="default"
-              autoCapitalize="none"
-            />
+              onPress={showTimepicker}
+              testID="time-appear"
+            >
+              <Text style={styles.timeText} testID="time-input">
+                {eventTime}
+              </Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.timeContainer}>
+          <View style={styles.timePicker}>
+            {showTimePicker && (
+              <DateTimePicker
+                value={moment(eventTime, 'hh:mm A').toDate()}
+                mode="time"
+                display="default"
+                is24Hour={false}
+                onChange={handleEventTimeChange}
+              />
+            )}
+          </View>
+          <View style={styles.invitedLabelContainer}>
             <Text style={styles.invitedLabel}>Who&apos;s Invited</Text>
           </View>
-          <View style={styles.usersContainer}>
+          <View style={styles.usersContainer} testID="user-container">
             <View style={styles.invitedContainer}>
               <TextInput
                 style={styles.invitedInput}
@@ -242,8 +304,9 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
                 onChangeText={handleInviteUserEmailChange}
                 keyboardType="default"
                 autoCapitalize="none"
+                testID="invited-input"
               />
-              <Pressable style={styles.addButton} onPress={handleAddUser}>
+              <Pressable style={styles.addButton} onPress={handleAddUser} testID="invite-button">
                 <Text style={styles.addbuttonText}>+</Text>
               </Pressable>
             </View>
@@ -255,7 +318,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
           </View>
         </KeyboardAvoidingView>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={handleCreateEvent}>
+          <Pressable style={styles.button} onPress={handleCreateEvent} testID="create-button">
             <Text style={styles.buttonText}>Create</Text>
           </Pressable>
         </View>
@@ -281,6 +344,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     padding: 20,
     width: '100%',
+    flexDirection: 'row',
   },
   titleInput: {
     width: '68%',
@@ -333,12 +397,20 @@ const styles = StyleSheet.create({
     width: '70%',
     borderColor: '#272222',
     backgroundColor: '#272222',
-    color: '#FFFFFB',
+    color: '#FFFFFC',
     fontWeight: 'bold',
     borderWidth: 3,
     borderRadius: 24,
     fontSize: 16,
     padding: 20,
+  },
+  dateText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  datePicker: {
+    alignSelf: 'flex-end',
+    paddingRight: 40,
   },
   timeContainer: {
     justifyContent: 'center',
@@ -363,6 +435,19 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     fontSize: 16,
     padding: 20,
+  },
+  timeText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  timePicker: {
+    alignSelf: 'flex-end',
+    paddingRight: 40,
+  },
+  invitedLabelContainer: {
+    justifyContent: 'center',
+    flexDirection: 'row',
+    paddingTop: 14,
   },
   invitedLabel: {
     color: '#FF7000',

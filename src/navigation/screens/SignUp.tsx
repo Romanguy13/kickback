@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFB',
     fontSize: Math.round((windowWidth * 0.12) / fontScale),
     fontWeight: 'bold',
+    width: '100%',
   },
   subText: {
     color: '#FFFFFB',
