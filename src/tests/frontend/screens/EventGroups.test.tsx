@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useIsFocused } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View } from 'react-native';
 import EventGroups from '../../../navigation/screens/EventGroups';
@@ -13,6 +13,13 @@ jest.mock('../../../resources/api/kickbackFirebase');
 jest.mock('../../../resources/api/groupMembers');
 jest.mock('../../../resources/api/groups');
 jest.mock('../../../resources/api/users');
+jest.mock('@react-navigation/native', () => {
+  const actualNav = jest.requireActual('@react-navigation/native');
+  return {
+    ...actualNav,
+    useIsFocused: jest.fn(),
+  };
+});
 
 const Stack = createNativeStackNavigator();
 function GroupDetailsMock(): JSX.Element {

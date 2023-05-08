@@ -57,6 +57,10 @@ export default class KickbackFirebase {
       }
     }
 
+    console.log('documentData ID: ', documentData.id);
+    console.log('returnId ID: ', returnId.id);
+    
+
     // Adds doc to collection
     await addDoc(dbRef, documentData);
 

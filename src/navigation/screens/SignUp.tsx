@@ -107,7 +107,8 @@ export default function SignUp({ navigation }: any) {
           value={newUserPassword}
           onChangeText={handleNewUserPasswordChange}
           aria-label="Password"
-          keyboardType="default"
+          // keyboardType="default"
+          textContentType="password"
           secureTextEntry
           placeholder="mypassword123"
           placeholderTextColor="gray"
@@ -119,7 +120,8 @@ export default function SignUp({ navigation }: any) {
           value={newUserConfirmPassword}
           onChangeText={handleNewUserPasswordConfirmChange}
           aria-label="Confirmed Password"
-          keyboardType="default"
+          // keyboardType="default"
+          textContentType="password"
           secureTextEntry
           placeholder="retype password"
           placeholderTextColor="gray"

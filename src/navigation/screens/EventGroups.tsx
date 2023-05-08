@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import GroupMembers from '../../resources/api/groupMembers';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Groups from '../../resources/api/groups';
@@ -20,6 +21,7 @@ export interface GroupCardProps {
 
 export default function EventGroups({ navigation }: any) {
   const [groups, setGroups] = useState<GroupCardProps[]>([]);
+  const isFocused = useIsFocused();
   // const [lastGroup, setLastGroup] = useState<GroupReturnModel | undefined>(undefined);
   // const [loadMore, setLoadMore] = useState<boolean>(true);
 
@@ -90,17 +92,18 @@ export default function EventGroups({ navigation }: any) {
 
       setGroups(groupsArr);
 
-      // if (groupsArr.length > 0) {
-      //   console.log('Here are some of the data for the Group');
-      //   console.log('Groups:', groupsArr[0].group);
-      //   console.log('Events:', groupsArr[0].events);
-      //   console.log('Top Members:', groupsArr[0].topMembers);
-      //   console.log('Extra Members:', groupsArr[0].extraMembers);
-      //   console.log('---------------------------------------');
-      // }
+      if (groupsArr.length > 0) {
+        console.log('Here are some of the data for the Group');
+        console.log('Groups:', groupsArr[0].group);
+        console.log('Events:', groupsArr[0].events);
+        console.log('Top Members:', groupsArr[0].topMembers);
+        console.log('Extra Members:', groupsArr[0].extraMembers);
+        console.log('---------------------------------------');
+      }
     };
     fetchData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFocused]);
 
   return (
     <View style={styles.container}>
