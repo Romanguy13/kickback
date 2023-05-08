@@ -27,11 +27,15 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
   useEffect(() => {
     const fetchData = async () => {
       const tempMembers = await new GroupMembers().getAll(group.id, 'groupId');
+      console.log('Temp Members:', tempMembers);
       // const tempEvents = await new Events().getAll(group.id, 'gId');
       const promises = tempMembers.map(async (member) => {
         const name = await idToName(member.userId);
         return { id: member.userId, name };
       });
+
+      // only take id and name field from tempMembers and store in tMembers
+      // const tMembers = tempMembers.map((member) => ({ id: member.userId, name: member.name }));
       const tMembers = await Promise.all(promises);
       setTopMembers(tMembers);
       console.log('Top Members:', topMembers);

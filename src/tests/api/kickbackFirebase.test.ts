@@ -37,7 +37,7 @@ test('Able to create a document', async () => {
   } as DocumentReference<any>);
 
   const returnedId: string = await kickbackFB.create(randomData);
-  expect(returnedId).toEqual('randomDocId');
+  expect(returnedId).toEqual('randomAddDocId');
 });
 
 test('Creating a document - Overriding ID', async () => {
@@ -56,8 +56,12 @@ test('Creating a document - Overriding ID', async () => {
     id: 'randomAddDocId',
   } as DocumentReference<any>);
 
+  (updateDoc as jest.Mock).mockResolvedValue({
+    id: 'randomUpdateDocId',
+  } as DocumentReference<any>);
+
   const returnedId = await kickbackFB.create(randomData, { overrideId: 'overrideId' });
-  expect(returnedId).toEqual('overrideId');
+  expect(returnedId).toEqual('randomAddDocId');
 });
 
 test('Creating a document - Disabling ID', async () => {

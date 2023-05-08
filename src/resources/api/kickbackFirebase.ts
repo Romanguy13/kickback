@@ -17,6 +17,7 @@ import {
   query,
   Query,
   startAfter,
+  deleteField,
 } from 'firebase/firestore';
 import { FB_DB } from '../../../firebaseConfig';
 import { KBFBCreate } from '../schema/kickbackFirebase.model';
@@ -42,19 +43,27 @@ export default class KickbackFirebase {
     const returnId: DocumentReference<DocumentData> = doc(dbRef);
 
     const documentData = {
-      id: returnId.id,
+      id: "",
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       ...data,
     };
 
+    const id = await addDoc(dbRef, documentData);
+
     if (extra) {
       if (extra.overrideId) {
-        documentData.id = extra.overrideId;
+        // documentData.id = extra.overrideId;
+        await updateDoc(id, { id: extra.overrideId });
       }
       if (extra.disableId) {
-        delete documentData.id;
+        // delete documentData.id;
+        await updateDoc(id, {
+          id: deleteField(),
+        });
       }
+    } else {
+      await updateDoc(id, { id: id.id });
     }
 
     console.log('documentData ID: ', documentData.id);
@@ -62,9 +71,9 @@ export default class KickbackFirebase {
     
 
     // Adds doc to collection
-    await addDoc(dbRef, documentData);
+    // await addDoc(dbRef, documentData);
 
-    return extra && extra.disableId ? '' : documentData.id;
+    return extra && extra.disableId ? '' : id.id;
   }
 
   public async getAll(userId: string, fieldName: string): Promise<DocumentData[]> {
