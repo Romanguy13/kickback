@@ -15,7 +15,7 @@ export default function HistoryCard({
     <View style={styles.container} key={eventId}>
       <View style={styles.textContainer}>
         <Text style={styles.text}>
-          {eventName} , {eventLocation}
+          {eventName} , {eventLocation} testing
         </Text>
       </View>
     </View>
