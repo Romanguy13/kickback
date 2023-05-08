@@ -166,10 +166,21 @@ export default function EventCreation({ navigation }: any) {
     setEventTime(moment().format('h:mm A'));
     setInvitedUsers([]);
   };
+
+  // Handle the onPress fo the cancel button
+  const handleCancel = () => {
+    navigation.navigate('Feed');
+    setEventTitle('');
+    setEventLocation('');
+    setEventDate(moment().format('MMM DD, YYYY'));
+    setEventTime(moment().format('h:mm A'));
+    setInvitedUsers([]);
+  };
+
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity onPress={() => navigation.navigate('Feed')}>
+        <TouchableOpacity onPress={handleCancel}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>
@@ -200,7 +211,11 @@ export default function EventCreation({ navigation }: any) {
           </View>
           <View style={styles.dateContainer}>
             <Text style={styles.dateLabel}>Date</Text>
-            <TouchableOpacity style={styles.dateInput} onPress={showDatepicker}>
+            <TouchableOpacity
+              style={styles.dateInput}
+              onPress={showDatepicker}
+              testID="date-appear"
+            >
               <Text style={styles.dateText} testID="date-input">
                 {eventDate}
               </Text>
@@ -220,8 +235,14 @@ export default function EventCreation({ navigation }: any) {
           </View>
           <View style={styles.timeContainer}>
             <Text style={styles.timeLabel}>Time</Text>
-            <TouchableOpacity style={styles.timeInput} testID="time-input" onPress={showTimepicker}>
-              <Text style={styles.timeText}>{eventTime}</Text>
+            <TouchableOpacity
+              style={styles.timeInput}
+              onPress={showTimepicker}
+              testID="time-appear"
+            >
+              <Text style={styles.timeText} testID="time-input">
+                {eventTime}
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.timePicker}>
@@ -260,7 +281,7 @@ export default function EventCreation({ navigation }: any) {
           </View>
         </KeyboardAvoidingView>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={handleCreateEvent}>
+          <Pressable style={styles.button} onPress={handleCreateEvent} testID="create-button">
             <Text style={styles.buttonText}>Create</Text>
           </Pressable>
         </View>
