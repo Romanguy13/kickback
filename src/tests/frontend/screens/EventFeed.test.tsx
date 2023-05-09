@@ -53,7 +53,7 @@ const renderWithNavigation = () =>
 
 test('Renders Login Screen - No events', async () => {
   // Set up the mock return value for getAll
-  (Events.prototype.getAll as jest.Mock).mockResolvedValue([] as EventReturn[]);
+  (Events.prototype.getAllByUserId as jest.Mock).mockResolvedValue([] as EventReturn[]);
 
   renderWithNavigation();
 

@@ -5,6 +5,8 @@ import {
   collection,
   CollectionReference,
   query,
+  serverTimestamp,
+  Timestamp,
 } from 'firebase/firestore';
 import { UpdatedUser, UserModel, UserReturn } from '../../resources/schema/user.model';
 import Users from '../../resources/api/users';
@@ -52,11 +54,15 @@ describe('Firestore Operations', () => {
         id: 'doc1',
         name: 'Isabella',
         email: 'isabella@bells.com',
+        createdAt: serverTimestamp() as Timestamp,
+        updatedAt: serverTimestamp() as Timestamp,
       },
       {
         id: 'doc2',
         name: 'Nook Crannny',
         email: 'nookcranny@bells.com',
+        createdAt: serverTimestamp() as Timestamp,
+        updatedAt: serverTimestamp() as Timestamp,
       },
     ];
 
@@ -79,6 +85,8 @@ describe('Firestore Operations', () => {
       id: 'isa45',
       name: 'Isabella',
       email: 'isabella@kickback.com',
+      createdAt: serverTimestamp() as Timestamp,
+      updatedAt: serverTimestamp() as Timestamp,
     };
 
     // Make sure that there is no connection with the database

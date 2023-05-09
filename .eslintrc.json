@@ -23,6 +23,7 @@
   },
   "plugins": ["react", "react-native", "@typescript-eslint", "import"],
   "rules": {
+    "global-require": "off",
     "no-console": "off",
     "react/style-prop-object": "off",
     "react/react-in-jsx-scope": "off",

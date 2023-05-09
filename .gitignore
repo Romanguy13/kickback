@@ -12,6 +12,9 @@ npm-debug.*
 web-build/
 coverage/**/*
 .env
+*.log
+*.log.*
+*.rules
 
 # Android/IntelliJ
 #
