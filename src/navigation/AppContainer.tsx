@@ -91,11 +91,7 @@ function AppContainer() {
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="GroupDetails" component={GroupDetails} />
         <Stack.Screen name="TabBar" component={TabBar} options={{ headerShown: false }} />
-        <Stack.Screen
-          name="EventDetail"
-          component={EventDetail}
-          options={{ headerShown: true, title: 'Details' }}
-        />
+        <Stack.Screen name="EventDetail" component={EventDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );
