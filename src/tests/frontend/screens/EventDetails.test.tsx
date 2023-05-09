@@ -17,22 +17,31 @@ const renderWithNavigation = () =>
   render(
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="EventDetail" component={EventDetail} initialParams={mockRoute} />
+        <Stack.Screen name="EventDetail" component={EventDetail} initialParams={params} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 
-const mockRoute = {
-  params: {
-    event: {
-      name: 'Test Event',
-      date: '2022-01-01',
-      time: '12:00 PM',
-      location: 'Test Location',
-      user: 'Test User',
-    },
+const params = {
+  event: {
+    name: 'Test Event',
+    date: '2022-01-01',
+    time: '12:00 PM',
+    location: 'Test Location',
+    user: 'Test User',
   },
 };
+
+test('Renders Event Screen', async () => {
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
+    {
+      userId: '1',
+      groupId: '1',
+    },
+  ]);
+
+  renderWithNavigation();
+});
 
 // describe('EventDetail', () => {
 //   it('renders event details correctly', async () => {
