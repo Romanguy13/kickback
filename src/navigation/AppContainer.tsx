@@ -14,6 +14,7 @@ import EventGroups from './screens/EventGroups';
 import EventHistory from './screens/EventHistory';
 import EventCreation from './screens/EventCreation';
 import EventDetail from './screens/EventDetail';
+import HistoryDetail from './screens/HistoryDetail';
 // import NavBar from './screens/NavBar';
 
 const Stack = createNativeStackNavigator();
@@ -92,6 +93,11 @@ function AppContainer() {
         <Stack.Screen
           name="EventDetail"
           component={EventDetail}
+          options={{ headerShown: true, title: 'Details' }}
+        />
+         <Stack.Screen
+          name="HistoryDetail"
+          component={HistoryDetail}
           options={{ headerShown: true, title: 'Details' }}
         />
       </Stack.Navigator>
