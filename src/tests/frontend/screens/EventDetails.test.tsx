@@ -5,11 +5,13 @@ import EventDetail from '../../../navigation/screens/EventDetail';
 import Events from '../../../resources/api/events';
 import GroupMembers from '../../../resources/api/groupMembers';
 import Groups from '../../../resources/api/groups';
+import Users from '../../../resources/api/users';
 
 // import '@testing-library/jest-dom';
 jest.mock('../../../resources/api/events');
 jest.mock('../../../resources/api/groupMembers');
 jest.mock('../../../resources/api/groups');
+jest.mock('../../../resources/api/users');
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +35,9 @@ const params = {
 };
 
 test('Renders Event Screen', async () => {
+  (Users.prototype.get as jest.Mock).mockResolvedValue({
+    name: 'Test User',
+  });
   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
     {
       userId: '1',
@@ -41,6 +46,9 @@ test('Renders Event Screen', async () => {
   ]);
 
   renderWithNavigation();
+  await waitFor(() => {
+    expect(screen.getByText('Test Event')).toBeTruthy();
+  });
 });
 
 // describe('EventDetail', () => {
