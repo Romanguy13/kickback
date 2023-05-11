@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { Alert, View } from 'react-native';
@@ -8,6 +8,8 @@ import EventFeed from '../../../navigation/screens/EventFeed';
 import Events from '../../../resources/api/events';
 import { EventReturn } from '../../../resources/schema/event.model';
 import Users from '../../../resources/api/users';
+import GroupMembers from '../../../resources/api/groupMembers';
+import { UserReturn } from '../../../resources/schema/user.model';
 
 jest.spyOn(Alert, 'alert');
 
@@ -18,6 +20,8 @@ jest.mock('firebase/firestore');
 jest.mock('../../../resources/api/events');
 
 jest.mock('../../../resources/api/users');
+
+jest.mock('../../../resources/api/groupMembers');
 
 const Stack = createNativeStackNavigator();
 function MockLogin(): JSX.Element {
@@ -55,6 +59,42 @@ const renderWithNavigation = () =>
       </Stack.Navigator>
     </NavigationContainer>
   );
+
+const renderWithNavigationAndData = async () => {
+  function TestEventCreation(): JSX.Element {
+    return (
+      <EventCreation
+        navigation={jest.fn()}
+        route={{
+          params: {
+            groupId: '123456',
+            topMembers: [
+              {
+                id: '12345',
+                email: 'john@wick.com',
+                name: 'John Wick',
+              },
+              {
+                id: '700',
+                email: 'jamesbond@kickback.com',
+                name: 'James Bond',
+              },
+            ],
+          },
+        }}
+      />
+    );
+  }
+
+  return render(
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="EventCreation" component={TestEventCreation} />
+        <Stack.Screen name="EventFeed" component={EventFeed} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 test('Renders Event Screen', async () => {
   renderWithNavigation();
@@ -275,4 +315,47 @@ test('Create Event', async () => {
   expect(inviteButton).not.toBeNull();
   // Create Here
   // fireEvent.press(createButton);
+});
+
+test('Create Event with Pre-Existing Group', async () => {
+  (Users.prototype.getUserByEmail as jest.Mock).mockResolvedValue({
+    id: '12345',
+    email: 'johnwick@kickback.com',
+    name: 'John Wick',
+  });
+  (Events.prototype.create as jest.Mock).mockResolvedValueOnce({});
+
+  await renderWithNavigationAndData();
+
+  await waitFor(() => {
+    expect(screen.getByText('James Bond')).toBeTruthy();
+  });
+
+  const titleInput = screen.getByTestId('title-input');
+  const locationInput = screen.getByTestId('location-input');
+  const dateInput = screen.getByTestId('date-input');
+  const timeInput = screen.getByTestId('time-input');
+  const createButton = screen.getByTestId('create-button');
+
+  // Title
+  fireEvent.changeText(titleInput, 'Test Event');
+  expect(titleInput).not.toBeNull();
+  // Location
+  fireEvent.changeText(locationInput, 'Testing Site');
+  expect(locationInput).not.toBeNull();
+  // Date
+  await fireEvent.press(dateInput);
+  const currentDate = new Date();
+  const tomorrow = new Date(currentDate.setDate(currentDate.getDate() + 1));
+  fireEvent.changeText(
+    dateInput,
+    `${tomorrow.getMonth() + 1}/${tomorrow.getDate()}/${tomorrow.getFullYear()}`
+  );
+  expect(dateInput).not.toBeNull();
+  // Time
+  await fireEvent.press(timeInput);
+  fireEvent.changeText(timeInput, '09:30 PM');
+  expect(timeInput).not.toBeNull();
+  // Create Here
+  fireEvent.press(createButton);
 });
