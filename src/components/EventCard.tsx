@@ -19,8 +19,7 @@ function EventCard({ event, navigation }: any) {
         <View>
           <View style={styles.headingContainer}>
             <Text style={[styles.heading]} accessibilityLabel={titleLabel}>
-              {''}
-              {event.name} {''}
+              {event.name} 
             </Text>
           </View>
           <View style={styles.dateTimeContainer}>
