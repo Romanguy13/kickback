@@ -42,7 +42,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
   };
 
   // Date Picker Config
-  const handleEventDateChange = (event, selectedDate) => {
+  const handleEventDateChange = (selectedDate: string) => {
     const currentDate = selectedDate || eventDate;
     setShowDatePicker(false);
     setEventDate(moment(currentDate).format('MMM DD, YYYY'));
@@ -52,7 +52,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
     setShowDatePicker(true);
   };
   // Time Picker Config
-  const handleEventTimeChange = (event, selectedTime) => {
+  const handleEventTimeChange = (selectedTime: string) => {
     const currentTime = selectedTime || eventTime;
     setShowTimePicker(false);
     setEventTime(moment(currentTime).format('h:mm A'));
@@ -315,6 +315,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
                 mode="date"
                 display="default"
                 textColor="dark"
+                testID="date-picker"
                 onChange={handleEventDateChange}
               />
             )}
