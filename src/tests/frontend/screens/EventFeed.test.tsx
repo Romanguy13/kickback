@@ -81,6 +81,28 @@ test('Renders Login Screen - With events', async () => {
 
   // Required to wait for the screen to load
   await waitFor(() => {
+    
+  });
+});
+
+test('Transitioning from Event Card to Event Details', async () => {
+  // Set up the mock return value for getAll
+  (Events.prototype.getAll as jest.Mock).mockResolvedValueOnce([
+    {
+      id: '123',
+      hostId: '123',
+      name: 'string',
+      location: 'string',
+      date: 'string',
+      time: 'string',
+      gId: '123',
+    },
+  ] as EventReturn[]);
+
+  renderWithNavigation();
+
+  // Required to wait for the screen to load
+  await waitFor(() => {
     // TODO: Components should appear here
   });
 });
