@@ -140,21 +140,23 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
         'userId'
       )) as GroupMemberModel[];
 
-      // First get all the groups that the user is in
-      const groupsPromise: Promise<GroupReturnModel>[] = groupsJoinTable.map(
-        (groupMember: GroupMemberModel) =>
-          new Groups().get(groupMember.groupId) as Promise<GroupReturnModel>
-      );
-
-      const groups: GroupReturnModel[] = await Promise.all(groupsPromise);
+      // // First get all the groups that the user is in
+      // const groupsPromise: Promise<GroupReturnModel>[] = groupsJoinTable.map(
+      //   (groupMember: GroupMemberModel) =>
+      //     new Groups().get(groupMember.groupId) as Promise<GroupReturnModel>
+      // );
+      //
+      // const groups: GroupReturnModel[] = await Promise.all(groupsPromise);
 
       // Check to see if the group members is the same as the invited users
-      const existingGroupCheck = groups.map(async (group: GroupReturnModel) => {
+      const existingGroupCheck = groupsJoinTable.map(async (group: GroupMemberModel) => {
         // Get all members from that group
         const groupMembers: GroupMemberModel[] = (await new GroupMembers().getAll(
-          group.id,
+          group.groupId,
           'groupId'
         )) as GroupMemberModel[];
+
+        console.log('GroupMembers WAS IT RETURNED:', groupMembers);
 
         // Get all users given the groupMembers
         const groupMembersPromise: Promise<UserReturn>[] = groupMembers.map(
@@ -171,6 +173,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
         // Check to see if the length is the same
         if (groupMembersUsers.length !== invitedUsers.length) {
+          console.log('Lengths are not the same');
           return;
         }
 
@@ -183,7 +186,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
         if (exists) {
           groupExists = true;
-          gId = group.id;
+          gId = group.groupId;
         }
       });
 
@@ -227,7 +230,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
     console.log('Event:', event);
     Event.create(event)
       .then(() => {
-        navigation.navigate('Feed');
+        navigation.navigate('EventFeed');
       })
       .catch(() => {
         Alert.alert('Error creating event.');
