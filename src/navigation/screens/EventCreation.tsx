@@ -123,7 +123,6 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
     try {
       // Trim the ends and make all lowercase
       userReturned = await user.getUserByEmail(userEmail.trim());
-      console.log(userReturned);
     } catch (e) {
       Alert.alert('Cannot find user.');
       return;
@@ -156,8 +155,6 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
           'groupId'
         )) as GroupMemberModel[];
 
-        console.log('GroupMembers WAS IT RETURNED:', groupMembers);
-
         // Get all users given the groupMembers
         const groupMembersPromise: Promise<UserReturn>[] = groupMembers.map(
           (groupMember: GroupMemberModel) =>
@@ -173,7 +170,6 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
         // Check to see if the length is the same
         if (groupMembersUsers.length !== invitedUsers.length) {
-          console.log('Lengths are not the same');
           return;
         }
 
@@ -181,8 +177,6 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
         const exists = groupMembersUsers.every((groupMemberUser: UserReturn) =>
           invitedUsers.some((invitedUser: UserReturn) => invitedUser.id === groupMemberUser.id)
         );
-
-        console.log('Exists:', exists);
 
         if (exists) {
           groupExists = true;
@@ -227,7 +221,6 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
     // Create event
     const Event = new Events();
-    console.log('Event:', event);
     Event.create(event)
       .then(() => {
         navigation.navigate('EventFeed');
@@ -251,7 +244,6 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
       // top members are the members that are in the group - ALL MEMBERS
       const { topMembers, groupId } = route.params;
       // remove current user from topMembers
-      console.log('gid', groupId);
       const filteredTopMembers = topMembers.filter((member: UserReturn) => member.id !== userId);
       setInvitedUsers(filteredTopMembers);
     }
