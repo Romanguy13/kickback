@@ -7,23 +7,72 @@ function HistoryCard({event, navigation}: any) {
   const handlePress = () => {
     navigation.navigate('HistoryDetail', { event });
   };
+  
+  //console.log("bf modified ", event.date)
+  
+  const MonthConverter = {
+    "January": 1,
+    "Feburay": 2, 
+    "March": 4,
+    "April": 4,
+    "May": 5,
+    "June": 6,
+    "July": 7,
+    "August": 8,
+    "September": 9,
+    "October": 10,
+    "November": 11,
+    "December": 12,
+  }
 
+  var str = event.date
+  var Month = str.substring(0, str.indexOf(' '))
+  
+  var date = str.substring(Month.length, Month.length+3)
+
+  var monthNumber = 0
+  for (const [month, number] of Object.entries(MonthConverter)) {
+    if (Month === month) {
+      monthNumber = number;
+      break;
+    }
+  }
+
+  var Year = str.substr(-4)
+
+  var event_date = new Date( parseInt(Year), parseInt(monthNumber)-1 , parseInt(date) )
+  
+  //Current date returns the next day 
+  const current_date = new Date()
+  
+
+  console.log("EVENT = ", event.name)
+  console.log("event date ", event_date )
+  console.log("curr curr ", current_date )
+  console.log(event_date < current_date ) 
   return (
-    <View style={[styles.card, styles.shadowProp]}>
-      <TouchableWithoutFeedback onPress={handlePress}>
-        <View>
-          <View style={styles.headingContainer}>
-            <Text style={[styles.heading]}>
-              {''}
-              {event.name} {''}
+    <>
+      {event_date < current_date? 
+      (
+        <View style={[styles.card, styles.shadowProp]}>
+
+        <TouchableWithoutFeedback onPress={handlePress}>
+          <View>
+            <View style={styles.headingContainer}>
+              <Text style={[styles.heading]}>
+                {''}
+                {event.name} {''}
+              </Text>
+            </View>
+            <Text style={styles.locationtext}>
+              {event.location}
             </Text>
           </View>
-          <Text style={styles.locationtext}>
-            {event.location}
-          </Text>
+        </TouchableWithoutFeedback>
+
         </View>
-      </TouchableWithoutFeedback>
-    </View>
+      ) : (<></>)}
+      </>
   );
 }
  

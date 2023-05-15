@@ -6,6 +6,7 @@ import Events from '../../resources/api/events';
 
 import HistoryCard from './HistoryCard';
 import { useIsFocused } from '@react-navigation/native';
+import { EventReturn } from '../../resources/schema/event.model';
 
 /*
 interface EventHistoryProps {
@@ -14,7 +15,7 @@ interface EventHistoryProps {
 */
 export default function EventHistory({ navigation }: any) {
   // Gather all the events
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<any>([]);
   const [refresh, setRefresh] = useState<boolean>(false);
   const isFocused = useIsFocused();
 
@@ -28,7 +29,7 @@ export default function EventHistory({ navigation }: any) {
       fetchData();
     }    
     setRefresh(false);
-    console.log(events);
+    //console.log(events);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh, isFocused]);
 
@@ -45,7 +46,7 @@ export default function EventHistory({ navigation }: any) {
             style={styles.cardList}
             data={events}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <HistoryCard event={item} navigation={navigation} />}
+            renderItem={({ item }) => <HistoryCard event={item} navigation={navigation}  />}
           />
       </View>
       {/* <NavBar navigation={navigation} /> */}
