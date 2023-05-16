@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react-native';
+import { render, waitFor, screen } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Alert, View } from 'react-native';
@@ -14,6 +14,15 @@ jest.mock('firebase/auth');
 jest.mock('firebase/firestore');
 
 jest.mock('../../../resources/api/events');
+
+const mockUseIsFocused = jest.fn();
+jest.mock('@react-navigation/native', () => {
+  const actualNav = jest.requireActual('@react-navigation/native');
+  return {
+    ...actualNav,
+    useIsFocused: () => mockUseIsFocused(),
+  };
+});
 
 const Stack = createNativeStackNavigator();
 function MockLogin(): JSX.Element {
@@ -53,22 +62,58 @@ const renderWithNavigation = () =>
 
 test('Renders History Screen - With events', async () => {
   // Set up the mock return value for getAll
-  (Events.prototype.getAll as jest.Mock).mockResolvedValueOnce([
+  (Events.prototype.getAllByUserId as jest.Mock).mockResolvedValueOnce([
     {
       id: '123',
       hostId: '123',
-      name: 'string',
-      location: 'string',
-      date: 'string',
-      time: 'string',
+      name: 'Event Title',
+      location: 'Event Location',
+      date: 'March 23, 2023',
+      time: '5:00 PM',
       gId: '123',
     },
   ] as EventReturn[]);
+
+  mockUseIsFocused.mockReturnValue(true); // or false
 
   renderWithNavigation();
 
   // Required to wait for the screen to load
   await waitFor(() => {
-    // TODO: Components should appear here
+    expect(screen.getByText('Previous KickBacks')).toBeTruthy();
+    expect(screen.getByText('Event Title')).toBeTruthy();
+    expect(screen.getByText('Event Location')).toBeTruthy();
+  });
+});
+
+/**
+ * Despite the fact that the mockUseIsFocused is set to false, the screen still renders
+ * However it does not render the data that is passed.
+ * Look at the test above for the same screen with the same data, but with mockUseIsFocused set to true
+ * to which IT IS rendered.
+ */
+test('Renders History Screen - No update', async () => {
+  // Set up the mock return value for getAll
+  (Events.prototype.getAllByUserId as jest.Mock).mockResolvedValueOnce([
+    {
+      id: '123',
+      hostId: '123',
+      name: 'Event Title',
+      location: 'Event Location',
+      date: 'March 23, 2023',
+      time: '5:00 PM',
+      gId: '123',
+    },
+  ] as EventReturn[]);
+
+  mockUseIsFocused.mockReturnValue(false);
+
+  renderWithNavigation();
+
+  // Required to wait for the screen to load
+  await waitFor(() => {
+    expect(screen.getByText('Previous KickBacks')).toBeTruthy();
+    expect(screen.queryByText('Event Title')).toBeNull();
+    expect(screen.queryByText('Event Location')).toBeNull();
   });
 });
