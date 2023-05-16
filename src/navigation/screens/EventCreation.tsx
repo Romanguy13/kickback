@@ -216,7 +216,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
     const Event = new Events();
     Event.create(event)
       .then(() => {
-        navigation.navigate('EventFeed');
+        navigation.navigate('Feed');
       })
       .catch(() => {
         Alert.alert('Error creating event.');
