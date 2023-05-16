@@ -10,6 +10,8 @@ function HistoryCard({event, navigation}: any) {
   
   //console.log("bf modified ", event.date)
   
+  /*
+  
   const MonthConverter = {
     "January": 1,
     "Feburay": 2, 
@@ -40,19 +42,25 @@ function HistoryCard({event, navigation}: any) {
 
   var Year = str.substr(-4)
 
-  var event_date = new Date( parseInt(Year), parseInt(monthNumber)-1 , parseInt(date) )
+  //var event_date = new Date( parseInt(Year), parseInt(monthNumber)-1 , parseInt(date) )
   
   //Current date returns the next day 
-  const current_date = new Date()
   
+  var current_date = new Date()
+  var event_date = new Date( `${parseInt(Year)}-${parseInt(monthNumber)}-${parseInt(date)}T12:00:00-07:00` )
+
 
   console.log("EVENT = ", event.name)
   console.log("event date ", event_date )
   console.log("curr curr ", current_date )
   console.log(event_date < current_date ) 
+
+
+  {event_date < current_date? 
+  */
   return (
-    <>
-      {event_date < current_date? 
+    
+      
       (
         <View style={[styles.card, styles.shadowProp]}>
 
@@ -71,8 +79,7 @@ function HistoryCard({event, navigation}: any) {
         </TouchableWithoutFeedback>
 
         </View>
-      ) : (<></>)}
-      </>
+      ) 
   );
 }
  
@@ -92,7 +99,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 322,
     height: 44,
-    backgroundColor: '#ff7000',
+    // this the card color 
+    backgroundColor: '#FFA500',
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
   },

@@ -8,11 +8,21 @@ import HistoryCard from './HistoryCard';
 import { useIsFocused } from '@react-navigation/native';
 import { EventReturn } from '../../resources/schema/event.model';
 
-/*
-interface EventHistoryProps {
-  navigation: any;
-}
-*/
+const monthMapping: Record<string, string> = {
+  "January": "01",
+  "February": "02",
+  "March": "03",
+  "April": "04",
+  "May": "05",
+  "June": "06",
+  "July": "07",
+  "August": "08",
+  'September': "09",
+  'October': "10",
+  "November": "11",
+  "December": "12",
+};
+
 export default function EventHistory({ navigation }: any) {
   // Gather all the events
   const [events, setEvents] = useState<any>([]);
@@ -22,14 +32,32 @@ export default function EventHistory({ navigation }: any) {
   useEffect(() => {
     const fetchData = async () => {
       const eventList = await new Events().getAll(FB_AUTH.currentUser?.uid as string);
-      setEvents(eventList);
+
+      // Filter through the events and only show the ones that have already passed
+      //Filter Function is lines 44 to 56 
+      const filteredEvents = eventList.filter((event: EventReturn) => {
+        const dateArr = event.date.split(' ');
+        const month = monthMapping[dateArr[0]];
+        const day = parseInt(dateArr[1].slice(0, -1)) + 1;
+        const year = dateArr[2];
+        const timeArr = event.time.split(':');
+        const partOfDay = timeArr[1].slice(-2);
+        const hour = partOfDay === 'PM' ? parseInt(timeArr[0], 10) + 12 : parseInt(timeArr[0], 10);
+        const minute = parseInt(timeArr[1].slice(0, -2), 10);
+
+        const eventDate = new Date(`${year}-${month}-${day}T${hour}:${minute}:00-7:00`);
+        const currentDate = new Date();
+    
+        return eventDate < currentDate;
+      });
+
+      setEvents(filteredEvents);
     };
 
     if (isFocused) {
       fetchData();
     }    
     setRefresh(false);
-    //console.log(events);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh, isFocused]);
 
@@ -49,21 +77,9 @@ export default function EventHistory({ navigation }: any) {
             renderItem={({ item }) => <HistoryCard event={item} navigation={navigation}  />}
           />
       </View>
-      {/* <NavBar navigation={navigation} /> */}
     </View>
-  );
+  ); 
 }
-
-/*
-
-
- {events.map((event) => (
-          <View key={event.id}>
-            <HistoryCard eventName={event.name} eventLocation={event.location} eventId={event.id} />
-          </View>
-        ))}
-*/
-
 
 const windowWidth = Dimensions.get('window').width;
 const fontScale = PixelRatio.getFontScale();
@@ -71,6 +87,7 @@ const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    //backgroundColor: '#FFFFFB',
     backgroundColor: '#FFFFFB',
     alignItems: 'center',
   },
