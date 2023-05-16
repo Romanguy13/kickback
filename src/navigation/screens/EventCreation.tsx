@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { EventModel } from '../../resources/schema/event.model';
@@ -20,7 +21,7 @@ import Groups from '../../resources/api/groups';
 import GroupMembers from '../../resources/api/groupMembers';
 import { UserReturn } from '../../resources/schema/user.model';
 
-export default function EventCreation({ navigation }: any) {
+export default function EventCreation({ navigation, route }: { navigation: any; route: any }) {
   const [eventTitle, setEventTitle] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [eventDate, setEventDate] = useState(moment().format('MMM DD, YYYY'));
@@ -28,7 +29,8 @@ export default function EventCreation({ navigation }: any) {
   const [eventTime, setEventTime] = useState(moment().format('h:mm A'));
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [inviteUserEmail, setInviteUserEmail] = useState('');
-  const [invitedUsers, setInvitedUsers] = useState<UserReturn[]>([]); // [email1, email2, ...
+  const [invitedUsers, setInvitedUsers] = useState<UserReturn[]>([]); // [email1, email2, ...'
+  const isFocused = useIsFocused();
 
   const handleEventTitleChange = (text: string) => {
     setEventTitle(text);
@@ -39,7 +41,7 @@ export default function EventCreation({ navigation }: any) {
   };
 
   // Date Picker Config
-  const handleEventDateChange = (event, selectedDate) => {
+  const handleEventDateChange = (selectedDate: string) => {
     const currentDate = selectedDate || eventDate;
     setShowDatePicker(false);
     setEventDate(moment(currentDate).format('MMM DD, YYYY'));
@@ -49,7 +51,7 @@ export default function EventCreation({ navigation }: any) {
     setShowDatePicker(true);
   };
   // Time Picker Config
-  const handleEventTimeChange = (event, selectedTime) => {
+  const handleEventTimeChange = (selectedTime: string) => {
     const currentTime = selectedTime || eventTime;
     setShowTimePicker(false);
     setEventTime(moment(currentTime).format('h:mm A'));
@@ -101,6 +103,10 @@ export default function EventCreation({ navigation }: any) {
       Alert.alert('Please fill in all fields.');
       return;
     }
+    if (invitedUsers.length === 0) {
+      Alert.alert('Please invite at least one user.');
+      return;
+    }
     // get current user id
     const userEmail = FB_AUTH.currentUser?.email;
     if (!userEmail) {
@@ -122,26 +128,45 @@ export default function EventCreation({ navigation }: any) {
       return;
     }
 
-    // Create Group
-    const gId: string = await new Groups().create({ name: 'Same Group Name' });
+    // // Create Group
+    // const gId: string = await new Groups().create({ name: 'Same Group Name' });
 
-    // Add the users to GroupMember
-    invitedUsers.map(async (currUser: UserReturn) => {
+    // // Add the users to GroupMember
+
+    // invitedUsers.map(async (currUser: UserReturn) => {
+    //   await new GroupMembers().create({
+    //     userId: currUser.id,
+    //     groupId: gId,
+    //   });
+    // });
+
+    // if there was no params passed in, create a new group
+    let gId: string;
+    if (!route.params) {
+      // Create Group
+      gId = await new Groups().create({ name: 'Same Group Name' });
+
+      // Add the users to GroupMember
+      invitedUsers.map(async (currUser: UserReturn) => {
+        await new GroupMembers().create({
+          userId: currUser.id,
+          groupId: gId,
+        });
+      });
+
+      // Add the current user to GroupMember
       await new GroupMembers().create({
-        userId: currUser.id,
+        userId: userReturned.id,
         groupId: gId,
       });
-    });
-
-    // Also add in the host as a group member
-    await new GroupMembers().create({
-      userId: FB_AUTH.currentUser?.uid as string,
-      groupId: gId,
-    });
+    } else {
+      // if there was params passed in, use the group id from the params
+      gId = route.params.groupId;
+    }
 
     // Event Model for later use
     const event: EventModel = {
-      hostId: FB_AUTH.currentUser?.uid as string,
+      hostId: userReturned.id,
       name: eventTitle,
       location: eventLocation,
       date: eventDate,
@@ -151,6 +176,7 @@ export default function EventCreation({ navigation }: any) {
 
     // Create event
     const Event = new Events();
+    console.log(event);
     Event.create(event)
       .then(() => {
         navigation.navigate('Feed');
@@ -166,10 +192,32 @@ export default function EventCreation({ navigation }: any) {
     setEventTime(moment().format('h:mm A'));
     setInvitedUsers([]);
   };
+
+  const userId = FB_AUTH.currentUser?.uid as string;
+
+  useEffect(() => {
+    if (route.params) {
+      const { topMembers, groupId } = route.params;
+      // remove current user from topMembers
+      console.log('gid', groupId);
+      const filteredTopMembers = topMembers.filter((member: UserReturn) => member.id !== userId);
+      setInvitedUsers(filteredTopMembers);
+    }
+  }, [isFocused, route.params, userId]);
+  // Handle the onPress fo the cancel button
+  const handleCancel = () => {
+    navigation.navigate('Feed');
+    setEventTitle('');
+    setEventLocation('');
+    setEventDate(moment().format('MMM DD, YYYY'));
+    setEventTime(moment().format('h:mm A'));
+    setInvitedUsers([]);
+  };
+
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity onPress={() => navigation.navigate('Feed')}>
+        <TouchableOpacity onPress={handleCancel}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>
@@ -200,7 +248,11 @@ export default function EventCreation({ navigation }: any) {
           </View>
           <View style={styles.dateContainer}>
             <Text style={styles.dateLabel}>Date</Text>
-            <TouchableOpacity style={styles.dateInput} onPress={showDatepicker}>
+            <TouchableOpacity
+              style={styles.dateInput}
+              onPress={showDatepicker}
+              testID="date-appear"
+            >
               <Text style={styles.dateText} testID="date-input">
                 {eventDate}
               </Text>
@@ -214,14 +266,21 @@ export default function EventCreation({ navigation }: any) {
                 mode="date"
                 display="default"
                 textColor="dark"
+                testID="date-picker"
                 onChange={handleEventDateChange}
               />
             )}
           </View>
           <View style={styles.timeContainer}>
             <Text style={styles.timeLabel}>Time</Text>
-            <TouchableOpacity style={styles.timeInput} testID="time-input" onPress={showTimepicker}>
-              <Text style={styles.timeText}>{eventTime}</Text>
+            <TouchableOpacity
+              style={styles.timeInput}
+              onPress={showTimepicker}
+              testID="time-appear"
+            >
+              <Text style={styles.timeText} testID="time-input">
+                {eventTime}
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.timePicker}>
@@ -260,7 +319,7 @@ export default function EventCreation({ navigation }: any) {
           </View>
         </KeyboardAvoidingView>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={handleCreateEvent}>
+          <Pressable style={styles.button} onPress={handleCreateEvent} testID="create-button">
             <Text style={styles.buttonText}>Create</Text>
           </Pressable>
         </View>

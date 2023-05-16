@@ -25,7 +25,7 @@ export default function EventFeed({ navigation }: any) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const eventList = await new Events().getAll(FB_AUTH.currentUser?.uid as string);
+      const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
       console.log('Event List:', eventList);
       setEvents(eventList);
     };
@@ -53,6 +53,8 @@ export default function EventFeed({ navigation }: any) {
       <Button title="Refresh" onPress={() => setRefresh(true)} />
       <View style={styles.textContainer}>
         <Text style={styles.text}>User's KickBacks</Text>
+      </View>
+      <View style={styles.cardContainer}>
         <FlatList
           style={styles.cardList}
           data={events}
@@ -87,6 +89,7 @@ const styles = StyleSheet.create({
   textContainer: {
     width: '100%',
     margin: 20,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   newText: {
@@ -125,10 +128,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
   },
+  cardContaoner: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   cardList: {
     width: '100%',
     height: '78%',
-    paddingLeft: 50,
-    paddingRight: 50,
+    alignSelf: 'center',
   },
 });

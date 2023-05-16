@@ -1,4 +1,4 @@
-import { DocumentData } from 'firebase/firestore';
+import { DocumentData, serverTimestamp, Timestamp } from 'firebase/firestore';
 import Events from '../../resources/api/events';
 import { EventReturn, UpdatedEvent, EventModel } from '../../resources/schema/event.model';
 import KickbackFirebase from '../../resources/api/kickbackFirebase';
@@ -44,6 +44,8 @@ describe('Firestore Operations', () => {
         name: 'Isabella',
         location: 'Santa Barbara',
         date: '2021-10-10',
+        createdAt: serverTimestamp() as Timestamp,
+        updatedAt: serverTimestamp() as Timestamp,
       },
       {
         gId: '202',
@@ -53,6 +55,8 @@ describe('Firestore Operations', () => {
         name: 'Isabella2',
         location: 'Santa Barbara2',
         date: '2021-10-10',
+        createdAt: serverTimestamp() as Timestamp,
+        updatedAt: serverTimestamp() as Timestamp,
       },
     ];
     // Groups that the user is in
@@ -71,7 +75,7 @@ describe('Firestore Operations', () => {
     (KickbackFirebase.prototype.getAll as jest.Mock).mockResolvedValueOnce([expectedData[0]]);
     (KickbackFirebase.prototype.getAll as jest.Mock).mockResolvedValueOnce([expectedData[1]]);
 
-    const returnedData: EventReturn[] = await eventClass.getAll('something');
+    const returnedData: EventReturn[] = await eventClass.getAllByUserId('something');
 
     console.log('Returned Data', returnedData);
 
@@ -94,6 +98,8 @@ describe('Firestore Operations', () => {
       name: 'Isabella',
       location: 'Santa Barbara',
       date: '2021-10-10',
+      createdAt: serverTimestamp() as Timestamp,
+      updatedAt: serverTimestamp() as Timestamp,
     };
 
     (KickbackFirebase.prototype.get as jest.Mock).mockReturnValueOnce(expectedData);

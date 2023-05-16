@@ -64,7 +64,7 @@ export default function SignUp({ navigation }: any) {
           const newUserClass = new Users();
           const id = await newUserClass.create(newUser, { overrideId: user.uid });
           console.log(id);
-          navigation.navigate('EventFeed');
+          navigation.navigate('TabBar');
         })
         .catch((error) => {
           console.log(error.code, error.message);
@@ -107,7 +107,8 @@ export default function SignUp({ navigation }: any) {
           value={newUserPassword}
           onChangeText={handleNewUserPasswordChange}
           aria-label="Password"
-          keyboardType="default"
+          // keyboardType="default"
+          textContentType="password"
           secureTextEntry
           placeholder="mypassword123"
           placeholderTextColor="gray"
@@ -119,7 +120,8 @@ export default function SignUp({ navigation }: any) {
           value={newUserConfirmPassword}
           onChangeText={handleNewUserPasswordConfirmChange}
           aria-label="Confirmed Password"
-          keyboardType="default"
+          // keyboardType="default"
+          textContentType="password"
           secureTextEntry
           placeholder="retype password"
           placeholderTextColor="gray"

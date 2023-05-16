@@ -13,6 +13,7 @@ import EventFeed from './screens/EventFeed';
 import EventGroups from './screens/EventGroups';
 import EventHistory from './screens/EventHistory';
 import EventCreation from './screens/EventCreation';
+import GroupDetails from './screens/GroupDetails';
 import EventDetail from './screens/EventDetail';
 import HistoryDetail from './screens/HistoryDetail';
 // import NavBar from './screens/NavBar';
@@ -89,17 +90,9 @@ function AppContainer() {
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="GroupDetails" component={GroupDetails} />
         <Stack.Screen name="TabBar" component={TabBar} options={{ headerShown: false }} />
-        <Stack.Screen
-          name="EventDetail"
-          component={EventDetail}
-          options={{ headerShown: true, title: 'Details' }}
-        />
-         <Stack.Screen
-          name="HistoryDetail"
-          component={HistoryDetail}
-          options={{ headerShown: true, title: 'Details' }}
-        />
+        <Stack.Screen name="EventDetail" component={EventDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );

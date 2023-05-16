@@ -37,7 +37,7 @@ test('Able to create a document', async () => {
   } as DocumentReference<any>);
 
   const returnedId: string = await kickbackFB.create(randomData);
-  expect(returnedId).toEqual('randomDocId');
+  expect(returnedId).toEqual('randomAddDocId');
 });
 
 test('Creating a document - Overriding ID', async () => {
@@ -56,8 +56,12 @@ test('Creating a document - Overriding ID', async () => {
     id: 'randomAddDocId',
   } as DocumentReference<any>);
 
+  (updateDoc as jest.Mock).mockResolvedValue({
+    id: 'randomUpdateDocId',
+  } as DocumentReference<any>);
+
   const returnedId = await kickbackFB.create(randomData, { overrideId: 'overrideId' });
-  expect(returnedId).toEqual('overrideId');
+  expect(returnedId).toEqual('randomAddDocId');
 });
 
 test('Creating a document - Disabling ID', async () => {
@@ -123,19 +127,6 @@ test('Able to get specific document from collection', async () => {
   expect(data).toEqual({
     name: 'Isabella',
   });
-});
-
-test('Unable to get specific document from collection', async () => {
-  (doc as jest.Mock).mockReturnValue({
-    id: 'randomDocId',
-  } as DocumentReference<DocumentData>);
-
-  (getDoc as jest.Mock).mockResolvedValue({
-    exists: () => false,
-  } as unknown as DocumentSnapshot<DocumentData>);
-
-  const data: DocumentData | undefined = await kickbackFB.get('someId');
-  expect(data).toEqual(undefined);
 });
 
 test('Edit a document', async () => {

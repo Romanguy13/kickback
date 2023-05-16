@@ -28,7 +28,7 @@ export default class Events extends KickbackFirebase {
     return super.edit(id, data);
   }
 
-  async getAll(userId: string): Promise<EventReturn[]> {
+  async getAllByUserId(userId: string): Promise<EventReturn[]> {
     const events: EventReturn[] = [];
     console.log('userId: ', userId);
     const groups: DocumentData[] = await new GroupMembers().getAll(userId, 'userId');
