@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
   },
-  cardContaoner: {
+  cardContainer: {
     flex: 1,
     width: '100%',
     alignItems: 'center',
