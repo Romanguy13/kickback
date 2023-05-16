@@ -57,6 +57,10 @@ export default function EventFeed({ navigation }: any) {
       <View style={styles.cardContainer}>
         <FlatList
           style={styles.cardList}
+          contentContainerStyle={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
           data={events}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <EventCard event={item} navigation={navigation} />}
