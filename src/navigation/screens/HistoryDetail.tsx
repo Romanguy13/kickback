@@ -5,15 +5,13 @@ function HistoryDetail({ route }: any) {
   const { event } = route.params;
   return (
     <View style={styles.container}>
-      <View style={styles.topContainer}>
-      </View>
+      <View style={styles.topContainer} />
       <View style={styles.bottomContainer}>
         <View style={styles.datetimeContainer}>
-          
           <View style={styles.dateContainer}>
             <Text style={styles.dateText}>{event.date}</Text>
           </View>
-          
+
           <View style={styles.timeContainer}>
             <Text style={styles.timeText}>{event.time}</Text>
           </View>
@@ -24,11 +22,10 @@ function HistoryDetail({ route }: any) {
 
           <View style={styles.voteContainer}>
             <Pressable style={styles.voteButton}>
-                <Image source={require('../../../assets/history_button.png')} />
+              <Image source={require('../../../assets/history_button.png')} />
             </Pressable>
           </View>
         </View>
-
 
         <View style={styles.locationpeopleContainer}>
           <View style={styles.locationContainer}>
@@ -155,22 +152,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 20,
   },
-  statusContainer:
-  {
+  statusContainer: {
     left: 10,
     width: 90,
     justifyContent: 'center',
     top: 170,
     backgroundColor: '#FF7000',
     height: 30,
-    borderRadius: 10
+    borderRadius: 10,
   },
-  statueText:
-  {
+  statueText: {
     fontSize: 20,
     color: 'white',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 export default HistoryDetail;

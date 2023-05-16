@@ -1,27 +1,27 @@
 import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
 import React, { useEffect, useState } from 'react';
-// import NavBar from '../NavBar';
 import { useIsFocused } from '@react-navigation/native';
+import moment from 'moment';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 
 import HistoryCard from './HistoryCard';
 import { EventReturn } from '../../resources/schema/event.model';
 
-const monthMapping: Record<string, string> = {
-  January: '01',
-  February: '02',
-  March: '03',
-  April: '04',
-  May: '05',
-  June: '06',
-  July: '07',
-  August: '08',
-  September: '09',
-  October: '10',
-  November: '11',
-  December: '12',
-};
+// const monthMapping: Record<string, string> = {
+//   January: '01',
+//   February: '02',
+//   March: '03',
+//   April: '04',
+//   May: '05',
+//   June: '06',
+//   July: '07',
+//   August: '08',
+//   September: '09',
+//   October: '10',
+//   November: '11',
+//   December: '12',
+// };
 
 export default function EventHistory({ navigation }: any) {
   // Gather all the events
@@ -30,28 +30,44 @@ export default function EventHistory({ navigation }: any) {
   const isFocused = useIsFocused();
 
   useEffect(() => {
+    console.log('isFocused', isFocused);
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
+      console.log(eventList);
 
       // Filter through the events and only show the ones that have already passed
       // Filter Function is lines 44 to 56
       const filteredEvents = eventList.filter((event: EventReturn) => {
-        const dateArr = event.date.split(' ');
-        const month = monthMapping[dateArr[0]];
-        const day = parseInt(dateArr[1].slice(0, -1), 10) + 1;
-        const year = dateArr[2];
-        const timeArr = event.time.split(':');
-        const partOfDay = timeArr[1].slice(-2);
-        const hour = partOfDay === 'PM' ? parseInt(timeArr[0], 10) + 12 : parseInt(timeArr[0], 10);
-        const minute = parseInt(timeArr[1].slice(0, -2), 10);
+        // Get today's date
+        const currentDate = moment();
+        const eventDate = moment(event.date, 'MMMM DD, YYYY');
 
-        const eventDate = new Date(`${year}-${month}-${day}T${hour}:${minute}:00-7:00`);
-        const currentDate = new Date();
+        return eventDate.isBefore(currentDate);
 
-        return eventDate < currentDate;
+        // const dateArr = event.date.split(' ');
+        // const month = monthMapping[dateArr[0]];
+        // const day = parseInt(dateArr[1].slice(0, -1), 10) + 1;
+        // const year = dateArr[2];
+        // const timeArr = event.time.split(':');
+        // const partOfDay = timeArr[1].slice(-2);
+        // const hour = partOfDay === 'PM' ? parseInt(timeArr[0], 10) + 12 : parseInt(timeArr[0], 10);
+        // const minute = parseInt(timeArr[1].slice(0, -2), 10);
+        //
+        // console.log(`${year}-${month}-${day}T${hour}:${(minute < 10 ? '0' : '') + minute}:00-7:00`);
+        //
+        // const eventDate = new Date(
+        //   `${year}-${month}-${day}T${hour}:${(minute < 10 ? '0' : '') + minute}:00-7:00`
+        // );
+        // const currentDate = new Date();
+        //
+        // console.log(eventDate);
+        // console.log(currentDate);
+        //
+        // return eventDate < currentDate;
       });
 
       setEvents(filteredEvents);
+      console.log(filteredEvents);
     };
 
     if (isFocused) {
@@ -65,7 +81,6 @@ export default function EventHistory({ navigation }: any) {
   // What to showcase on the screen
   return (
     <View style={styles.container}>
-      <Button title="Refresh" onPress={() => setRefresh(true)} />
       <View style={styles.textContainer}>
         <Text style={styles.text}>Previous {'\n'}KickBacks </Text>
       </View>

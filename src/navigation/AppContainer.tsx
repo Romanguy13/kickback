@@ -93,6 +93,11 @@ function AppContainer() {
         <Stack.Screen name="GroupDetails" component={GroupDetails} />
         <Stack.Screen name="TabBar" component={TabBar} options={{ headerShown: false }} />
         <Stack.Screen name="EventDetail" component={EventDetail} />
+        <Stack.Screen
+          name="HistoryDetail"
+          component={HistoryDetail}
+          options={{ headerShown: true, title: 'Details' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

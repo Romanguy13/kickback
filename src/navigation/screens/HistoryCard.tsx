@@ -1,105 +1,33 @@
 import React from 'react';
-import {TouchableWithoutFeedback, StyleSheet, View, Dimensions, PixelRatio, Text } from 'react-native';
+import { TouchableWithoutFeedback, StyleSheet, View, Text } from 'react-native';
+import { EventReturn } from '../../resources/schema/event.model';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
-function HistoryCard({event, navigation}: any) {
-
+function HistoryCard({ event, navigation }: { event: EventReturn; navigation: any }) {
   const handlePress = () => {
     navigation.navigate('HistoryDetail', { event });
   };
-  
-  //console.log("bf modified ", event.date)
-  
-  /*
-  
-  const MonthConverter = {
-    "January": 1,
-    "Feburay": 2, 
-    "March": 4,
-    "April": 4,
-    "May": 5,
-    "June": 6,
-    "July": 7,
-    "August": 8,
-    "September": 9,
-    "October": 10,
-    "November": 11,
-    "December": 12,
-  }
 
-  var str = event.date
-  var Month = str.substring(0, str.indexOf(' '))
-  
-  var date = str.substring(Month.length, Month.length+3)
-
-  var monthNumber = 0
-  for (const [month, number] of Object.entries(MonthConverter)) {
-    if (Month === month) {
-      monthNumber = number;
-      break;
-    }
-  }
-
-  var Year = str.substr(-4)
-
-  //var event_date = new Date( parseInt(Year), parseInt(monthNumber)-1 , parseInt(date) )
-  
-  //Current date returns the next day 
-  
-  var current_date = new Date()
-  var event_date = new Date( `${parseInt(Year)}-${parseInt(monthNumber)}-${parseInt(date)}T12:00:00-07:00` )
-
-
-  console.log("EVENT = ", event.name)
-  console.log("event date ", event_date )
-  console.log("curr curr ", current_date )
-  console.log(event_date < current_date ) 
-
-
-  {event_date < current_date? 
-  */
   return (
-    
-      
-      (
-        <View style={[styles.card, styles.shadowProp]}>
-
-        <TouchableWithoutFeedback onPress={handlePress}>
-          <View>
-            <View style={styles.headingContainer}>
-              <Text style={[styles.heading]}>
-                {''}
-                {event.name} {''}
-              </Text>
-            </View>
-            <Text style={styles.locationtext}>
-              {event.location}
-            </Text>
+    <View style={[styles.card, styles.shadowProp]}>
+      <TouchableWithoutFeedback onPress={handlePress}>
+        <View>
+          <View style={styles.headingContainer}>
+            <Text style={[styles.heading]}>{event.name}</Text>
           </View>
-        </TouchableWithoutFeedback>
-
+          <Text style={styles.locationtext}>{event.location}</Text>
         </View>
-      ) 
-  );
-}
- 
-/*  return (
-    <View style={styles.container} key={eventId}>
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>
-          {eventName} , {eventLocation} testing
-        </Text>
-      </View>
+      </TouchableWithoutFeedback>
     </View>
   );
-*/
+}
 
 const styles = StyleSheet.create({
   headingContainer: {
     position: 'absolute',
     width: 322,
     height: 44,
-    // this the card color 
+    // this the card color
     backgroundColor: '#FFA500',
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
@@ -154,7 +82,7 @@ const styles = StyleSheet.create({
     width: 250,
     fontWeight: '700',
     fontSize: 16,
-    //textAlign: 'center',
+    // textAlign: 'center',
     paddingLeft: 70,
   },
   card: {
@@ -180,7 +108,6 @@ const styles = StyleSheet.create({
 });
 
 export default HistoryCard;
-
 
 /*
 const windowWidth = Dimensions.get('window').width;
