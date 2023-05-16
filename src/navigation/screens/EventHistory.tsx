@@ -8,21 +8,6 @@ import Events from '../../resources/api/events';
 import HistoryCard from './HistoryCard';
 import { EventReturn } from '../../resources/schema/event.model';
 
-// const monthMapping: Record<string, string> = {
-//   January: '01',
-//   February: '02',
-//   March: '03',
-//   April: '04',
-//   May: '05',
-//   June: '06',
-//   July: '07',
-//   August: '08',
-//   September: '09',
-//   October: '10',
-//   November: '11',
-//   December: '12',
-// };
-
 export default function EventHistory({ navigation }: any) {
   // Gather all the events
   const [events, setEvents] = useState<EventReturn[]>([]);
@@ -43,27 +28,6 @@ export default function EventHistory({ navigation }: any) {
         const eventDate = moment(event.date, 'MMMM DD, YYYY');
 
         return eventDate.isBefore(currentDate);
-
-        // const dateArr = event.date.split(' ');
-        // const month = monthMapping[dateArr[0]];
-        // const day = parseInt(dateArr[1].slice(0, -1), 10) + 1;
-        // const year = dateArr[2];
-        // const timeArr = event.time.split(':');
-        // const partOfDay = timeArr[1].slice(-2);
-        // const hour = partOfDay === 'PM' ? parseInt(timeArr[0], 10) + 12 : parseInt(timeArr[0], 10);
-        // const minute = parseInt(timeArr[1].slice(0, -2), 10);
-        //
-        // console.log(`${year}-${month}-${day}T${hour}:${(minute < 10 ? '0' : '') + minute}:00-7:00`);
-        //
-        // const eventDate = new Date(
-        //   `${year}-${month}-${day}T${hour}:${(minute < 10 ? '0' : '') + minute}:00-7:00`
-        // );
-        // const currentDate = new Date();
-        //
-        // console.log(eventDate);
-        // console.log(currentDate);
-        //
-        // return eventDate < currentDate;
       });
 
       setEvents(filteredEvents);
