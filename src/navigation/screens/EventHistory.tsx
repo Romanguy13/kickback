@@ -9,36 +9,36 @@ import HistoryCard from './HistoryCard';
 import { EventReturn } from '../../resources/schema/event.model';
 
 const monthMapping: Record<string, string> = {
-  "January": "01",
-  "February": "02",
-  "March": "03",
-  "April": "04",
-  "May": "05",
-  "June": "06",
-  "July": "07",
-  "August": "08",
-  'September': "09",
-  'October': "10",
-  "November": "11",
-  "December": "12",
+  January: '01',
+  February: '02',
+  March: '03',
+  April: '04',
+  May: '05',
+  June: '06',
+  July: '07',
+  August: '08',
+  September: '09',
+  October: '10',
+  November: '11',
+  December: '12',
 };
 
 export default function EventHistory({ navigation }: any) {
   // Gather all the events
-  const [events, setEvents] = useState<any>([]);
+  const [events, setEvents] = useState<EventReturn[]>([]);
   const [refresh, setRefresh] = useState<boolean>(false);
   const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchData = async () => {
-      const eventList = await new Events().getAll(FB_AUTH.currentUser?.uid as string);
+      const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
 
       // Filter through the events and only show the ones that have already passed
-      //Filter Function is lines 44 to 56 
+      // Filter Function is lines 44 to 56
       const filteredEvents = eventList.filter((event: EventReturn) => {
         const dateArr = event.date.split(' ');
         const month = monthMapping[dateArr[0]];
-        const day = parseInt(dateArr[1].slice(0, -1)) + 1;
+        const day = parseInt(dateArr[1].slice(0, -1), 10) + 1;
         const year = dateArr[2];
         const timeArr = event.time.split(':');
         const partOfDay = timeArr[1].slice(-2);
@@ -47,7 +47,7 @@ export default function EventHistory({ navigation }: any) {
 
         const eventDate = new Date(`${year}-${month}-${day}T${hour}:${minute}:00-7:00`);
         const currentDate = new Date();
-    
+
         return eventDate < currentDate;
       });
 
@@ -56,7 +56,7 @@ export default function EventHistory({ navigation }: any) {
 
     if (isFocused) {
       fetchData();
-    }    
+    }
     setRefresh(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,7 +78,7 @@ export default function EventHistory({ navigation }: any) {
         />
       </View>
     </View>
-  ); 
+  );
 }
 
 const windowWidth = Dimensions.get('window').width;
@@ -87,14 +87,13 @@ const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: '#FFFFFB',
     backgroundColor: '#FFFFFB',
     alignItems: 'center',
   },
   cardContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   textContainer: {
     width: '100%',
