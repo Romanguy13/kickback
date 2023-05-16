@@ -20,6 +20,7 @@ import Events from '../../resources/api/events';
 import Groups from '../../resources/api/groups';
 import GroupMembers from '../../resources/api/groupMembers';
 import { UserReturn } from '../../resources/schema/user.model';
+import { GroupMemberModel, GroupModel, GroupReturnModel } from '../../resources/schema/group.model';
 
 export default function EventCreation({ navigation, route }: { navigation: any; route: any }) {
   const [eventTitle, setEventTitle] = useState('');
@@ -122,43 +123,87 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
     try {
       // Trim the ends and make all lowercase
       userReturned = await user.getUserByEmail(userEmail.trim());
-      console.log(userReturned);
     } catch (e) {
       Alert.alert('Cannot find user.');
       return;
     }
 
-    // // Create Group
-    // const gId: string = await new Groups().create({ name: 'Same Group Name' });
-
-    // // Add the users to GroupMember
-
-    // invitedUsers.map(async (currUser: UserReturn) => {
-    //   await new GroupMembers().create({
-    //     userId: currUser.id,
-    //     groupId: gId,
-    //   });
-    // });
-
     // if there was no params passed in, create a new group
-    let gId: string;
+    let gId = '';
     if (!route.params) {
-      // Create Group
-      gId = await new Groups().create({ name: 'Same Group Name' });
+      // FIRST - Check to see if the group exists
+      let groupExists = false;
 
-      // Add the users to GroupMember
-      invitedUsers.map(async (currUser: UserReturn) => {
+      const groupsJoinTable = (await new GroupMembers().getAll(
+        FB_AUTH.currentUser?.uid as string,
+        'userId'
+      )) as GroupMemberModel[];
+
+      // // First get all the groups that the user is in
+      // const groupsPromise: Promise<GroupReturnModel>[] = groupsJoinTable.map(
+      //   (groupMember: GroupMemberModel) =>
+      //     new Groups().get(groupMember.groupId) as Promise<GroupReturnModel>
+      // );
+      //
+      // const groups: GroupReturnModel[] = await Promise.all(groupsPromise);
+
+      // Check to see if the group members is the same as the invited users
+      const existingGroupCheck = groupsJoinTable.map(async (group: GroupMemberModel) => {
+        // Get all members from that group
+        const groupMembers: GroupMemberModel[] = (await new GroupMembers().getAll(
+          group.groupId,
+          'groupId'
+        )) as GroupMemberModel[];
+
+        // Get all users given the groupMembers
+        const groupMembersPromise: Promise<UserReturn>[] = groupMembers.map(
+          (groupMember: GroupMemberModel) =>
+            new Users().get(groupMember.userId) as Promise<UserReturn>
+        );
+        const groupMembersUsers: UserReturn[] = await Promise.all(groupMembersPromise);
+
+        // Remove the current user from the groupMembersUsers
+        groupMembersUsers.splice(
+          groupMembersUsers.findIndex((groupMemberUser) => groupMemberUser.id === userReturned.id),
+          1
+        );
+
+        // Check to see if the length is the same
+        if (groupMembersUsers.length !== invitedUsers.length) {
+          return;
+        }
+
+        // Check to see if the groupMembersUsers is the same as the invitedUsers
+        const exists = groupMembersUsers.every((groupMemberUser: UserReturn) =>
+          invitedUsers.some((invitedUser: UserReturn) => invitedUser.id === groupMemberUser.id)
+        );
+
+        if (exists) {
+          groupExists = true;
+          gId = group.groupId;
+        }
+      });
+
+      await Promise.all(existingGroupCheck);
+
+      // Create Group
+      if (!groupExists) {
+        gId = await new Groups().create({ name: 'Same Group Name' });
+
+        // Add the users to GroupMember
+        invitedUsers.map(async (currUser: UserReturn) => {
+          await new GroupMembers().create({
+            userId: currUser.id,
+            groupId: gId,
+          });
+        });
+
+        // Add the current user to GroupMember
         await new GroupMembers().create({
-          userId: currUser.id,
+          userId: userReturned.id,
           groupId: gId,
         });
-      });
-
-      // Add the current user to GroupMember
-      await new GroupMembers().create({
-        userId: userReturned.id,
-        groupId: gId,
-      });
+      }
     } else {
       // if there was params passed in, use the group id from the params
       gId = route.params.groupId;
@@ -176,10 +221,9 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
     // Create event
     const Event = new Events();
-    console.log(event);
     Event.create(event)
       .then(() => {
-        navigation.navigate('Feed');
+        navigation.navigate('EventFeed');
       })
       .catch(() => {
         Alert.alert('Error creating event.');
@@ -197,9 +241,9 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
   useEffect(() => {
     if (route.params) {
+      // top members are the members that are in the group - ALL MEMBERS
       const { topMembers, groupId } = route.params;
       // remove current user from topMembers
-      console.log('gid', groupId);
       const filteredTopMembers = topMembers.filter((member: UserReturn) => member.id !== userId);
       setInvitedUsers(filteredTopMembers);
     }
