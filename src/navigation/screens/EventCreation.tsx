@@ -42,9 +42,9 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
   };
 
   // Date Picker Config
-  const handleEventDateChange = (selectedDate: string) => {
+  const handleEventDateChange = (selectedDate: Date | undefined) => {
     const currentDate = selectedDate || eventDate;
-    setShowDatePicker(false);
+    // setShowDatePicker(false);
     setEventDate(moment(currentDate).format('MMM DD, YYYY'));
   };
 
@@ -52,9 +52,10 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
     setShowDatePicker(true);
   };
   // Time Picker Config
-  const handleEventTimeChange = (selectedTime: string) => {
+  const handleEventTimeChange = (selectedTime: Date | undefined) => {
     const currentTime = selectedTime || eventTime;
-    setShowTimePicker(false);
+    console.log(currentTime);
+    // setShowTimePicker(false);
     setEventTime(moment(currentTime).format('h:mm A'));
   };
 
@@ -138,14 +139,6 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
         FB_AUTH.currentUser?.uid as string,
         'userId'
       )) as GroupMemberModel[];
-
-      // // First get all the groups that the user is in
-      // const groupsPromise: Promise<GroupReturnModel>[] = groupsJoinTable.map(
-      //   (groupMember: GroupMemberModel) =>
-      //     new Groups().get(groupMember.groupId) as Promise<GroupReturnModel>
-      // );
-      //
-      // const groups: GroupReturnModel[] = await Promise.all(groupsPromise);
 
       // Check to see if the group members is the same as the invited users
       const existingGroupCheck = groupsJoinTable.map(async (group: GroupMemberModel) => {
@@ -305,13 +298,15 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
           <View style={styles.datePicker}>
             {showDatePicker && (
               <DateTimePicker
-                value={new Date()}
+                value={moment(eventDate, 'MMM DD, YYYY').toDate()}
                 minimumDate={new Date()}
                 mode="date"
                 display="default"
                 textColor="dark"
                 testID="date-picker"
-                onChange={handleEventDateChange}
+                onChange={(event, date) => {
+                  handleEventDateChange(date);
+                }}
               />
             )}
           </View>
@@ -334,7 +329,9 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
                 mode="time"
                 display="default"
                 is24Hour={false}
-                onChange={handleEventTimeChange}
+                onChange={(event, date) => {
+                  handleEventTimeChange(date);
+                }}
               />
             )}
           </View>
