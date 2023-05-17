@@ -52,10 +52,10 @@ function EventDetail({ route, navigation }: any) {
             {canVote ? (
               <>
                 <Pressable style={styles.voteButton}>
-                  <Image source={require('../../../assets/accept-button.svg')} />
+                  <Image source={require('../../../assets/accept-button.png')} />
                 </Pressable>
                 <Pressable style={styles.voteButton}>
-                  <Image source={require('../../../assets/reject-button.svg')} />
+                  <Image source={require('../../../assets/reject-button.png')} />
                 </Pressable>
               </>
             ) : (
