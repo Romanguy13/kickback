@@ -39,7 +39,11 @@ function EventDetail({ route, navigation }: any) {
       </View>
       <View style={styles.bottomContainer}>
         <View style={styles.datetimeContainer}>
-          <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Pressable
+            testID="backButton"
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
             <Ionicons name="arrow-back-outline" size={40} color="white" />
           </Pressable>
           <View style={styles.dateContainer}>
@@ -52,10 +56,10 @@ function EventDetail({ route, navigation }: any) {
           <View style={styles.voteContainer}>
             {canVote ? (
               <>
-                <Pressable style={styles.voteButton}>
+                <Pressable style={styles.voteButton} testID="accept-button">
                   <Image source={require('../../../assets/accept-button.png')} />
                 </Pressable>
-                <Pressable style={styles.voteButton}>
+                <Pressable style={styles.voteButton} testID="decline-button">
                   <Image source={require('../../../assets/reject-button.png')} />
                 </Pressable>
               </>

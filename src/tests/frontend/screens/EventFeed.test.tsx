@@ -25,7 +25,7 @@ jest.mock('@react-navigation/native', () => {
 });
 
 const Stack = createNativeStackNavigator();
-function MockLogin(): JSX.Element {
+function MockDetail(): JSX.Element {
   return <View />;
 }
 
@@ -55,7 +55,7 @@ const renderWithNavigation = () =>
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="EventFeed" component={EventFeed} />
-        <Stack.Screen name="Login" component={MockLogin} />
+        <Stack.Screen name="EventDetail" component={MockDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );
