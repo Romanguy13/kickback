@@ -5,7 +5,7 @@ import { EventReturn } from '../../resources/schema/event.model';
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
 function HistoryCard({ event, navigation }: { event: EventReturn; navigation: any }) {
   const handlePress = () => {
-    navigation.navigate('HistoryDetail', { event });
+    navigation.navigate('EventDetail', { event });
   };
 
   return (

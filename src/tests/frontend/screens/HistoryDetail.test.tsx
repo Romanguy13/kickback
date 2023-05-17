@@ -31,7 +31,7 @@ const renderWithNavigation = () =>
     </NavigationContainer>
   );
 
-test('Renders Event Screen', async () => {
+test('Renders History Details Screen', async () => {
   renderWithNavigation();
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
