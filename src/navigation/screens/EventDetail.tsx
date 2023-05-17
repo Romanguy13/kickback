@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View, ScrollView, Image } from 'react-nati
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
+import { UserReturn } from '../../resources/schema/user.model';
 
 function EventDetail({ route, navigation }: any) {
   const { event, canVote } = route.params;
@@ -73,8 +74,8 @@ function EventDetail({ route, navigation }: any) {
 
           <View style={styles.usersContainer}>
             <ScrollView style={styles.usersScroll}>
-              {topMembers.map((member) => (
-                <Text key={member.userId} style={styles.usersText}>
+              {topMembers.map((member: UserReturn) => (
+                <Text key={member.id} style={styles.usersText}>
                   {member.name}
                 </Text>
               ))}
