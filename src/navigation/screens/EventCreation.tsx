@@ -210,6 +210,10 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
       date: eventDate,
       time: eventTime,
       gId,
+      inviteeStatus: invitedUsers.map((invitedUser: UserReturn) => ({
+        id: invitedUser.id,
+        status: null,
+      })),
     };
 
     // Create event

@@ -81,7 +81,7 @@ test('Renders Login Screen - With events', async () => {
 
   // Required to wait for the screen to load
   await waitFor(() => {
-    
+    // TODO: Components should appear here
   });
 });
 
