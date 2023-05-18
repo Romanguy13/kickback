@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View, ScrollView } from 'react-native';
+import { Pressable, StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
@@ -7,7 +7,7 @@ import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
 
 function EventDetail({ route, navigation }: any) {
-  const { event } = route.params;
+  const { event, canVote } = route.params;
 
   const [currentEvent, setCurrentEvent] = useState<any>(event);
 
@@ -51,7 +51,6 @@ function EventDetail({ route, navigation }: any) {
   useEffect(() => {
     const fetchData = async () => {
       const tempMembers = await new GroupMembers().getAll(event.gId, 'groupId');
-      console.log('Temp Members:', tempMembers);
 
       const promises = tempMembers.map(async (member) => {
         const name = await idToName(member.userId);
@@ -70,7 +69,6 @@ function EventDetail({ route, navigation }: any) {
         return 0;
       });
       setTopMembers(tMembers);
-      console.log('Top Members:', topMembers);
     };
 
     fetchData();
@@ -125,10 +123,12 @@ function EventDetail({ route, navigation }: any) {
           )}
           {/* comment out for now */}
         </View>
+
         <View style={styles.locationpeopleContainer}>
           <View style={styles.locationContainer}>
             <Text style={styles.locationTitleText}>{event.location}</Text>
           </View>
+
           <View style={styles.usersContainer}>
             <ScrollView style={styles.usersScroll}>
               {topMembers.map((member) => (
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     flexDirection: 'row',
-    height: '100%',
+    height: '84%',
   },
   backButton: {
     borderRadius: 100,
@@ -216,11 +216,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#272222',
     width: '30%',
     flexDirection: 'column',
+    justifyContent: 'center',
   },
   dateContainer: {
     width: '100%',
     justifyContent: 'center',
-    top: 120,
   },
   dateText: {
     color: '#FFFFFB',
@@ -233,7 +233,6 @@ const styles = StyleSheet.create({
   timeContainer: {
     width: '100%',
     justifyContent: 'center',
-    top: 130,
   },
   timeText: {
     color: '#FFFFFB',
@@ -246,7 +245,6 @@ const styles = StyleSheet.create({
   voteContainer: {
     width: '100%',
     justifyContent: 'center',
-    top: 220,
   },
   voteButton: {
     borderRadius: 100,

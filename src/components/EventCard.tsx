@@ -3,14 +3,14 @@ import { TouchableWithoutFeedback, StyleSheet, Text, View } from 'react-native';
 
 function EventCard({ event, navigation }: any) {
   // accessibility labels
-  let timeLabel = 'time of the event';
-  let dateLabel = 'date';
-  let titleLabel = 'title of event';
-  let statusLabel = 'status';
-  let locationLabel = 'location of event';
+  const timeLabel = 'time of the event';
+  const dateLabel = 'date';
+  const titleLabel = 'title of event';
+  const statusLabel = 'status';
+  const locationLabel = 'location of event';
 
   const handlePress = () => {
-    navigation.navigate('EventDetail', { event });
+    navigation.navigate('EventDetail', { event, canVote: true });
   };
 
   return (
@@ -19,7 +19,7 @@ function EventCard({ event, navigation }: any) {
         <View>
           <View style={styles.headingContainer}>
             <Text style={[styles.heading]} accessibilityLabel={titleLabel}>
-              {event.name} 
+              {event.name}
             </Text>
           </View>
           <View style={styles.dateTimeContainer}>
