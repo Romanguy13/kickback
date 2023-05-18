@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
@@ -29,7 +29,6 @@ export default function EventHistory({ navigation }: any) {
 
         return eventDate.isBefore(currentDate);
       });
-
       setEvents(filteredEvents);
       console.log(filteredEvents);
     };

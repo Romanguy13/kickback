@@ -1,17 +1,9 @@
 /* eslint-disable global-require */
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Dimensions,
-  PixelRatio,
-  FlatList,
-  Button,
-} from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, FlatList } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 // import NavBar from '../NavBar';
+import moment from 'moment';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 import { EventReturn } from '../../resources/schema/event.model';
@@ -27,7 +19,14 @@ export default function EventFeed({ navigation }: any) {
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
       console.log('Event List:', eventList);
-      setEvents(eventList);
+
+      const filteredEvents = eventList.filter((event: EventReturn) => {
+        const currentDate = moment();
+        const eventDate = moment(event.date, 'MMMM DD, YYYY');
+        return eventDate.isSameOrAfter(currentDate);
+      });
+
+      setEvents(filteredEvents);
     };
 
     if (isFocused) {
