@@ -50,7 +50,7 @@ export default function EventFeed({ navigation }: any) {
   ) : (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>User's KickBacks</Text>
+        <Text style={styles.text}>KickBacks</Text>
       </View>
       <View style={styles.cardContainer}>
         <FlatList

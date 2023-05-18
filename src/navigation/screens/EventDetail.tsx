@@ -3,16 +3,49 @@ import { Pressable, StyleSheet, Text, View, ScrollView, Image } from 'react-nati
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
-import { UserReturn } from '../../resources/schema/user.model';
+import Events from '../../resources/api/events';
+import { FB_AUTH } from '../../../firebaseConfig';
 
 function EventDetail({ route, navigation }: any) {
   const { event, canVote } = route.params;
+
+  const [currentEvent, setCurrentEvent] = useState<any>(event);
 
   const [topMembers, setTopMembers] = useState<any[]>([]);
 
   const idToName = async (id: string) => {
     const user = await new Users().get(id);
     return user.name;
+  };
+
+  const handleInviteeStatus = async (status: boolean) => {
+    // edit the event in the database to reflect the new status based on the user's response
+    const currentUserId = FB_AUTH.currentUser?.uid;
+    const { inviteeStatus } = currentEvent;
+
+    // find the inviteeStatus that corresponds to the current user id
+    const inviteeFound = inviteeStatus.find(
+      (invitee: { id: string; status: boolean | null }) => invitee.id === currentUserId
+    );
+    if (inviteeFound) {
+      inviteeFound.status = status;
+    }
+
+    // change the inviteeStatus to reflect the user's response
+    const newInviteeStatus = inviteeStatus.map(
+      (invitee: { id: string; status: boolean | null }) => {
+        if (invitee.id === currentUserId) {
+          return inviteeFound;
+        }
+        return invitee;
+      }
+    );
+
+    // update the event in the database
+    await new Events().edit(event.id, { inviteeStatus: newInviteeStatus });
+
+    // update the event in the state
+    setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
   };
 
   useEffect(() => {
@@ -25,12 +58,22 @@ function EventDetail({ route, navigation }: any) {
       });
 
       const tMembers = await Promise.all(promises);
+      // sort the members so the host is first
+      tMembers.sort((a, b) => {
+        if (a.id === currentEvent.hostId) {
+          return -1;
+        }
+        if (b.id === currentEvent.hostId) {
+          return 1;
+        }
+        return 0;
+      });
       setTopMembers(tMembers);
     };
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentEvent]);
 
   return (
     <View style={styles.container}>
@@ -40,7 +83,7 @@ function EventDetail({ route, navigation }: any) {
       <View style={styles.bottomContainer}>
         <View style={styles.datetimeContainer}>
           <Pressable
-            testID="backButton"
+            accessibilityLabel="Back Button"
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
@@ -52,23 +95,33 @@ function EventDetail({ route, navigation }: any) {
           <View style={styles.timeContainer}>
             <Text style={styles.timeText}>{event.time}</Text>
           </View>
-
-          <View style={styles.voteContainer}>
-            {canVote ? (
-              <>
-                <Pressable style={styles.voteButton} testID="accept-button">
-                  <Image source={require('../../../assets/accept-button.png')} />
-                </Pressable>
-                <Pressable style={styles.voteButton} testID="decline-button">
-                  <Image source={require('../../../assets/reject-button.png')} />
-                </Pressable>
-              </>
-            ) : (
-              <Pressable style={styles.voteButton}>
-                <Image source={require('../../../assets/history_button.png')} />
+          {FB_AUTH.currentUser?.uid !== event.hostId && (
+            <View style={styles.voteContainer}>
+              <Pressable onPress={() => handleInviteeStatus(true)} style={styles.voteButton}>
+                <Text
+                  style={{
+                    color: '#FF7000',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Yes
+                </Text>
               </Pressable>
-            )}
-          </View>
+              <Pressable onPress={() => handleInviteeStatus(false)} style={styles.voteButton}>
+                <Text
+                  style={{
+                    color: '#FF7000',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  No
+                </Text>
+              </Pressable>
+            </View>
+          )}
+          {/* comment out for now */}
         </View>
 
         <View style={styles.locationpeopleContainer}>
@@ -78,10 +131,43 @@ function EventDetail({ route, navigation }: any) {
 
           <View style={styles.usersContainer}>
             <ScrollView style={styles.usersScroll}>
-              {topMembers.map((member: UserReturn) => (
-                <Text key={member.id} style={styles.usersText}>
-                  {member.name}
-                </Text>
+              {topMembers.map((member) => (
+                <View
+                  key={member.id}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    margin: 10,
+                  }}
+                >
+                  <Text key={member.userId} style={styles.usersText}>
+                    {member.name}
+                  </Text>
+                  <View
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+
+                      marginRight: 10,
+                    }}
+                  >
+                    {member.id === event.hostId && (
+                      <Ionicons name="star" size={20} color="#FF7000" />
+                    )}
+                    {member.id !== event.hostId &&
+                      currentEvent.inviteeStatus.find(
+                        (invitee: { id: string; status: boolean | null }) =>
+                          invitee.id === member.id
+                      ).status === true && <Ionicons name="checkmark" size={20} color="#FF7000" />}
+                    {member.id !== event.hostId &&
+                      currentEvent.inviteeStatus.find(
+                        (invitee: { id: string; status: boolean | null }) =>
+                          invitee.id === member.id
+                      ).status === false && <Ionicons name="close" size={20} color="#FF7000" />}
+                  </View>
+                </View>
               ))}
             </ScrollView>
           </View>
@@ -205,14 +291,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   usersScroll: {
-    width: '100%',
+    margin: 10,
+    height: '100%',
   },
   usersText: {
     color: '#FFFFFB',
     fontSize: 20,
     fontWeight: 'bold',
-    paddingTop: 20,
-    marginHorizontal: 20,
     justifyContent: 'flex-end',
   },
 });

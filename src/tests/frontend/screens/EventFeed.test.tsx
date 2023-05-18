@@ -6,6 +6,7 @@ import React from 'react';
 import EventFeed from '../../../navigation/screens/EventFeed';
 import { EventReturn } from '../../../resources/schema/event.model';
 import Events from '../../../resources/api/events';
+import GroupMembers from '../../../resources/api/groupMembers';
 
 jest.spyOn(Alert, 'alert');
 
@@ -14,6 +15,8 @@ jest.mock('firebase/auth');
 jest.mock('firebase/firestore');
 
 jest.mock('../../../resources/api/events');
+
+jest.mock('../../../resources/api/groupMembers');
 
 const mockUseIsFocused = jest.fn();
 jest.mock('@react-navigation/native', () => {
