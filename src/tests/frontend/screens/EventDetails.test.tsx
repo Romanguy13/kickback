@@ -1,28 +1,25 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View } from 'react-native';
 import EventDetail from '../../../navigation/screens/EventDetail';
-import Events from '../../../resources/api/events';
 import GroupMembers from '../../../resources/api/groupMembers';
-import Groups from '../../../resources/api/groups';
 import Users from '../../../resources/api/users';
 
-// import '@testing-library/jest-dom';
 jest.mock('../../../resources/api/events');
 jest.mock('../../../resources/api/groupMembers');
 jest.mock('../../../resources/api/groups');
 jest.mock('../../../resources/api/users');
+jest.mock('@react-navigation/native', () => ({
+  ...jest.requireActual('@react-navigation/native'),
+  useNavigation: () => ({
+    navigation: jest.fn(),
+    navigate: jest.fn(),
+    goBack: jest.fn(),
+  }),
+}));
 
 const Stack = createNativeStackNavigator();
-
-const renderWithNavigation = () =>
-  render(
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="EventDetail" component={EventDetail} initialParams={params} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
 
 const params = {
   event: {
@@ -33,6 +30,71 @@ const params = {
     user: 'Test User',
   },
 };
+
+function MockFeed() {
+  return <View />;
+}
+
+/**
+ * This is a test for the EventHistory screen.
+ */
+const renderWithNavigation = () =>
+  render(
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="EventDetail" component={EventDetail} initialParams={params} />
+        <Stack.Screen name="EventFeed" component={MockFeed} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+
+const renderView = async () =>
+  render(
+    <EventDetail
+      route={{
+        params: {
+          ...params,
+          canVote: true,
+        },
+      }}
+      navigation={{
+        navigate: jest.fn(),
+        goBack: jest.fn(),
+      }}
+    />
+  );
+const renderWithNavigationForEventDetails = () =>
+  render(
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="EventDetail"
+          component={EventDetail}
+          initialParams={{ ...params, canVote: true }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+
+test('Renders History Screen', async () => {
+  (Users.prototype.get as jest.Mock).mockResolvedValue({
+    name: 'Test User',
+  });
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
+    {
+      userId: '1',
+      groupId: '1',
+    },
+  ]);
+
+  renderWithNavigationForEventDetails();
+  await waitFor(() => {
+    expect(screen.getByText('Test Event')).toBeTruthy();
+  });
+
+  expect(screen.getByTestId('accept-button')).toBeTruthy();
+  expect(screen.getByTestId('decline-button')).toBeTruthy();
+});
 
 test('Renders Event Screen', async () => {
   (Users.prototype.get as jest.Mock).mockResolvedValue({
@@ -51,21 +113,23 @@ test('Renders Event Screen', async () => {
   });
 });
 
-// describe('EventDetail', () => {
-//   it('renders event details correctly', async () => {
-//     (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValueOnce([
-//       {
-//         userId: '1',
-//         groupId: '1',
-//       },
-//     ]);
-//     const { getByText } = render(<EventDetail route={mockRoute} />);
+test('Renders History Screen - Go Back', async () => {
+  (Users.prototype.get as jest.Mock).mockResolvedValue({
+    name: 'Test User',
+  });
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
+    {
+      userId: '1',
+      groupId: '1',
+    },
+  ]);
 
-//     await waitFor(() => {
-//       expect(getByText('Test Event')).toBeTruthy();
-//       // expect(getByText('2022-01-01')).toBeTruthy();
-//       // expect(getByText('12:00 PM')).toBeTruthy();
-//       // expect(getByText('Test Location')).toBeTruthy();
-//     });
-//   });
-// });
+  await renderView();
+  await waitFor(() => {
+    expect(screen.getByText('Test Event')).toBeTruthy();
+  });
+
+  const backButton = screen.getByTestId('backButton');
+
+  await fireEvent.press(backButton);
+});

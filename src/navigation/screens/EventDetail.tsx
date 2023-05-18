@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View, ScrollView } from 'react-native';
+import { Pressable, StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
+import { UserReturn } from '../../resources/schema/user.model';
 
 function EventDetail({ route, navigation }: any) {
-  const { event } = route.params;
+  const { event, canVote } = route.params;
 
   const [topMembers, setTopMembers] = useState<any[]>([]);
 
@@ -17,7 +18,6 @@ function EventDetail({ route, navigation }: any) {
   useEffect(() => {
     const fetchData = async () => {
       const tempMembers = await new GroupMembers().getAll(event.gId, 'groupId');
-      console.log('Temp Members:', tempMembers);
 
       const promises = tempMembers.map(async (member) => {
         const name = await idToName(member.userId);
@@ -26,7 +26,6 @@ function EventDetail({ route, navigation }: any) {
 
       const tMembers = await Promise.all(promises);
       setTopMembers(tMembers);
-      console.log('Top Members:', topMembers);
     };
 
     fetchData();
@@ -40,7 +39,11 @@ function EventDetail({ route, navigation }: any) {
       </View>
       <View style={styles.bottomContainer}>
         <View style={styles.datetimeContainer}>
-          <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Pressable
+            testID="backButton"
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
             <Ionicons name="arrow-back-outline" size={40} color="white" />
           </Pressable>
           <View style={styles.dateContainer}>
@@ -49,23 +52,34 @@ function EventDetail({ route, navigation }: any) {
           <View style={styles.timeContainer}>
             <Text style={styles.timeText}>{event.time}</Text>
           </View>
-          {/* <View style={styles.voteContainer}>
-            <Pressable style={styles.voteButton}>
-              <Text>Yes</Text>
-            </Pressable>
-            <Pressable style={styles.voteButton}>
-              <Text>No</Text>
-            </Pressable>
-          </View> */}
+
+          <View style={styles.voteContainer}>
+            {canVote ? (
+              <>
+                <Pressable style={styles.voteButton} testID="accept-button">
+                  <Image source={require('../../../assets/accept-button.png')} />
+                </Pressable>
+                <Pressable style={styles.voteButton} testID="decline-button">
+                  <Image source={require('../../../assets/reject-button.png')} />
+                </Pressable>
+              </>
+            ) : (
+              <Pressable style={styles.voteButton}>
+                <Image source={require('../../../assets/history_button.png')} />
+              </Pressable>
+            )}
+          </View>
         </View>
+
         <View style={styles.locationpeopleContainer}>
           <View style={styles.locationContainer}>
             <Text style={styles.locationTitleText}>{event.location}</Text>
           </View>
+
           <View style={styles.usersContainer}>
             <ScrollView style={styles.usersScroll}>
-              {topMembers.map((member) => (
-                <Text key={member.userId} style={styles.usersText}>
+              {topMembers.map((member: UserReturn) => (
+                <Text key={member.id} style={styles.usersText}>
                   {member.name}
                 </Text>
               ))}
@@ -98,7 +112,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     flexDirection: 'row',
-    height: '100%',
+    height: '84%',
   },
   backButton: {
     borderRadius: 100,
@@ -116,11 +130,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#272222',
     width: '30%',
     flexDirection: 'column',
+    justifyContent: 'center',
   },
   dateContainer: {
     width: '100%',
     justifyContent: 'center',
-    top: 120,
   },
   dateText: {
     color: '#FFFFFB',
@@ -133,7 +147,6 @@ const styles = StyleSheet.create({
   timeContainer: {
     width: '100%',
     justifyContent: 'center',
-    top: 130,
   },
   timeText: {
     color: '#FFFFFB',
@@ -146,7 +159,6 @@ const styles = StyleSheet.create({
   voteContainer: {
     width: '100%',
     justifyContent: 'center',
-    top: 220,
   },
   voteButton: {
     borderRadius: 100,
