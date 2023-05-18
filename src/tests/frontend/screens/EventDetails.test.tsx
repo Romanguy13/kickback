@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View } from 'react-native';
 import EventDetail from '../../../navigation/screens/EventDetail';
 import Events from '../../../resources/api/events';
 import GroupMembers from '../../../resources/api/groupMembers';
@@ -50,7 +49,7 @@ const renderWithNavigation = (params: any) =>
   render(
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="EventDetail" component={EventDetail} initialParams={params} />
+        <Stack.Screen name="EventDetail" component={EventDetail} initialParams={{ ...params }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -82,6 +81,7 @@ const params = {
       },
     ],
   },
+  canVote: true,
 };
 
 const params2 = {
@@ -111,30 +111,33 @@ const params2 = {
       },
     ],
   },
+  canVote: true,
 };
 
+const groupMemberReturn = [
+  {
+    userId: '1',
+    groupId: '1',
+  },
+  {
+    userId: '2',
+    groupId: '1',
+  },
+  {
+    userId: '3',
+    groupId: '1',
+  },
+  {
+    userId: '4',
+    groupId: '1',
+  },
+];
+
 test('Renders Event Screen', async () => {
   (Users.prototype.get as jest.Mock).mockResolvedValue({
     name: 'Test User',
   });
-  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
-    {
-      userId: '2',
-      groupId: '1',
-    },
-    {
-      userId: '1',
-      groupId: '1',
-    },
-    {
-      userId: '3',
-      groupId: '1',
-    },
-    {
-      userId: '4',
-      groupId: '1',
-    },
-  ]);
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
 
   renderWithNavigation(params);
   await waitFor(() => {
@@ -142,28 +145,11 @@ test('Renders Event Screen', async () => {
   });
 });
 
-test('Click "Yes" for status update', async () => {
+test('Click accept for status update', async () => {
   (Users.prototype.get as jest.Mock).mockResolvedValue({
     name: 'Test User',
   });
-  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
-    {
-      userId: '2',
-      groupId: '1',
-    },
-    {
-      userId: '1',
-      groupId: '1',
-    },
-    {
-      userId: '3',
-      groupId: '1',
-    },
-    {
-      userId: '4',
-      groupId: '1',
-    },
-  ]);
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
   (Events.prototype.edit as jest.Mock).mockResolvedValue({
     id: '1',
     status: true,
@@ -174,34 +160,17 @@ test('Click "Yes" for status update', async () => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
 
-  fireEvent.press(screen.getByText('Yes'));
+  fireEvent.press(screen.getByTestId('accept-invite'));
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
 });
 
-test('Click "No" for status update', async () => {
+test('Click decline for status update', async () => {
   (Users.prototype.get as jest.Mock).mockResolvedValue({
     name: 'Test User',
   });
-  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
-    {
-      userId: '1',
-      groupId: '1',
-    },
-    {
-      userId: '2',
-      groupId: '1',
-    },
-    {
-      userId: '3',
-      groupId: '1',
-    },
-    {
-      userId: '4',
-      groupId: '1',
-    },
-  ]);
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
   (Events.prototype.edit as jest.Mock).mockResolvedValue({
     id: '4',
     status: false,
@@ -212,66 +181,17 @@ test('Click "No" for status update', async () => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
 
-  fireEvent.press(screen.getByText('No'));
+  fireEvent.press(screen.getByTestId('decline-invite'));
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
 });
 
-// test('Click the "Go Back" button', async () => {
-//   (Users.prototype.get as jest.Mock).mockResolvedValue({
-//     name: 'Test User',
-//   });
-//   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
-//     {
-//       userId: '1',
-//       groupId: '1',
-//     },
-//     {
-//       userId: '2',
-//       groupId: '1',
-//     },
-//     {
-//       userId: '3',
-//       groupId: '1',
-//     },
-//     {
-//       userId: '4',
-//       groupId: '1',
-//     },
-//   ]);
-
-//   renderWithNavigationForEventDetails();
-//   await waitFor(() => {
-//     expect(screen.getByText('Test Event')).toBeTruthy();
-//   });
-
-//   expect(screen.getByTestId('accept-button')).toBeTruthy();
-//   expect(screen.getByTestId('decline-button')).toBeTruthy();
-// });
-
 test('Renders Event Screen', async () => {
   (Users.prototype.get as jest.Mock).mockResolvedValue({
     name: 'Test User',
   });
-  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
-    {
-      userId: '2',
-      groupId: '1',
-    },
-    {
-      userId: '1',
-      groupId: '1',
-    },
-    {
-      userId: '3',
-      groupId: '1',
-    },
-    {
-      userId: '4',
-      groupId: '1',
-    },
-  ]);
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
 
   renderWithNavigation(params);
   await waitFor(() => {
@@ -279,28 +199,11 @@ test('Renders Event Screen', async () => {
   });
 });
 
-test('Click "Yes" for status update', async () => {
+test('Click accept for status update', async () => {
   (Users.prototype.get as jest.Mock).mockResolvedValue({
     name: 'Test User',
   });
-  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
-    {
-      userId: '2',
-      groupId: '1',
-    },
-    {
-      userId: '1',
-      groupId: '1',
-    },
-    {
-      userId: '3',
-      groupId: '1',
-    },
-    {
-      userId: '4',
-      groupId: '1',
-    },
-  ]);
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
   (Events.prototype.edit as jest.Mock).mockResolvedValue({
     id: '1',
     status: true,
@@ -311,34 +214,17 @@ test('Click "Yes" for status update', async () => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
 
-  fireEvent.press(screen.getByText('Yes'));
+  fireEvent.press(screen.getByTestId('accept-invite'));
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
 });
 
-test('Click "No" for status update', async () => {
+test('Click decline for status update', async () => {
   (Users.prototype.get as jest.Mock).mockResolvedValue({
     name: 'Test User',
   });
-  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
-    {
-      userId: '1',
-      groupId: '1',
-    },
-    {
-      userId: '2',
-      groupId: '1',
-    },
-    {
-      userId: '3',
-      groupId: '1',
-    },
-    {
-      userId: '4',
-      groupId: '1',
-    },
-  ]);
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
   (Events.prototype.edit as jest.Mock).mockResolvedValue({
     id: '4',
     status: false,
@@ -349,7 +235,7 @@ test('Click "No" for status update', async () => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
 
-  fireEvent.press(screen.getByText('No'));
+  fireEvent.press(screen.getByTestId('decline-invite'));
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
@@ -359,24 +245,7 @@ test('Click the "Go Back" button', async () => {
   (Users.prototype.get as jest.Mock).mockResolvedValue({
     name: 'Test User',
   });
-  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
-    {
-      userId: '1',
-      groupId: '1',
-    },
-    {
-      userId: '2',
-      groupId: '1',
-    },
-    {
-      userId: '3',
-      groupId: '1',
-    },
-    {
-      userId: '4',
-      groupId: '1',
-    },
-  ]);
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
 
   renderWithNavigation(params);
   await waitFor(() => {

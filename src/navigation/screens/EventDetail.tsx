@@ -95,29 +95,27 @@ function EventDetail({ route, navigation }: any) {
           <View style={styles.timeContainer}>
             <Text style={styles.timeText}>{event.time}</Text>
           </View>
-          {FB_AUTH.currentUser?.uid !== event.hostId && (
+          {canVote && FB_AUTH.currentUser?.uid !== event.hostId ? (
             <View style={styles.voteContainer}>
-              <Pressable onPress={() => handleInviteeStatus(true)} style={styles.voteButton}>
-                <Text
-                  style={{
-                    color: '#FF7000',
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Yes
-                </Text>
+              <Pressable
+                testID="accept-invite"
+                onPress={() => handleInviteeStatus(true)}
+                style={styles.voteButton}
+              >
+                <Ionicons name="person-add-outline" size={30} color="#FF7000" />
               </Pressable>
-              <Pressable onPress={() => handleInviteeStatus(false)} style={styles.voteButton}>
-                <Text
-                  style={{
-                    color: '#FF7000',
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                  }}
-                >
-                  No
-                </Text>
+              <Pressable
+                testID="decline-invite"
+                onPress={() => handleInviteeStatus(false)}
+                style={styles.voteButton}
+              >
+                <Ionicons name="person-remove-outline" size={30} color="#FF7000" />
+              </Pressable>
+            </View>
+          ) : (
+            <View style={styles.voteContainer}>
+              <Pressable style={styles.voteButton}>
+                <Ionicons name="repeat-outline" size={30} color="#FF7000" />
               </Pressable>
             </View>
           )}
@@ -154,18 +152,18 @@ function EventDetail({ route, navigation }: any) {
                     }}
                   >
                     {member.id === event.hostId && (
-                      <Ionicons name="star" size={20} color="#FF7000" />
+                      <Ionicons name="star" size={25} color="#FF7000" />
                     )}
                     {member.id !== event.hostId &&
                       currentEvent.inviteeStatus.find(
                         (invitee: { id: string; status: boolean | null }) =>
                           invitee.id === member.id
-                      ).status === true && <Ionicons name="checkmark" size={20} color="#FF7000" />}
+                      ).status === true && <Ionicons name="checkmark" size={25} color="#FF7000" />}
                     {member.id !== event.hostId &&
                       currentEvent.inviteeStatus.find(
                         (invitee: { id: string; status: boolean | null }) =>
                           invitee.id === member.id
-                      ).status === false && <Ionicons name="close" size={20} color="#FF7000" />}
+                      ).status === false && <Ionicons name="close" size={25} color="#FF7000" />}
                   </View>
                 </View>
               ))}
