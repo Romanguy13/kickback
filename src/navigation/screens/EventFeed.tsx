@@ -34,7 +34,6 @@ export default function EventFeed({ navigation }: any) {
       fetchData();
     }
     setRefresh(false);
-    console.log(events);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh, isFocused]);
 
@@ -50,9 +49,8 @@ export default function EventFeed({ navigation }: any) {
     </View>
   ) : (
     <View style={styles.container}>
-      <Button title="Refresh" onPress={() => setRefresh(true)} />
       <View style={styles.textContainer}>
-        <Text style={styles.text}>User's KickBacks</Text>
+        <Text style={styles.text}>KickBacks</Text>
       </View>
       <View style={styles.cardContainer}>
         <FlatList
