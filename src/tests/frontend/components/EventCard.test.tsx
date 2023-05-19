@@ -1,8 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Alert, View } from 'react-native';
 import React from 'react';
+import moment from 'moment';
 import { Timestamp } from 'firebase/firestore';
 import EventCard from '../../../components/EventCard';
 
@@ -28,7 +26,9 @@ const status2 = [
   },
 ];
 
-const renderSimple = async (status: any) =>
+const renderSimple = async (status: any) => {
+  const randomTime = moment('10/10/2023 10:00 PM', 'MM/DD/YYYY hh:mm AA').toDate();
+
   render(
     <EventCard
       event={{
@@ -36,8 +36,7 @@ const renderSimple = async (status: any) =>
         hostId: '12346',
         name: 'Test Event',
         location: 'Test Location',
-        date: '10/10/2023',
-        time: '10:00',
+        datetime: Timestamp.fromDate(randomTime),
         gId: '12347',
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
@@ -48,6 +47,7 @@ const renderSimple = async (status: any) =>
       }}
     />
   );
+};
 
 interface FirebaseUser {
   uid: string;
@@ -76,8 +76,8 @@ test('Renders Event Card', async () => {
 
   expect(screen.getByText('Test Event')).toBeTruthy();
   expect(screen.getByText('Test Location')).toBeTruthy();
-  expect(screen.getByText('10:00')).toBeTruthy();
-  expect(screen.getByText('10/10/2023')).toBeTruthy();
+  expect(screen.getByText('10:00 PM')).toBeTruthy();
+  expect(screen.getByText('October 10, 2023')).toBeTruthy();
   expect(screen.getByText('pending')).toBeTruthy();
 });
 
@@ -86,9 +86,10 @@ test('Click Event Card', async () => {
 
   expect(screen.getByText('Test Event')).toBeTruthy();
   expect(screen.getByText('Test Location')).toBeTruthy();
-  expect(screen.getByText('10:00')).toBeTruthy();
-  expect(screen.getByText('10/10/2023')).toBeTruthy();
   expect(screen.getByText('pending')).toBeTruthy();
+  expect(screen.getByText('10:00 PM')).toBeTruthy();
+  expect(screen.getByText('October 10, 2023')).toBeTruthy();
+
   await fireEvent.press(screen.getByText('Test Event'));
 });
 
@@ -97,8 +98,8 @@ test('Participant is going', async () => {
 
   expect(screen.getByText('Test Event')).toBeTruthy();
   expect(screen.getByText('Test Location')).toBeTruthy();
-  expect(screen.getByText('10:00')).toBeTruthy();
-  expect(screen.getByText('10/10/2023')).toBeTruthy();
+  expect(screen.getByText('10:00 PM')).toBeTruthy();
+  expect(screen.getByText('October 10, 2023')).toBeTruthy();
   expect(screen.getByText('going')).toBeTruthy();
 });
 

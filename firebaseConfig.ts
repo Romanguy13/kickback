@@ -24,4 +24,4 @@ export const FB_AUTH = getAuth(FB_APP);
 export const FB_DB = getFirestore(FB_APP);
 
 // connectFirestoreEmulator(FB_DB, 'localhost', 8080);
-// connectAuthEmulator(FB_AUTH, "http://127.0.0.1:9099");
+// connectAuthEmulator(FB_AUTH, 'http://127.0.0.1:9099');
