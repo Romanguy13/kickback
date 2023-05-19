@@ -53,6 +53,7 @@ jest.mock('../../../../firebaseConfig', () => ({
     currentUser,
   },
 }));
+
 const renderWithNavigation = () =>
   render(
     <NavigationContainer>
@@ -86,6 +87,12 @@ test('Renders Event Feed Screen - With events', async () => {
       date: 'August 25, 2029',
       time: '5:00 PM',
       gId: '123',
+      inviteeStatus: [
+        {
+          id: '123',
+          status: true,
+        },
+      ],
     },
   ] as EventReturn[]);
 
@@ -113,6 +120,27 @@ test('Transitioning from Event Card to Event Details', async () => {
       date: 'July 29, 2029',
       time: '9:00 PM',
       gId: '123',
+      inviteeStatus: [
+        {
+          id: '123',
+          status: true,
+        },
+      ],
+    },
+    {
+      id: '456',
+      hostId: '12345',
+      name: 'SURL Concert',
+      location: 'San Francisco',
+      date: 'August 25, 2028',
+      time: '5:00 PM',
+      gId: '123',
+      inviteeStatus: [
+        {
+          id: '123',
+          status: true,
+        },
+      ],
     },
   ] as EventReturn[]);
 
