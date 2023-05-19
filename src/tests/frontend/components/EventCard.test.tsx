@@ -14,6 +14,7 @@ const renderSimple = async () =>
         name: 'Test Event',
         location: 'Test Location',
         date: '10/10/2023',
+        status: null,
         time: '10:00',
         gId: '12347',
         createdAt: 'Test Date',
@@ -32,6 +33,7 @@ test('Renders Event Card', async () => {
   expect(screen.getByText('Test Location')).toBeTruthy();
   expect(screen.getByText('10:00')).toBeTruthy();
   expect(screen.getByText('10/10/2023')).toBeTruthy();
+  expect(screen.getByText('Pending')).toBeTruthy();
 });
 
 test('Click Event Card', async () => {
@@ -41,6 +43,8 @@ test('Click Event Card', async () => {
   expect(screen.getByText('Test Location')).toBeTruthy();
   expect(screen.getByText('10:00')).toBeTruthy();
   expect(screen.getByText('10/10/2023')).toBeTruthy();
-
+  expect(screen.getByText('Pending')).toBeTruthy();
   await fireEvent.press(screen.getByText('Test Event'));
 });
+
+// will need to update tests to check when the status changes to going
