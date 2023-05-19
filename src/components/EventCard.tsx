@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableWithoutFeedback, StyleSheet, Text, View } from 'react-native';
 import moment from 'moment';
 import { EventReturn } from '../resources/schema/event.model';
+import { FB_AUTH } from '../../firebaseConfig';
 
 function EventCard({ event, navigation }: { event: EventReturn; navigation: any }) {
   // accessibility labels
@@ -16,6 +17,35 @@ function EventCard({ event, navigation }: { event: EventReturn; navigation: any 
 
   const handlePress = () => {
     navigation.navigate('EventDetail', { event, canVote: true });
+  };
+
+  console.log('event', event);
+
+  const checkStatus = (currEvent: EventReturn) => {
+    // check the status of the the user in the event based on their id
+    const currentUserId = FB_AUTH.currentUser?.uid;
+    const { inviteeStatus } = currEvent;
+
+    // find the inviteeStatus that corresponds to the current user id
+    const inviteeFound = inviteeStatus.find(
+      (invitee: { id: string; status: boolean | null }) => invitee.id === currentUserId
+    );
+
+    const status = inviteeFound?.status;
+
+    // check if the user is the host
+    if (currentUserId === currEvent.hostId) {
+      return 'host';
+    }
+
+    // if the user has not responded to the invite, return 'pending'
+    if (status === null) {
+      return 'pending';
+    }
+    if (status) {
+      return 'going';
+    }
+    return 'not going';
   };
 
   return (
@@ -36,7 +66,9 @@ function EventCard({ event, navigation }: { event: EventReturn; navigation: any 
             </Text>
           </View>
           <View style={styles.statusContainer}>
-            <Text accessibilityLabel={statusLabel}>{event.status}</Text>
+            <Text accessibilityLabel={statusLabel} style={styles.statusLabel}>
+              {checkStatus(event)}
+            </Text>
           </View>
           <Text style={styles.locationtext} accessibilityLabel={locationLabel}>
             {event.location}
@@ -75,7 +107,7 @@ const styles = StyleSheet.create({
   },
   datetext: {
     position: 'absolute',
-    paddingTop: 20,
+    paddingTop: 10,
     fontWeight: '700',
     fontSize: 22,
     lineHeight: 25,
@@ -95,7 +127,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 24,
     lineHeight: 72,
-    paddingTop: 52,
+    paddingTop: 42,
     textAlign: 'center',
     color: '#FFFDF8',
   },
@@ -124,10 +156,23 @@ const styles = StyleSheet.create({
   },
   statusContainer: {
     position: 'absolute',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: 84,
     height: 21.66,
+    bottom: -33,
+    left: 20,
     borderRadius: 25,
-    backgroundColor: '#ff7000',
+    backgroundColor: '#ff6800',
+  },
+  statusLabel: {
+    position: 'absolute',
+    fontWeight: '700',
+    fontSize: 15,
+    lineHeight: 25,
+    textAlign: 'center',
+    color: '#FFFDF8',
   },
 });
 

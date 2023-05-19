@@ -27,7 +27,13 @@ export default function EventFeed({ navigation }: any) {
         return eventDate.isSameOrAfter(currentDate);
       });
 
-      setEvents(filteredEvents);
+      const sortedEvents = filteredEvents.sort((a: EventReturn, b: EventReturn) => {
+        const aDate = moment(a.date, 'MMMM DD, YYYY');
+        const bDate = moment(b.date, 'MMMM DD, YYYY');
+        return aDate.isAfter(bDate) ? 1 : -1;
+      });
+
+      setEvents(sortedEvents);
     };
 
     if (isFocused) {
@@ -108,6 +114,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
+    bottom: -18
   },
   imageContainer: {
     flex: 1,
