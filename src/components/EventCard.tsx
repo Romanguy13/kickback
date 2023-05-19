@@ -1,13 +1,18 @@
 import React from 'react';
 import { TouchableWithoutFeedback, StyleSheet, Text, View } from 'react-native';
+import moment from 'moment';
+import { EventReturn } from '../resources/schema/event.model';
 
-function EventCard({ event, navigation }: any) {
+function EventCard({ event, navigation }: { event: EventReturn; navigation: any }) {
   // accessibility labels
   const timeLabel = 'time of the event';
   const dateLabel = 'date';
   const titleLabel = 'title of event';
   const statusLabel = 'status';
   const locationLabel = 'location of event';
+
+  // Event Date
+  const eventDate = moment(event.datetime.toDate());
 
   const handlePress = () => {
     navigation.navigate('EventDetail', { event, canVote: true });
@@ -24,10 +29,10 @@ function EventCard({ event, navigation }: any) {
           </View>
           <View style={styles.dateTimeContainer}>
             <Text style={styles.datetext} accessibilityLabel={dateLabel}>
-              {event.date}
+              {eventDate.format('MMMM DD, YYYY')}
             </Text>
             <Text style={[styles.timetext]} accessibilityLabel={timeLabel}>
-              {event.time}
+              {eventDate.format('h:mm A')}
             </Text>
           </View>
           <View style={styles.statusContainer}>

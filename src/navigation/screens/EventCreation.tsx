@@ -16,6 +16,8 @@ import {
 import { useIsFocused } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import firebase from 'firebase/compat';
+import { Timestamp } from 'firebase/firestore';
 import { EventModel } from '../../resources/schema/event.model';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Users from '../../resources/api/users';
@@ -166,11 +168,8 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
       await Promise.all(existingGroupCheck);
 
-      console.log('GROUP EXISTS', groupExists);
-
       // Create Group
       if (!groupExists) {
-        console.log('CREATING THE GROUP BRO WAIT HOLD UP');
         gId = await new Groups().create({ name: 'Same Group Name' });
 
         // Add the users to GroupMember
@@ -192,13 +191,14 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
       gId = route.params.groupId;
     }
 
+    const tempDateTime: Date = moment(`${eventDate} ${eventTime}`, 'MMM DD, YYYY h:mm A').toDate();
+
     // Event Model for later use
     const event: EventModel = {
       hostId: userReturned.id,
       name: eventTitle,
       location: eventLocation,
-      date: eventDate,
-      time: eventTime,
+      datetime: Timestamp.fromDate(tempDateTime),
       gId,
       inviteeStatus: invitedUsers.map((invitedUser: UserReturn) => ({
         id: invitedUser.id,

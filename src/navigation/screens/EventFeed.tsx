@@ -22,7 +22,8 @@ export default function EventFeed({ navigation }: any) {
 
       const filteredEvents = eventList.filter((event: EventReturn) => {
         const currentDate = moment();
-        const eventDate = moment(event.date, 'MMMM DD, YYYY');
+        console.log('Current Date:', event.datetime);
+        const eventDate = moment(event.datetime.toDate());
         return eventDate.isSameOrAfter(currentDate);
       });
 

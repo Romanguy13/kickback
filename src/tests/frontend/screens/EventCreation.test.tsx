@@ -161,6 +161,24 @@ test('Handles Date Change - Cancel', async () => {
   expect(screen.queryByTestId('date-picker')).toBeNull();
 });
 
+test('Handles Date Change - Error', async () => {
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValueOnce([] as GroupMemberModel[]);
+
+  await renderWithNavigation();
+
+  const dateButton = screen.getByTestId('date-input');
+  fireEvent.press(dateButton);
+
+  // Change the date
+  const datePicker = screen.getByTestId('date-picker');
+  act(() => {
+    fireEvent(datePicker, 'onConfirm', undefined);
+  });
+
+  // Date picker disappears
+  expect(screen.queryByTestId('date-picker')).toBeNull();
+});
+
 test('Handles Time Change - Confirm', async () => {
   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValueOnce([] as GroupMemberModel[]);
 
@@ -188,6 +206,24 @@ test('Handles Time Change - Cancel', async () => {
   // Change the date
   const datePicker = screen.getByTestId('time-picker');
   await fireEvent(datePicker, 'onCancel');
+
+  // Date picker disappears
+  expect(screen.queryByTestId('time-picker')).toBeNull();
+});
+
+test('Handles Time Change - Error', async () => {
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValueOnce([] as GroupMemberModel[]);
+
+  await renderWithNavigation();
+
+  const dateButton = screen.getByTestId('time-input');
+  fireEvent.press(dateButton);
+
+  // Change the date
+  const datePicker = screen.getByTestId('time-picker');
+  act(() => {
+    fireEvent(datePicker, 'onConfirm', undefined);
+  });
 
   // Date picker disappears
   expect(screen.queryByTestId('time-picker')).toBeNull();

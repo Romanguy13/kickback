@@ -4,10 +4,9 @@ export interface EventModel {
   hostId: string;
   name: string;
   location: string;
-  date: string;
-  time: string;
+  datetime: Timestamp;
   gId: string;
-  inviteeStatus: {id: string, status: boolean | null}[];
+  inviteeStatus: { id: string; status: boolean | null }[];
 }
 
 export interface EventReturn {
@@ -15,10 +14,9 @@ export interface EventReturn {
   hostId: string;
   name: string;
   location: string;
-  date: string;
-  time: string;
+  datetime: Timestamp;
   gId: string;
-  inviteeStatus: {id: string, status: boolean | null}[];
+  inviteeStatus: { id: string; status: boolean | null }[];
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -26,7 +24,6 @@ export interface EventReturn {
 export interface UpdatedEvent {
   name?: string;
   location?: string;
-  date?: string;
-  time?: string;
-  inviteeStatus?: {id: string, status: boolean | null}[];
+  datetime?: Timestamp;
+  inviteeStatus?: { id: string; status: boolean | null }[];
 }

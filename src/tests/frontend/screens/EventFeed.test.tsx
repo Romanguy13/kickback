@@ -3,6 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Alert, View } from 'react-native';
 import React from 'react';
+import { Timestamp } from 'firebase/firestore';
+import moment from 'moment';
 import EventFeed from '../../../navigation/screens/EventFeed';
 import { EventReturn } from '../../../resources/schema/event.model';
 import Events from '../../../resources/api/events';
@@ -12,7 +14,7 @@ jest.spyOn(Alert, 'alert');
 
 jest.mock('firebase/auth');
 
-jest.mock('firebase/firestore');
+// jest.mock('firebase/firestore');
 
 jest.mock('../../../resources/api/events');
 
@@ -76,6 +78,9 @@ test('Renders Event Feed Screen - No events', async () => {
 });
 
 test('Renders Event Feed Screen - With events', async () => {
+  const randomDatetime = moment('2029-08-25T17:00:00.000Z', 'YYYY-MM-DDTHH:mm:ss.SSS');
+  console.log('Timestamp', Timestamp.fromDate(randomDatetime.toDate()));
+
   // Set up the mock return value for getAll
   (Events.prototype.getAllByUserId as jest.Mock).mockResolvedValueOnce([
     {
@@ -83,8 +88,7 @@ test('Renders Event Feed Screen - With events', async () => {
       hostId: '123',
       name: 'SURL Concert',
       location: 'San Francisco',
-      date: 'August 25, 2029',
-      time: '5:00 PM',
+      datetime: Timestamp.fromDate(randomDatetime.toDate()),
       gId: '123',
     },
   ] as EventReturn[]);
@@ -103,6 +107,9 @@ test('Renders Event Feed Screen - With events', async () => {
 });
 
 test('Transitioning from Event Card to Event Details', async () => {
+  const randomDatetime = moment('2029-07-29T21:00:00.000', 'YYYY-MM-DDTHH:mm:ss.SSS');
+  console.log('Timestamp', Timestamp.fromDate(randomDatetime.toDate()));
+
   // Set up the mock return value for getAll
   (Events.prototype.getAllByUserId as jest.Mock).mockResolvedValueOnce([
     {
@@ -110,9 +117,16 @@ test('Transitioning from Event Card to Event Details', async () => {
       hostId: '12345',
       name: 'Taylor Swift Concert',
       location: 'San Diego, CA',
-      date: 'July 29, 2029',
-      time: '9:00 PM',
+      datetime: Timestamp.fromDate(randomDatetime.toDate()),
       gId: '123',
+      inviteeStatus: [
+        {
+          id: '123',
+          status: false,
+        },
+      ],
+      createdAt: Timestamp.fromDate(new Date('2023-08-01T00:00:00.000Z')),
+      updatedAt: Timestamp.fromDate(new Date('2023-08-01T00:00:00.000Z')),
     },
   ] as EventReturn[]);
 
