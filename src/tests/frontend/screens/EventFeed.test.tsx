@@ -115,6 +115,8 @@ test('Renders Event Feed Screen - With events', async () => {
 
 test('Transitioning from Event Card to Event Details', async () => {
   const randomDatetime = moment('2029-07-29T21:00:00.000', 'YYYY-MM-DDTHH:mm:ss.SSS');
+  const randomDatetime2 = moment('2029-08-25T17:00:00.000Z', 'YYYY-MM-DDTHH:mm:ss.SSS');
+
   console.log('Timestamp', Timestamp.fromDate(randomDatetime.toDate()));
 
   // Set up the mock return value for getAll
@@ -125,6 +127,20 @@ test('Transitioning from Event Card to Event Details', async () => {
       name: 'Taylor Swift Concert',
       location: 'San Diego, CA',
       datetime: Timestamp.fromDate(randomDatetime.toDate()),
+      gId: '123',
+      inviteeStatus: [
+        {
+          id: '123',
+          status: true,
+        },
+      ],
+    },
+    {
+      id: '456',
+      hostId: '12345',
+      name: 'SURL Concert',
+      location: 'San Francisco',
+      datetime: Timestamp.fromDate(randomDatetime2.toDate()),
       gId: '123',
       inviteeStatus: [
         {

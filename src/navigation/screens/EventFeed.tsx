@@ -28,8 +28,8 @@ export default function EventFeed({ navigation }: any) {
       });
 
       const sortedEvents = filteredEvents.sort((a: EventReturn, b: EventReturn) => {
-        const aDate = moment(a.date, 'MMMM DD, YYYY');
-        const bDate = moment(b.date, 'MMMM DD, YYYY');
+        const aDate = moment(a.datetime.toDate());
+        const bDate = moment(b.datetime.toDate());
         return aDate.isAfter(bDate) ? 1 : -1;
       });
 
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
-    bottom: -18
+    bottom: -18,
   },
   imageContainer: {
     flex: 1,

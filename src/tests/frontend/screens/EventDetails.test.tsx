@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { Timestamp } from 'firebase/firestore';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import EventDetail from '../../../navigation/screens/EventDetail';
@@ -58,8 +59,7 @@ const params = {
   event: {
     hostId: '2',
     name: 'Test Event',
-    date: '2022-01-01',
-    time: '12:00 PM',
+    datetime: Timestamp.fromDate(new Date('2022-01-01')),
     location: 'Test Location',
     gId: '1',
     inviteeStatus: [
@@ -88,8 +88,7 @@ const params2 = {
   event: {
     hostId: '4',
     name: 'Test Event',
-    date: '2022-01-01',
-    time: '12:00 PM',
+    datetime: Timestamp.fromDate(new Date('2022-01-01')),
     location: 'Test Location',
     gId: '1',
     inviteeStatus: [

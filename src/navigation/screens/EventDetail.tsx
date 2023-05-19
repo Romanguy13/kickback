@@ -90,10 +90,18 @@ function EventDetail({ route, navigation }: any) {
             <Ionicons name="arrow-back-outline" size={40} color="white" />
           </Pressable>
           <View style={styles.dateContainer}>
-            <Text style={styles.dateText}>{event.date}</Text>
+            <Text style={styles.dateText}>
+              {event.datetime
+                .toDate()
+                .toDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </Text>
           </View>
           <View style={styles.timeContainer}>
-            <Text style={styles.timeText}>{event.time}</Text>
+            <Text style={styles.timeText}>
+              {event.datetime
+                .toDate()
+                .toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
+            </Text>
           </View>
           {canVote && FB_AUTH.currentUser?.uid !== event.hostId && (
             <View style={styles.voteContainer}>
