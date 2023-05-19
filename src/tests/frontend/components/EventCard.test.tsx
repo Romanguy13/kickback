@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Alert, View } from 'react-native';
 import React from 'react';
+import { Timestamp } from 'firebase/firestore';
 import EventCard from '../../../components/EventCard';
 
 const status1 = [
@@ -36,11 +37,10 @@ const renderSimple = async (status: any) =>
         name: 'Test Event',
         location: 'Test Location',
         date: '10/10/2023',
-        status: null,
         time: '10:00',
         gId: '12347',
-        createdAt: 'Test Date',
-        updatedAt: 'Test Time',
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
         inviteeStatus: status,
       }}
       navigation={{

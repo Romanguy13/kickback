@@ -1,9 +1,9 @@
 import React from 'react';
 import { TouchableWithoutFeedback, StyleSheet, Text, View } from 'react-native';
-import { EventModel } from '../resources/schema/event.model';
+import { EventReturn } from '../resources/schema/event.model';
 import { FB_AUTH } from '../../firebaseConfig';
 
-function EventCard({ event, navigation }: any) {
+function EventCard({ event, navigation }: { event: EventReturn; navigation: any }) {
   // accessibility labels
   const timeLabel = 'time of the event';
   const dateLabel = 'date';
@@ -17,7 +17,7 @@ function EventCard({ event, navigation }: any) {
 
   console.log('event', event);
 
-  const checkStatus = (currEvent: EventModel) => {
+  const checkStatus = (currEvent: EventReturn) => {
     // check the status of the the user in the event based on their id
     const currentUserId = FB_AUTH.currentUser?.uid;
     const { inviteeStatus } = currEvent;
