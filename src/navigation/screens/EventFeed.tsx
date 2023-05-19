@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
+    bottom: -18
   },
   imageContainer: {
     flex: 1,

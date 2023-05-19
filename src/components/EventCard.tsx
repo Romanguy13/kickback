@@ -12,7 +12,19 @@ function EventCard({ event, navigation }: any) {
   const handlePress = () => {
     navigation.navigate('EventDetail', { event, canVote: true });
   };
-  //console.log('event', event);
+  
+  console.log('event', event);
+
+  const checkStatus = (status: string) => {
+    if (status == null) {
+      return 'Pending';
+    } else {
+      return 'Going';
+    }
+  };
+
+
+
   return (
     <View style={[styles.card, styles.shadowProp]}>
       <TouchableWithoutFeedback onPress={handlePress}>
@@ -31,7 +43,9 @@ function EventCard({ event, navigation }: any) {
             </Text>
           </View>
           <View style={styles.statusContainer}>
-            <Text accessibilityLabel={statusLabel}>{event.status}</Text>
+            <Text accessibilityLabel={statusLabel} style={styles.statusLabel}>
+              {checkStatus(event.status)}
+            </Text>
           </View>
           <Text style={styles.locationtext} accessibilityLabel={locationLabel}>
             {event.location}
@@ -133,6 +147,8 @@ const styles = StyleSheet.create({
     lineHeight: 25,
     textAlign: 'center',
     color: '#FFFDF8',
+    right: 13,
+    top: -1
   }
 });
 
