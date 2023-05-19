@@ -12,7 +12,7 @@ function EventCard({ event, navigation }: any) {
   const handlePress = () => {
     navigation.navigate('EventDetail', { event, canVote: true });
   };
-
+  //console.log('event', event);
   return (
     <View style={[styles.card, styles.shadowProp]}>
       <TouchableWithoutFeedback onPress={handlePress}>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   datetext: {
     position: 'absolute',
-    paddingTop: 20,
+    paddingTop: 10,
     fontWeight: '700',
     fontSize: 22,
     lineHeight: 25,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 24,
     lineHeight: 72,
-    paddingTop: 52,
+    paddingTop: 42,
     textAlign: 'center',
     color: '#FFFDF8',
   },
@@ -121,9 +121,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 84,
     height: 21.66,
+    bottom: -35,
+    left: 20,
     borderRadius: 25,
-    backgroundColor: '#ff7000',
+    backgroundColor: '#ff6800',
   },
+  statusLabel:{
+    position: 'absolute',
+    fontWeight: '700',
+    fontSize: 15,
+    lineHeight: 25,
+    textAlign: 'center',
+    color: '#FFFDF8',
+  }
 });
 
 export default EventCard;
