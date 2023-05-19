@@ -1,5 +1,7 @@
 import React from 'react';
 import { TouchableWithoutFeedback, StyleSheet, Text, View } from 'react-native';
+import { EventModel } from '../resources/schema/event.model';
+import { FB_AUTH } from '../../firebaseConfig';
 
 function EventCard({ event, navigation }: any) {
   // accessibility labels
@@ -12,18 +14,35 @@ function EventCard({ event, navigation }: any) {
   const handlePress = () => {
     navigation.navigate('EventDetail', { event, canVote: true });
   };
-  
+
   console.log('event', event);
 
-  const checkStatus = (status: string) => {
-    if (status == null) {
-      return 'Pending';
-    } else {
-      return 'Going';
+  const checkStatus = (currEvent: EventModel) => {
+    // check the status of the the user in the event based on their id
+    const currentUserId = FB_AUTH.currentUser?.uid;
+    const { inviteeStatus } = currEvent;
+
+    // find the inviteeStatus that corresponds to the current user id
+    const inviteeFound = inviteeStatus.find(
+      (invitee: { id: string; status: boolean | null }) => invitee.id === currentUserId
+    );
+
+    const status = inviteeFound?.status;
+
+    // check if the user is the host
+    if (currentUserId === currEvent.hostId) {
+      return 'host';
     }
+
+    // if the user has not responded to the invite, return 'pending'
+    if (status === null) {
+      return 'pending';
+    }
+    if (status) {
+      return 'going';
+    }
+    return 'not going';
   };
-
-
 
   return (
     <View style={[styles.card, styles.shadowProp]}>
@@ -44,7 +63,7 @@ function EventCard({ event, navigation }: any) {
           </View>
           <View style={styles.statusContainer}>
             <Text accessibilityLabel={statusLabel} style={styles.statusLabel}>
-              {checkStatus(event.status)}
+              {checkStatus(event)}
             </Text>
           </View>
           <Text style={styles.locationtext} accessibilityLabel={locationLabel}>
@@ -133,6 +152,9 @@ const styles = StyleSheet.create({
   },
   statusContainer: {
     position: 'absolute',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: 84,
     height: 21.66,
     bottom: -33,
@@ -140,16 +162,14 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: '#ff6800',
   },
-  statusLabel:{
+  statusLabel: {
     position: 'absolute',
     fontWeight: '700',
     fontSize: 15,
     lineHeight: 25,
     textAlign: 'center',
     color: '#FFFDF8',
-    right: 13,
-    top: -1
-  }
+  },
 });
 
 export default EventCard;

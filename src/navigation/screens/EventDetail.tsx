@@ -95,7 +95,7 @@ function EventDetail({ route, navigation }: any) {
           <View style={styles.timeContainer}>
             <Text style={styles.timeText}>{event.time}</Text>
           </View>
-          {canVote && FB_AUTH.currentUser?.uid !== event.hostId ? (
+          {canVote && FB_AUTH.currentUser?.uid !== event.hostId && (
             <View style={styles.voteContainer}>
               <Pressable
                 testID="accept-invite"
@@ -112,14 +112,14 @@ function EventDetail({ route, navigation }: any) {
                 <Ionicons name="person-remove-outline" size={30} color="#FF7000" />
               </Pressable>
             </View>
-          ) : (
+          )}
+          {!canVote && (
             <View style={styles.voteContainer}>
               <Pressable style={styles.voteButton}>
                 <Ionicons name="repeat-outline" size={30} color="#FF7000" />
               </Pressable>
             </View>
           )}
-          {/* comment out for now */}
         </View>
 
         <View style={styles.locationpeopleContainer}>
