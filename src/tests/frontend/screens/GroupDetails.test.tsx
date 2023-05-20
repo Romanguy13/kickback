@@ -113,7 +113,7 @@ test('Click Back Button', async () => {
     />
   );
 
-  const backButton = screen.getByText('Groups');
+  const backButton = screen.getByTestId('back-button');
   fireEvent.press(backButton);
 });
 

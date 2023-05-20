@@ -1,4 +1,4 @@
-import { Pressable, View, Text } from 'react-native';
+import { StyleSheet, Pressable, View, Text } from 'react-native';
 import React, { useEffect } from 'react';
 import { GroupCardProps } from '../navigation/screens/EventGroups';
 import { UserModel } from '../resources/schema/user.model';
@@ -56,6 +56,7 @@ const styles = {
     borderTopColor: '#FF7000',
     borderTopWidth: 15,
     marginTop: 10,
+    marginBottom: 5,
     color: '#272222',
     fontSize: 20,
     fontWeight: 'bold',

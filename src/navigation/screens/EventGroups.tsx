@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View, Text, Dimensions, PixelRatio } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import GroupMembers from '../../resources/api/groupMembers';
 import { FB_AUTH } from '../../../firebaseConfig';
@@ -107,6 +107,9 @@ export default function EventGroups({ navigation }: any) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.textContainer}>
+        <Text style={styles.header}>Groups</Text>
+      </View>
       <View style={styles.listContainer}>
         <FlatList
           data={groups}
@@ -122,19 +125,33 @@ export default function EventGroups({ navigation }: any) {
   );
 }
 
+const windowWidth = Dimensions.get('window').width;
+const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFB',
     alignItems: 'center',
+  },
+  textContainer: {
+    width: '100%',
+    margin: 20,
     justifyContent: 'center',
-    paddingTop: 30,
+    alignItems: 'center',
+  },
+  header: {
+    color: '#272222',
+    fontSize: Math.round((windowWidth * 0.15) / fontScale),
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 30,
   },
   listContainer: {
-    width: '100%',
-    height: '100%',
-    paddingLeft: 20,
-    paddingRight: 20,
     display: 'flex',
+    width: '100%',
+    height: '78%',
+    alignSelf: 'center',
+    paddingLeft: 30,
+    paddingRight: 30,
   },
 });

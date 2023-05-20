@@ -56,7 +56,7 @@ export default function EventFeed({ navigation }: any) {
   ) : (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>KickBacks</Text>
+        <Text style={styles.header}>KickBacks</Text>
       </View>
       <View style={styles.cardContainer}>
         <FlatList
@@ -82,23 +82,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFB',
     alignItems: 'center',
   },
-  header: {
-    color: '#272222',
-    fontSize: Math.round((windowWidth * 0.15) / fontScale),
-    fontWeight: 'bold',
-    textAlign: 'center',
-    paddingTop: 40,
-  },
-  headerContainer: {
-    borderBottomColor: '#272222',
-    borderBottomWidth: 2,
-    paddingBottom: 20,
-  },
   textContainer: {
     width: '100%',
     margin: 20,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  header: {
+    color: '#272222',
+    fontSize: Math.round((windowWidth * 0.15) / fontScale),
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 30,
   },
   newText: {
     color: '#272222',
