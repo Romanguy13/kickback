@@ -75,6 +75,10 @@ function EventDetail({ route, navigation }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEvent]);
 
+  if (event.name.length >= 14) {
+    event.name = `${event.name.substring(0, 14)}..`;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
