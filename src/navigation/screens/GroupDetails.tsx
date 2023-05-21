@@ -60,12 +60,18 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
   useEffect(() => {
     const fetchData = async () => {
       const tempEvents = (await new Events().getAll(group.id, 'gId')) as EventReturn[];
-      setEvents(tempEvents);
+      const sortedEvents = tempEvents.sort((a: EventReturn, b: EventReturn) => {
+        const aDate = moment(a.datetime.toDate());
+        const bDate = moment(b.datetime.toDate());
+        return aDate.isAfter(bDate) ? 1 : -1;
+      });
+      setEvents(sortedEvents);
     };
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
+
   return (
     <View style={styles.container}>
       <View style={styles.top}>
