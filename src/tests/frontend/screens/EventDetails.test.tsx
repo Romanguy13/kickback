@@ -150,10 +150,12 @@ test('Click accept for status update', async () => {
     status: true,
   });
 
+  preLoadData();
+
   await renderWithNavigation(params);
 
   await waitFor(() => {
-    expect(screen.getByText('Test Location')).toBeTruthy();
+    expect(screen.getByText('Chief Keef')).toBeTruthy();
   });
 
   act(() => {
@@ -168,6 +170,8 @@ test('Click decline for status update', async () => {
     id: '4',
     status: false,
   });
+
+  preLoadData();
 
   await renderWithNavigation(params2);
   await waitFor(() => {

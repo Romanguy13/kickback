@@ -9,6 +9,11 @@ export interface EventModel {
   inviteeStatus: { id: string; status: boolean | null }[];
 }
 
+export interface InviteeStatus {
+  id: string;
+  status: boolean | null;
+}
+
 export interface EventReturn {
   id: string;
   hostId: string;
@@ -16,7 +21,7 @@ export interface EventReturn {
   location: string;
   datetime: Timestamp;
   gId: string;
-  inviteeStatus: { id: string; status: boolean | null }[];
+  inviteeStatus: InviteeStatus[];
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -25,5 +30,5 @@ export interface UpdatedEvent {
   name?: string;
   location?: string;
   datetime?: Timestamp;
-  inviteeStatus?: { id: string; status: boolean | null }[];
+  inviteeStatus?: InviteeStatus[];
 }

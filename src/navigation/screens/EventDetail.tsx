@@ -7,11 +7,13 @@ import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
 import { UserReturn } from '../../resources/schema/user.model';
 import { GroupMemberModel } from '../../resources/schema/group.model';
+import { EventReturn, InviteeStatus, UpdatedEvent } from '../../resources/schema/event.model';
+import InviteeStatusCard from '../../components/InviteeStatusCard';
 
 function EventDetail({ route, navigation }: any) {
   const { event, canVote } = route.params;
 
-  const [currentEvent, setCurrentEvent] = useState<any>(event);
+  const [currentEvent, setCurrentEvent] = useState<EventReturn>(event);
 
   const [topMembers, setTopMembers] = useState<UserReturn[]>([]);
 
@@ -22,27 +24,29 @@ function EventDetail({ route, navigation }: any) {
 
     // find the inviteeStatus that corresponds to the current user id
     const inviteeFound = inviteeStatus.find(
-      (invitee: { id: string; status: boolean | null }) => invitee.id === currentUserId
+      (invitee: InviteeStatus) => invitee.id === currentUserId
     );
     if (inviteeFound) {
       inviteeFound.status = status;
-    }
 
-    // change the inviteeStatus to reflect the user's response
-    const newInviteeStatus = inviteeStatus.map(
-      (invitee: { id: string; status: boolean | null }) => {
+      // change the inviteeStatus to reflect the user's response
+      const newInviteeStatus = inviteeStatus.map((invitee: InviteeStatus) => {
         if (invitee.id === currentUserId) {
           return inviteeFound;
         }
         return invitee;
-      }
-    );
+      });
 
-    // update the event in the database
-    await new Events().edit(event.id, { inviteeStatus: newInviteeStatus });
+      // update the event in the database
+      await new Events().edit(event.id, { inviteeStatus: newInviteeStatus });
 
-    // update the event in the state
-    setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
+      console.log('inviteeStatus - before', currentEvent);
+
+      // update the event in the state
+      setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
+
+      console.log('inviteeStatus - after', currentEvent);
+    }
   };
 
   useEffect(() => {
@@ -147,40 +151,7 @@ function EventDetail({ route, navigation }: any) {
           <View style={styles.usersContainer}>
             <ScrollView style={styles.usersScroll}>
               {topMembers.map((member: UserReturn) => (
-                <View
-                  key={member.id}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    margin: 10,
-                  }}
-                >
-                  <Text style={styles.usersText}>{member.name}</Text>
-                  <View
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-
-                      marginRight: 10,
-                    }}
-                  >
-                    {member.id === event.hostId && (
-                      <Ionicons name="star" size={25} color="#FF7000" />
-                    )}
-                    {member.id !== event.hostId &&
-                      currentEvent.inviteeStatus.find(
-                        (invitee: { id: string; status: boolean | null }) =>
-                          invitee.id === member.id
-                      ).status === true && <Ionicons name="checkmark" size={25} color="#FF7000" />}
-                    {member.id !== event.hostId &&
-                      currentEvent.inviteeStatus.find(
-                        (invitee: { id: string; status: boolean | null }) =>
-                          invitee.id === member.id
-                      ).status === false && <Ionicons name="close" size={25} color="#FF7000" />}
-                  </View>
-                </View>
+                <InviteeStatusCard event={event} key={member.id} currentMember={member} />
               ))}
             </ScrollView>
           </View>
