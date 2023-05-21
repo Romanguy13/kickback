@@ -25,7 +25,8 @@ export default function EventHistory({ navigation }: any) {
       const filteredEvents = eventList.filter((event: EventReturn) => {
         // Get today's date
         const currentDate = moment();
-        const eventDate = moment(event.date, 'MMMM DD, YYYY');
+        console.log('currentDate', event.datetime.toDate());
+        const eventDate = moment(event.datetime.toDate());
 
         return eventDate.isBefore(currentDate);
       });

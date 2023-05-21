@@ -11,6 +11,7 @@ import Events from '../../resources/api/events';
 import { UserReturn } from '../../resources/schema/user.model';
 import { EventReturn } from '../../resources/schema/event.model';
 import { GroupMemberModel } from '../../resources/schema/group.model';
+import Groups from '../../resources/api/groups';
 
 export default function GroupDetails({ navigation, route }: { navigation: any; route: any }) {
   const { group }: GroupCardProps = route.params;
@@ -29,7 +30,8 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
     setModalVisible(false);
   };
 
-  const changeGroupName = () => {
+  const changeGroupName = async () => {
+    await new Groups().edit(group.id, { name: groupName });
     group.name = groupName;
     closeModal();
   };

@@ -1,10 +1,10 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { NavigationContainer, useIsFocused } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View } from 'react-native';
-import EventGroups from '../../../navigation/screens/EventGroups';
+import { Timestamp } from 'firebase/firestore';
+import moment from 'moment';
 import GroupMembers from '../../../resources/api/groupMembers';
-import Groups from '../../../resources/api/groups';
 import Users from '../../../resources/api/users';
 import Events from '../../../resources/api/events';
 import GroupDetails from '../../../navigation/screens/GroupDetails';
@@ -12,7 +12,7 @@ import { UserModel } from '../../../resources/schema/user.model';
 import { EventReturn } from '../../../resources/schema/event.model';
 import { GroupReturnModel } from '../../../resources/schema/group.model';
 
-jest.mock('firebase/firestore');
+// jest.mock('firebase/firestore');
 jest.mock('../../../resources/api/kickbackFirebase');
 jest.mock('../../../resources/api/events');
 jest.mock('../../../resources/api/groupMembers');
@@ -125,12 +125,10 @@ test('Render Group Details', async () => {
       gId: '12345',
       id: 'event1',
       hostId: 'user1',
-      date: '2021-10-10',
-      time: '12:00',
       location: '123 Main St',
-      datetime: '2021-10-10T12:00',
+      datetime: Timestamp.fromDate(moment('2021-10-10 12:00').toDate()),
     },
-  ]);
+  ] as EventReturn[]);
   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValueOnce([
     {
       id: 'user1',
@@ -153,6 +151,7 @@ test('Render Group Details', async () => {
     name: 'User 2',
     email: 'user2@kickback.com',
   });
+
   render(
     <GroupDetails
       navigation={{

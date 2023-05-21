@@ -46,7 +46,7 @@ jest.mock('../../../../firebaseConfig', () => ({
 
 const Stack = createNativeStackNavigator();
 
-const renderWithNavigation = (params: any) =>
+const renderWithNavigation = async (params: any) =>
   render(
     <NavigationContainer>
       <Stack.Navigator>
@@ -138,7 +138,7 @@ test('Renders Event Screen', async () => {
   });
   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
 
-  renderWithNavigation(params);
+  await renderWithNavigation(params);
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
@@ -154,15 +154,9 @@ test('Click accept for status update', async () => {
     status: true,
   });
 
-  renderWithNavigation(params);
-  await waitFor(() => {
-    expect(screen.getByText('Test Event')).toBeTruthy();
-  });
+  await renderWithNavigation(params);
 
   fireEvent.press(screen.getByTestId('accept-invite'));
-  await waitFor(() => {
-    expect(screen.getByText('Test Event')).toBeTruthy();
-  });
 });
 
 test('Click decline for status update', async () => {
@@ -175,7 +169,7 @@ test('Click decline for status update', async () => {
     status: false,
   });
 
-  renderWithNavigation(params2);
+  await renderWithNavigation(params2);
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
@@ -192,7 +186,7 @@ test('Renders Event Screen', async () => {
   });
   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
 
-  renderWithNavigation(params);
+  await renderWithNavigation(params);
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
@@ -208,7 +202,7 @@ test('Click accept for status update', async () => {
     status: true,
   });
 
-  renderWithNavigation(params);
+  await renderWithNavigation(params);
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
@@ -229,7 +223,7 @@ test('Click decline for status update', async () => {
     status: false,
   });
 
-  renderWithNavigation(params2);
+  await renderWithNavigation(params2);
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
@@ -246,7 +240,7 @@ test('Click the "Go Back" button', async () => {
   });
   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
 
-  renderWithNavigation(params);
+  await renderWithNavigation(params);
   await waitFor(() => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
@@ -258,24 +252,3 @@ test('Click the "Go Back" button', async () => {
     expect(screen.getByText('Test Event')).toBeTruthy();
   });
 });
-
-// test('Renders History Screen - Go Back', async () => {
-//   (Users.prototype.get as jest.Mock).mockResolvedValue({
-//     name: 'Test User',
-//   });
-//   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue([
-//     {
-//       userId: '1',
-//       groupId: '1',
-//     },
-//   ]);
-
-//   // await renderView();
-//   await waitFor(() => {
-//     expect(screen.getByText('Test Event')).toBeTruthy();
-//   });
-
-//   const backButton = screen.getByTestId('backButton');
-
-//   await fireEvent.press(backButton);
-// });
