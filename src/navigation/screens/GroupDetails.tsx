@@ -71,6 +71,12 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
+  // Make a function that checks if a event date is past the current date and return true or false
+  const isPastEvent = (event: EventReturn) => {
+    const eventDate = moment(event.datetime.toDate());
+    const currentDate = moment();
+    return eventDate.isBefore(currentDate);
+  };
 
   return (
     <View style={styles.container}>
@@ -206,6 +212,15 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
                 >
                   {moment(event.datetime.toDate()).format('MMM Do YYYY, h:mm a')}
                 </Text>
+                {isPastEvent(event) ? (
+                  <View style={styles.statusContainerRed}>
+                    <Text style={styles.statusLabel}>Past</Text>
+                  </View>
+                ) : (
+                  <View style={styles.statusContainerGreen}>
+                    <Text style={styles.statusLabel}>Upcoming</Text>
+                  </View>
+                )}
               </View>
             ))}
           </View>
@@ -328,6 +343,33 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5, // Elevation property for Android
+  },
+  statusContainerRed: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: 25,
+    bottom: 0,
+    backgroundColor: 'red',
+    width: '30%',
+  },
+  statusContainerGreen: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: 25,
+    bottom: 0,
+    backgroundColor: 'green',
+    width: '40%',
+  },
+  statusLabel: {
+    fontWeight: '700',
+    fontSize: 15,
+    lineHeight: 25,
+    textAlign: 'center',
+    color: '#FFFDF8',
   },
   modalContainer: {
     flex: 1,
