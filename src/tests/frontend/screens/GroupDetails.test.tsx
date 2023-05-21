@@ -128,6 +128,7 @@ test('Render Group Details', async () => {
       date: '2021-10-10',
       time: '12:00',
       location: '123 Main St',
+      datetime: '2021-10-10T12:00',
     },
   ]);
   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValueOnce([

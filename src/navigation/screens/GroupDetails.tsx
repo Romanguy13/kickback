@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Pressable, Text, View, ScrollView } from 'react-native';
+import moment from 'moment';
+import { StyleSheet, Pressable, Text, View, ScrollView, Modal, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import { GroupCardProps } from './EventGroups';
@@ -7,61 +8,62 @@ import { FB_AUTH } from '../../../firebaseConfig';
 import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
 import Events from '../../resources/api/events';
-
-// type GroupDetailsProps = StackScreenProps<
-//     { GroupDetails: { group: GroupReturnModel } },
-//     'GroupDetails'
-// >;
+import { UserReturn } from '../../resources/schema/user.model';
+import { EventReturn } from '../../resources/schema/event.model';
+import { GroupMemberModel } from '../../resources/schema/group.model';
 
 export default function GroupDetails({ navigation, route }: { navigation: any; route: any }) {
   const { group }: GroupCardProps = route.params;
-  const [topMembers, setTopMembers] = useState<any[]>([]);
-  const [events, setEvents] = useState<any[]>([]);
+  const [topMembers, setTopMembers] = useState<UserReturn[]>([]);
+  const [events, setEvents] = useState<EventReturn[]>([]);
   const isFocused = useIsFocused();
   const backgroundChipColors = ['#D9D9D9', '#EC9090', '#9BEFE5', '#FFD464'];
+  const [modalVisible, setModalVisible] = useState(false);
+  const [groupName, setGroupName] = useState('');
 
-  const idToName = async (id: string) => {
-    const user = await new Users().get(id);
-    return user.name;
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const changeGroupName = () => {
+    group.name = groupName;
+    closeModal();
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const tempMembers = await new GroupMembers().getAll(group.id, 'groupId');
+      const tempMembers = (await new GroupMembers().getAll(
+        group.id,
+        'groupId'
+      )) as GroupMemberModel[];
+
       console.log('Temp Members:', tempMembers);
-      // const tempEvents = await new Events().getAll(group.id, 'gId');
-      const promises = tempMembers.map(async (member) => {
-        const name = await idToName(member.userId);
-        return { id: member.userId, name };
-      });
+
+      const promises: Promise<UserReturn>[] = tempMembers.map(
+        (member: GroupMemberModel) => new Users().get(member.userId) as Promise<UserReturn>
+      );
 
       // only take id and name field from tempMembers and store in tMembers
-      // const tMembers = tempMembers.map((member) => ({ id: member.userId, name: member.name }));
       const tMembers = await Promise.all(promises);
       setTopMembers(tMembers);
-      console.log('Top Members:', topMembers);
     };
-
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const tempEvents = await new Events().getAll(group.id, 'gId');
-      // const promises = tempEvents.map(async (event) => {
-      //   const tempEvent = await idToEvent(event.id);
-      //   return tempEvent;
-      // });
-      // const tEvents = await Promise.all(promises);
+      const tempEvents = (await new Events().getAll(group.id, 'gId')) as EventReturn[];
       setEvents(tempEvents);
-      console.log('Events:', events);
     };
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
-
   return (
     <View style={styles.container}>
       <View style={styles.top}>
@@ -74,6 +76,9 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
           style={styles.backButton}
         >
           <Ionicons name="arrow-back-outline" size={30} color="#FFFFFB" />
+        </Pressable>
+        <Pressable style={styles.editButton} onPress={openModal}>
+          <Ionicons name="create-outline" size={30} color="#FFFFFB" />
         </Pressable>
       </View>
       <View style={styles.titleContainer}>
@@ -191,12 +196,30 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
                     textAlign: 'center',
                   }}
                 >
-                  {event.time}
+                  {moment(event.datetime.toDate()).format('MMM Do YYYY, h:mm a')}
                 </Text>
               </View>
             ))}
           </View>
         </ScrollView>
+        <Modal visible={modalVisible} animationType="slide" transparent>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>Edit Group Name:</Text>
+              <TextInput style={styles.modalInputBox} onChangeText={(text) => setGroupName(text)}>
+                <Text style={styles.modalInput}>{group.name}</Text>
+              </TextInput>
+              <View style={styles.modalButtonContainer}>
+                <Pressable style={styles.closeButton} onPress={changeGroupName}>
+                  <Text style={styles.closeButtonText}>Done</Text>
+                </Pressable>
+                <Pressable style={styles.closeButton} onPress={closeModal}>
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </View>
   );
@@ -208,23 +231,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFB',
   },
   top: {
-    justifyContent: 'flex-end',
     display: 'flex',
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
     backgroundColor: '#FF7000',
     height: 100,
+    paddingTop: 30,
   },
   backButton: {
-    top: 0,
     justifyContent: 'center',
-    width: 80,
     alignItems: 'center',
+    borderColor: '#FFFFFB',
+    top: 0,
+    width: 80,
     borderRadius: 20,
     borderWidth: 2,
+    marginTop: 20,
+    marginBottom: 10,
+    marginRight: 20,
+    marginLeft: 20,
+  },
+  editButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
     borderColor: '#FFFFFB',
-    marginTop: 0,
-    marginBottom: 8,
-    marginLeft: 10,
-    padding: 4,
+    top: 0,
+    width: 80,
+    borderRadius: 20,
+    borderWidth: 2,
+    marginTop: 20,
+    marginBottom: 10,
+    marginRight: 20,
+    marginLeft: 200,
   },
   titleContainer: {
     alignItems: 'center',
@@ -282,5 +320,55 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5, // Elevation property for Android
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#272222',
+    width: '80%',
+    padding: 20,
+    borderRadius: 8,
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 10,
+    color: '#FFFFFB',
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  closeButton: {
+    alignSelf: 'center',
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#FF7000',
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFB',
+  },
+  modalInputBox: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    backgroundColor: '#EEEEEE',
+    borderRadius: 5,
+    padding: 5,
+  },
+  modalInput: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#272222',
+    backgroundColor: '#EEEEEE',
+    borderRadius: 5,
+    padding: 5,
   },
 });
