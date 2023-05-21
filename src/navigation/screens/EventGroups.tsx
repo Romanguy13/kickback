@@ -7,7 +7,7 @@ import Groups from '../../resources/api/groups';
 import { GroupMemberModel, GroupReturnModel } from '../../resources/schema/group.model';
 import GroupCard from '../../components/GroupCard';
 import Events from '../../resources/api/events';
-import { UserModel } from '../../resources/schema/user.model';
+import { UserModel, UserReturn } from '../../resources/schema/user.model';
 import Users from '../../resources/api/users';
 import { EventModel, EventReturn } from '../../resources/schema/event.model';
 
@@ -60,21 +60,21 @@ export default function EventGroups({ navigation }: any) {
         const currGroup = await new Groups().get(group.groupId);
 
         // Get the amount of members in the group
-        const members = await new GroupMembers().getAll(group.groupId, 'groupId');
+        const members = (await new GroupMembers().getAll(
+          group.groupId,
+          'groupId'
+        )) as GroupMemberModel[];
 
-        // Get the top 3 members of the group
-        const topMembers: UserModel[] = [];
-        const innerPromise = members.map(async (member, i) => {
-          // Break out of the loop after 4 members
-          if (i > 4) return false;
-
+        // Get the top 4 members of the group
+        const tempMembers = [...members];
+        if (tempMembers.length >= 4) tempMembers.splice(0, members.length - 4);
+        const innerPromise = tempMembers.map(async (member) => {
           const user = await new Users().get(member.userId);
-          topMembers.push(user as UserModel);
-          return true;
+          return user as UserModel;
         });
 
         // Wait for the inner promise to finish
-        await Promise.all(innerPromise);
+        const tempUsers: UserModel[] = await Promise.all(innerPromise);
 
         // Get the amount of events in the group
         const events = await new Events().getAll(group.groupId, 'gId');
@@ -83,7 +83,7 @@ export default function EventGroups({ navigation }: any) {
           group: currGroup as GroupReturnModel,
           navigation,
           events: events as EventReturn[],
-          topMembers,
+          topMembers: tempUsers as UserModel[],
           extraMembers: members.length > 4 ? members.length - 4 : 0,
         });
       });
