@@ -237,12 +237,12 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
   }, [isFocused, route.params, userId]);
   // Handle the onPress fo the cancel button
   const handleCancel = () => {
-    navigation.navigate('Feed');
     setEventTitle('');
     setEventLocation('');
     setEventDate(moment().format('MMM DD, YYYY'));
     setEventTime(moment().format('h:mm A'));
     setInvitedUsers([]);
+    navigation.navigate('Feed');
   };
 
   return (
