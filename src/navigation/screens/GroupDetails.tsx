@@ -63,7 +63,7 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
       const sortedEvents = tempEvents.sort((a: EventReturn, b: EventReturn) => {
         const aDate = moment(a.datetime.toDate());
         const bDate = moment(b.datetime.toDate());
-        return aDate.isAfter(bDate) ? 1 : -1;
+        return aDate.isAfter(bDate) ? -1 : 1;
       });
       setEvents(sortedEvents);
     };
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 25,
     bottom: 0,
-    backgroundColor: 'red',
+    backgroundColor: '#ff6b6b',
     width: '30%',
   },
   statusContainerGreen: {
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 25,
     bottom: 0,
-    backgroundColor: 'green',
+    backgroundColor: '#68BB59',
     width: '40%',
   },
   statusLabel: {
