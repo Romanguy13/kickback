@@ -92,11 +92,6 @@ export default class KickbackFirebase {
   public async get(id: string): Promise<DocumentData> {
     const data: DocumentData[] = await this.getAll(id, 'id');
 
-    // if (data.length === 0) {
-    //   // throw new Error(`No document found with id: ${id}`);
-    //   console.log(`No document found with id: ${id}`);
-    // }
-
     return data[0];
   }
 
