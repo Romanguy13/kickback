@@ -5,18 +5,15 @@ import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
 import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
+import { UserReturn } from '../../resources/schema/user.model';
+import { GroupMemberModel } from '../../resources/schema/group.model';
 
 function EventDetail({ route, navigation }: any) {
   const { event, canVote } = route.params;
 
   const [currentEvent, setCurrentEvent] = useState<any>(event);
 
-  const [topMembers, setTopMembers] = useState<any[]>([]);
-
-  const idToName = async (id: string) => {
-    const user = await new Users().get(id);
-    return user.name;
-  };
+  const [topMembers, setTopMembers] = useState<UserReturn[]>([]);
 
   const handleInviteeStatus = async (status: boolean) => {
     // edit the event in the database to reflect the new status based on the user's response
@@ -50,14 +47,19 @@ function EventDetail({ route, navigation }: any) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const tempMembers = await new GroupMembers().getAll(event.gId, 'groupId');
+      const tempMembers = (await new GroupMembers().getAll(
+        event.gId,
+        'groupId'
+      )) as GroupMemberModel[];
 
-      const promises = tempMembers.map(async (member) => {
-        const name = await idToName(member.userId);
-        return { id: member.userId, name };
-      });
+      const promises = tempMembers.map(
+        (member) => new Users().get(member.userId) as Promise<UserReturn>
+      );
 
-      const tMembers = await Promise.all(promises);
+      const tMembers: UserReturn[] = await Promise.all(promises);
+
+      console.log('tMembers', tMembers);
+
       // sort the members so the host is first
       tMembers.sort((a, b) => {
         if (a.id === currentEvent.hostId) {
@@ -95,9 +97,12 @@ function EventDetail({ route, navigation }: any) {
           </Pressable>
           <View style={styles.dateContainer}>
             <Text style={styles.dateText}>
-              {event.datetime
-                .toDate()
-                .toDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              {event.datetime.toDate().toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
             </Text>
           </View>
           <View style={styles.timeContainer}>
@@ -141,7 +146,7 @@ function EventDetail({ route, navigation }: any) {
 
           <View style={styles.usersContainer}>
             <ScrollView style={styles.usersScroll}>
-              {topMembers.map((member) => (
+              {topMembers.map((member: UserReturn) => (
                 <View
                   key={member.id}
                   style={{
@@ -152,9 +157,7 @@ function EventDetail({ route, navigation }: any) {
                     margin: 10,
                   }}
                 >
-                  <Text key={member.userId} style={styles.usersText}>
-                    {member.name}
-                  </Text>
+                  <Text style={styles.usersText}>{member.name}</Text>
                   <View
                     style={{
                       display: 'flex',
