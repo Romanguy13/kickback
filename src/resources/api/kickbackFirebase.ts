@@ -43,7 +43,7 @@ export default class KickbackFirebase {
     const returnId: DocumentReference<DocumentData> = doc(dbRef);
 
     const documentData = {
-      id: "",
+      id: '',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       ...data,
@@ -68,7 +68,6 @@ export default class KickbackFirebase {
 
     console.log('documentData ID: ', documentData.id);
     console.log('returnId ID: ', returnId.id);
-    
 
     // Adds doc to collection
     // await addDoc(dbRef, documentData);
@@ -137,8 +136,13 @@ export default class KickbackFirebase {
   // }
 
   public async edit(id: string, data: any): Promise<any> {
+    const newData = {
+      ...data,
+      updatedAt: serverTimestamp(),
+    };
+
     const docRef: DocumentReference<DocumentData> = doc(this.database, this.collection, id);
-    await updateDoc(docRef, data);
-    return data;
+    await updateDoc(docRef, newData);
+    return newData;
   }
 }

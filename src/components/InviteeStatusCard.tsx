@@ -15,6 +15,8 @@ export default function InviteeStatusCard({
     (currInvitee: InviteeStatus) => currInvitee.id === currentMember.id
   );
 
+  console.log('isAttending', isAttending);
+
   let icon: JSX.Element | null = null;
 
   if (currentMember.id === event.hostId) {
