@@ -51,6 +51,9 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
 
       // only take id and name field from tempMembers and store in tMembers
       const tMembers = await Promise.all(promises);
+
+      console.log('RICHY READ THIS ONE PLEASE', tMembers);
+
       setTopMembers(tMembers);
     };
     fetchData();
@@ -91,7 +94,7 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
         >
           <Ionicons name="arrow-back-outline" size={30} color="#FFFFFB" />
         </Pressable>
-        <Pressable style={styles.editButton} onPress={openModal}>
+        <Pressable testID="edit-icon-button" style={styles.editButton} onPress={openModal}>
           <Ionicons name="create-outline" size={30} color="#FFFFFB" />
         </Pressable>
       </View>
@@ -225,11 +228,15 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
             ))}
           </View>
         </ScrollView>
-        <Modal visible={modalVisible} animationType="slide" transparent>
+        <Modal testID="edit-modal" visible={modalVisible} animationType="slide" transparent>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalText}>Edit Group Name:</Text>
-              <TextInput style={styles.modalInputBox} onChangeText={(text) => setGroupName(text)}>
+              <TextInput
+                style={styles.modalInputBox}
+                onChangeText={(text) => setGroupName(text)}
+                testID="new-name-input"
+              >
                 <Text style={styles.modalInput}>{group.name}</Text>
               </TextInput>
               <View style={styles.modalButtonContainer}>
