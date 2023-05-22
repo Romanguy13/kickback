@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
 
 function HistoryDetail({ route }: any) {
   const { event } = route.params;
+  const paymentStatus = true
   return (
     <View style={styles.container}>
       <View style={styles.topContainer} />
@@ -25,7 +26,22 @@ function HistoryDetail({ route }: any) {
               <Image source={require('../../../assets/history_button.png')} />
             </Pressable>
           </View>
+
+
+          {paymentStatus ? (
+            <View style={styles.paymentPaidContainer}>
+              <Text style={styles.paymentText}> PAID </Text>
+            </View>
+          ) : (
+            <View style={styles.paymentPayContainer}>
+              <Text style={styles.paymentText}> PAY </Text>
+            </View>
+          )}
+
+
         </View>
+
+
 
         <View style={styles.locationpeopleContainer}>
           <View style={styles.locationContainer}>
@@ -100,7 +116,7 @@ const styles = StyleSheet.create({
   voteContainer: {
     width: '100%',
     justifyContent: 'center',
-    top: 200,
+    top: 140,
   },
   voteButton: {
     borderRadius: 100,
@@ -156,7 +172,7 @@ const styles = StyleSheet.create({
     left: 10,
     width: 90,
     justifyContent: 'center',
-    top: 170,
+    top: 100,
     backgroundColor: '#FF7000',
     height: 30,
     borderRadius: 10,
@@ -166,6 +182,29 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
+  paymentPaidContainer: {
+    left: 10,
+    width: 90,
+    justifyContent: 'center',
+    top: 170,
+    backgroundColor: '#00FF00',
+    height: 30,
+    borderRadius: 10,
+  },
+  paymentPayContainer: {
+    left: 10,
+    width: 90,
+    justifyContent: 'center',
+    top: 170,
+    backgroundColor: '#FF0000',
+    height: 30,
+    borderRadius: 10,
+  },
+  paymentText: {
+    fontSize: 20,
+    color: 'white',
+    textAlign: 'center',
+  }
 });
 
 export default HistoryDetail;
