@@ -52,8 +52,6 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
       // only take id and name field from tempMembers and store in tMembers
       const tMembers = await Promise.all(promises);
 
-      console.log('RICHY READ THIS ONE PLEASE', tMembers);
-
       setTopMembers(tMembers);
     };
     fetchData();
