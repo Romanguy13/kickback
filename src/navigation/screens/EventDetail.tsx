@@ -81,7 +81,7 @@ function EventDetail({ route, navigation }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEvent]);
 
-  if (event.name.length >= 14) {
+  if (event.name.length >= 20) {
     event.name = `${event.name.substring(0, 14)}..`;
   }
 
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     color: '#FFFFFB',
-    fontSize: 60,
+    fontSize: 40,
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
