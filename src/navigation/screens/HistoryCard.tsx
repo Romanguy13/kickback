@@ -5,7 +5,7 @@ import {TouchableWithoutFeedback, StyleSheet, View, Dimensions, PixelRatio, Text
 function HistoryCard({event, navigation}: any) {
 
   const handlePress = () => {
-    navigation.navigate('HistoryDetail', { event });
+    navigation.navigate('EventDetail', { event });
   };
   
   //console.log("bf modified ", event.date)

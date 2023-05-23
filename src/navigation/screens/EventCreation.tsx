@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {
   View,
   StyleSheet,
@@ -9,10 +11,13 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import firebase from 'firebase/compat';
+import { Timestamp } from 'firebase/firestore';
 import { EventModel } from '../../resources/schema/event.model';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Users from '../../resources/api/users';
@@ -25,60 +30,43 @@ import { GroupMemberModel, GroupModel, GroupReturnModel } from '../../resources/
 export default function EventCreation({ navigation, route }: { navigation: any; route: any }) {
   const [eventTitle, setEventTitle] = useState('');
   const [eventLocation, setEventLocation] = useState('');
-  const [eventDate, setEventDate] = useState(moment().format('MMM DD, YYYY'));
+  const [eventDate, setEventDate] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [eventTime, setEventTime] = useState(moment().format('h:mm A'));
+  const [eventTime, setEventTime] = useState('');
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [inviteUserEmail, setInviteUserEmail] = useState('');
   const [invitedUsers, setInvitedUsers] = useState<UserReturn[]>([]); // [email1, email2, ...'
   const isFocused = useIsFocused();
 
-  const handleEventTitleChange = (text: string) => {
-    setEventTitle(text);
-  };
-
-  const handleEventLocationChange = (text: string) => {
-    setEventLocation(text);
-  };
-
   // Date Picker Config
   const handleEventDateChange = (selectedDate: Date | undefined) => {
     const currentDate = selectedDate || eventDate;
-    // setShowDatePicker(false);
+    console.log(currentDate);
+    setShowDatePicker(false);
     setEventDate(moment(currentDate).format('MMM DD, YYYY'));
   };
 
-  const showDatepicker = () => {
-    setShowDatePicker(true);
-  };
   // Time Picker Config
   const handleEventTimeChange = (selectedTime: Date | undefined) => {
     const currentTime = selectedTime || eventTime;
-    console.log(currentTime);
-    // setShowTimePicker(false);
+    setShowTimePicker(false);
     setEventTime(moment(currentTime).format('h:mm A'));
   };
 
-  const showTimepicker = () => {
-    setShowTimePicker(true);
-  };
-
-  const handleInviteUserEmailChange = (text: string) => {
-    setInviteUserEmail(text);
-  };
-
   const handleAddUser = () => {
+    console.log('email', inviteUserEmail);
+
     // create user object and check if user exists
     if (inviteUserEmail === '') {
       Alert.alert('Please enter an email.');
       return;
     }
-    if (invitedUsers.find((user: UserReturn) => user.email === inviteUserEmail)) {
-      Alert.alert('User already invited.');
-      return;
-    }
     if (inviteUserEmail === FB_AUTH.currentUser?.email) {
       Alert.alert('You cannot invite yourself, silly goose.');
+      return;
+    }
+    if (invitedUsers.find((user: UserReturn) => user.email === inviteUserEmail)) {
+      Alert.alert('User already invited.');
       return;
     }
 
@@ -90,6 +78,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
         setInviteUserEmail('');
       })
       .catch(() => {
+        console.log('no user found');
         Alert.alert('User does not exist.');
         setInviteUserEmail('');
       });
@@ -202,14 +191,19 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
       gId = route.params.groupId;
     }
 
+    const tempDateTime: Date = moment(`${eventDate} ${eventTime}`, 'MMM DD, YYYY h:mm A').toDate();
+
     // Event Model for later use
     const event: EventModel = {
       hostId: userReturned.id,
       name: eventTitle,
       location: eventLocation,
-      date: eventDate,
-      time: eventTime,
+      datetime: Timestamp.fromDate(tempDateTime),
       gId,
+      inviteeStatus: invitedUsers.map((invitedUser: UserReturn) => ({
+        id: invitedUser.id,
+        status: null,
+      })),
     };
 
     // Create event
@@ -264,7 +258,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
             <TextInput
               style={styles.titleInput}
               value={eventTitle}
-              onChangeText={handleEventTitleChange}
+              onChangeText={setEventTitle}
               keyboardType="default"
               placeholder="Event Title"
               placeholderTextColor="#FF7000"
@@ -277,7 +271,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
             <TextInput
               style={styles.locationInput}
               value={eventLocation}
-              onChangeText={handleEventLocationChange}
+              onChangeText={setEventLocation}
               keyboardType="default"
               autoCapitalize="none"
               testID="location-input"
@@ -287,7 +281,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
             <Text style={styles.dateLabel}>Date</Text>
             <TouchableOpacity
               style={styles.dateInput}
-              onPress={showDatepicker}
+              onPress={() => setShowDatePicker(true)}
               testID="date-appear"
             >
               <Text style={styles.dateText} testID="date-input">
@@ -295,17 +289,20 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
               </Text>
             </TouchableOpacity>
           </View>
+
           <View style={styles.datePicker}>
             {showDatePicker && (
-              <DateTimePicker
-                value={moment(eventDate, 'MMM DD, YYYY').toDate()}
-                minimumDate={new Date()}
-                mode="date"
-                display="default"
-                textColor="dark"
+              <DateTimePickerModal
                 testID="date-picker"
-                onChange={(event, date) => {
+                isVisible={showDatePicker}
+                mode="date"
+                minimumDate={new Date()}
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onConfirm={(date: Date) => {
                   handleEventDateChange(date);
+                }}
+                onCancel={() => {
+                  setShowDatePicker(false);
                 }}
               />
             )}
@@ -314,7 +311,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
             <Text style={styles.timeLabel}>Time</Text>
             <TouchableOpacity
               style={styles.timeInput}
-              onPress={showTimepicker}
+              onPress={() => setShowTimePicker(true)}
               testID="time-appear"
             >
               <Text style={styles.timeText} testID="time-input">
@@ -324,13 +321,16 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
           </View>
           <View style={styles.timePicker}>
             {showTimePicker && (
-              <DateTimePicker
-                value={moment(eventTime, 'hh:mm A').toDate()}
+              <DateTimePickerModal
+                testID="time-picker"
+                isVisible={showTimePicker}
                 mode="time"
-                display="default"
-                is24Hour={false}
-                onChange={(event, date) => {
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onConfirm={(date: Date) => {
                   handleEventTimeChange(date);
+                }}
+                onCancel={() => {
+                  setShowTimePicker(false);
                 }}
               />
             )}
@@ -343,7 +343,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
               <TextInput
                 style={styles.invitedInput}
                 value={inviteUserEmail}
-                onChangeText={handleInviteUserEmailChange}
+                onChangeText={setInviteUserEmail}
                 keyboardType="default"
                 autoCapitalize="none"
                 testID="invited-input"
@@ -451,8 +451,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   datePicker: {
-    alignSelf: 'flex-end',
-    paddingRight: 40,
+    // alignSelf: 'flex-end',
+    // paddingRight: 40,
+    display: 'flex',
+    flexDirection: 'row',
   },
   timeContainer: {
     justifyContent: 'center',

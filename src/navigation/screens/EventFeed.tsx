@@ -1,17 +1,9 @@
 /* eslint-disable global-require */
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Dimensions,
-  PixelRatio,
-  FlatList,
-  Button,
-} from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, FlatList } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 // import NavBar from '../NavBar';
+import moment from 'moment';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 import { EventReturn } from '../../resources/schema/event.model';
@@ -27,14 +19,27 @@ export default function EventFeed({ navigation }: any) {
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
       console.log('Event List:', eventList);
-      setEvents(eventList);
+
+      const filteredEvents = eventList.filter((event: EventReturn) => {
+        const currentDate = moment();
+        console.log('Current Date:', event.datetime);
+        const eventDate = moment(event.datetime.toDate());
+        return eventDate.isSameOrAfter(currentDate);
+      });
+
+      const sortedEvents = filteredEvents.sort((a: EventReturn, b: EventReturn) => {
+        const aDate = moment(a.datetime.toDate());
+        const bDate = moment(b.datetime.toDate());
+        return aDate.isAfter(bDate) ? 1 : -1;
+      });
+
+      setEvents(sortedEvents);
     };
 
     if (isFocused) {
       fetchData();
     }
     setRefresh(false);
-    console.log(events);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh, isFocused]);
 
@@ -50,9 +55,8 @@ export default function EventFeed({ navigation }: any) {
     </View>
   ) : (
     <View style={styles.container}>
-      <Button title="Refresh" onPress={() => setRefresh(true)} />
       <View style={styles.textContainer}>
-        <Text style={styles.text}>User's KickBacks</Text>
+        <Text style={styles.text}>KickBacks</Text>
       </View>
       <View style={styles.cardContainer}>
         <FlatList
@@ -110,6 +114,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
+    bottom: -18,
   },
   imageContainer: {
     flex: 1,
