@@ -16,7 +16,7 @@ function EventCard({ event, navigation }: { event: EventReturn; navigation: any 
   const eventDate = moment(event.datetime.toDate());
 
   const handlePress = () => {
-    navigation.navigate('EventDetail', { event, hasConcluded: true });
+    navigation.navigate('EventDetail', { event, isOccuring: true });
   };
 
   console.log('event', event);

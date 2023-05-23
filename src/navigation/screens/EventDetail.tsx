@@ -7,7 +7,9 @@ import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
 
 function EventDetail({ route, navigation }: any) {
-  const { event, hasConcluded } = route.params;
+  const { event, isOccuring } = route.params;
+
+  const paymentStatus = false;
 
   const [currentEvent, setCurrentEvent] = useState<any>(event);
 
@@ -103,7 +105,7 @@ function EventDetail({ route, navigation }: any) {
                 .toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
             </Text>
           </View>
-          {hasConcluded && FB_AUTH.currentUser?.uid !== event.hostId && (
+          {isOccuring && FB_AUTH.currentUser?.uid !== event.hostId && (
             <View style={styles.voteContainer}>
               <Pressable
                 testID="accept-invite"
@@ -121,11 +123,20 @@ function EventDetail({ route, navigation }: any) {
               </Pressable>
             </View>
           )}
-          {!hasConcluded && (
+          {!isOccuring && (
             <View style={styles.voteContainer}>
               <Pressable style={styles.voteButton}>
                 <Ionicons name="repeat-outline" size={30} color="#FF7000" />
               </Pressable>
+              {paymentStatus ? (
+                <View style={styles.paymentPaidContainer}>
+                  <Text style={styles.paymentText}> PAID </Text>
+                </View>
+              ) : (
+                <View style={styles.paymentPayContainer}>
+                  <Text style={styles.paymentText}> PAY </Text>
+                </View>
+              )}
             </View>
           )}
         </View>
@@ -305,6 +316,30 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     justifyContent: 'flex-end',
+  },
+  statueText: {
+    fontSize: 20,
+    color: 'white',
+    textAlign: 'center',
+  },
+  paymentPaidContainer: {
+    width: 90,
+    alignSelf: 'center',
+    backgroundColor: '#6EDE51',
+    height: 30,
+    borderRadius: 10,
+  },
+  paymentPayContainer: {
+    width: 90,
+    alignSelf: 'center',
+    backgroundColor: '#FF0000',
+    height: 30,
+    borderRadius: 10,
+  },
+  paymentText: {
+    fontSize: 20,
+    color: 'black',
+    textAlign: 'center',
   },
 });
 
