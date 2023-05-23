@@ -80,6 +80,13 @@ function EventCard({ event, navigation }: { event: EventReturn; navigation: any 
 }
 
 const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#FFFDF8',
+    borderRadius: 18,
+    width: 322,
+    height: 176,
+    marginVertical: 10,
+  },
   headingContainer: {
     position: 'absolute',
     width: 322,
@@ -140,13 +147,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     paddingLeft: 70,
-  },
-  card: {
-    backgroundColor: '#FFFDF8',
-    borderRadius: 18,
-    width: 322,
-    height: 176,
-    marginVertical: 10,
   },
   shadowProp: {
     shadowColor: '#171717',

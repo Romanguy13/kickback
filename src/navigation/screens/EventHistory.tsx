@@ -25,7 +25,8 @@ export default function EventHistory({ navigation }: any) {
       const filteredEvents = eventList.filter((event: EventReturn) => {
         // Get today's date
         const currentDate = moment();
-        const eventDate = moment(event.date, 'MMMM DD, YYYY');
+        console.log('currentDate', event.datetime.toDate());
+        const eventDate = moment(event.datetime.toDate());
 
         return eventDate.isBefore(currentDate);
       });
@@ -45,7 +46,7 @@ export default function EventHistory({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>Previous {'\n'}KickBacks </Text>
+        <Text style={styles.header}>Previous {'\n'}KickBacks </Text>
       </View>
       <View style={styles.cardContainer}>
         <FlatList
@@ -68,16 +69,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFB',
     alignItems: 'center',
   },
+  textContainer: {
+    width: '100%',
+    margin: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    color: '#272222',
+    fontSize: Math.round((windowWidth * 0.15) / fontScale),
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 30,
+  },
   cardContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  textContainer: {
-    width: '100%',
-    paddingTop: 20,
-    margin: 20,
-    alignItems: 'center',
   },
   text: {
     color: '#272222',

@@ -5,18 +5,17 @@ import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
 import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
+import { UserReturn } from '../../resources/schema/user.model';
+import { GroupMemberModel } from '../../resources/schema/group.model';
+import { EventReturn, InviteeStatus, UpdatedEvent } from '../../resources/schema/event.model';
+import InviteeStatusCard from '../../components/InviteeStatusCard';
 
 function EventDetail({ route, navigation }: any) {
   const { event, canVote } = route.params;
 
-  const [currentEvent, setCurrentEvent] = useState<any>(event);
+  const [currentEvent, setCurrentEvent] = useState<EventReturn>(event);
 
-  const [topMembers, setTopMembers] = useState<any[]>([]);
-
-  const idToName = async (id: string) => {
-    const user = await new Users().get(id);
-    return user.name;
-  };
+  const [topMembers, setTopMembers] = useState<UserReturn[]>([]);
 
   const handleInviteeStatus = async (status: boolean) => {
     // edit the event in the database to reflect the new status based on the user's response
@@ -25,39 +24,46 @@ function EventDetail({ route, navigation }: any) {
 
     // find the inviteeStatus that corresponds to the current user id
     const inviteeFound = inviteeStatus.find(
-      (invitee: { id: string; status: boolean | null }) => invitee.id === currentUserId
+      (invitee: InviteeStatus) => invitee.id === currentUserId
     );
     if (inviteeFound) {
       inviteeFound.status = status;
-    }
 
-    // change the inviteeStatus to reflect the user's response
-    const newInviteeStatus = inviteeStatus.map(
-      (invitee: { id: string; status: boolean | null }) => {
+      // change the inviteeStatus to reflect the user's response
+      const newInviteeStatus = inviteeStatus.map((invitee: InviteeStatus) => {
         if (invitee.id === currentUserId) {
           return inviteeFound;
         }
         return invitee;
-      }
-    );
+      });
 
-    // update the event in the database
-    await new Events().edit(event.id, { inviteeStatus: newInviteeStatus });
+      // update the event in the database
+      await new Events().edit(event.id, { inviteeStatus: newInviteeStatus });
 
-    // update the event in the state
-    setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
+      console.log('inviteeStatus - before', currentEvent);
+
+      // update the event in the state
+      setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
+
+      console.log('inviteeStatus - after', currentEvent);
+    }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const tempMembers = await new GroupMembers().getAll(event.gId, 'groupId');
+      const tempMembers = (await new GroupMembers().getAll(
+        event.gId,
+        'groupId'
+      )) as GroupMemberModel[];
 
-      const promises = tempMembers.map(async (member) => {
-        const name = await idToName(member.userId);
-        return { id: member.userId, name };
-      });
+      const promises = tempMembers.map(
+        (member) => new Users().get(member.userId) as Promise<UserReturn>
+      );
 
-      const tMembers = await Promise.all(promises);
+      const tMembers: UserReturn[] = await Promise.all(promises);
+
+      console.log('tMembers', tMembers);
+
       // sort the members so the host is first
       tMembers.sort((a, b) => {
         if (a.id === currentEvent.hostId) {
@@ -75,6 +81,10 @@ function EventDetail({ route, navigation }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEvent]);
 
+  if (event.name.length >= 20) {
+    event.name = `${event.name.substring(0, 14)}..`;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -91,9 +101,12 @@ function EventDetail({ route, navigation }: any) {
           </Pressable>
           <View style={styles.dateContainer}>
             <Text style={styles.dateText}>
-              {event.datetime
-                .toDate()
-                .toDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              {event.datetime.toDate().toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
             </Text>
           </View>
           <View style={styles.timeContainer}>
@@ -137,43 +150,8 @@ function EventDetail({ route, navigation }: any) {
 
           <View style={styles.usersContainer}>
             <ScrollView style={styles.usersScroll}>
-              {topMembers.map((member) => (
-                <View
-                  key={member.id}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    margin: 10,
-                  }}
-                >
-                  <Text key={member.userId} style={styles.usersText}>
-                    {member.name}
-                  </Text>
-                  <View
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-
-                      marginRight: 10,
-                    }}
-                  >
-                    {member.id === event.hostId && (
-                      <Ionicons name="star" size={25} color="#FF7000" />
-                    )}
-                    {member.id !== event.hostId &&
-                      currentEvent.inviteeStatus.find(
-                        (invitee: { id: string; status: boolean | null }) =>
-                          invitee.id === member.id
-                      ).status === true && <Ionicons name="checkmark" size={25} color="#FF7000" />}
-                    {member.id !== event.hostId &&
-                      currentEvent.inviteeStatus.find(
-                        (invitee: { id: string; status: boolean | null }) =>
-                          invitee.id === member.id
-                      ).status === false && <Ionicons name="close" size={25} color="#FF7000" />}
-                  </View>
-                </View>
+              {topMembers.map((member: UserReturn) => (
+                <InviteeStatusCard event={event} key={member.id} currentMember={member} />
               ))}
             </ScrollView>
           </View>
@@ -197,7 +175,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     color: '#FFFFFB',
-    fontSize: 60,
+    fontSize: 40,
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',

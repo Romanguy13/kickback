@@ -3,6 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Alert, View } from 'react-native';
 import React from 'react';
+import { Timestamp } from 'firebase/firestore';
+import moment from 'moment';
 import EventHistory from '../../../navigation/screens/EventHistory';
 import { EventReturn } from '../../../resources/schema/event.model';
 import Events from '../../../resources/api/events';
@@ -11,7 +13,7 @@ jest.spyOn(Alert, 'alert');
 
 jest.mock('firebase/auth');
 
-jest.mock('firebase/firestore');
+// jest.mock('firebase/firestore');
 
 jest.mock('../../../resources/api/events');
 
@@ -68,8 +70,7 @@ test('Renders History Screen - With events', async () => {
       hostId: '123',
       name: 'Event Title',
       location: 'Event Location',
-      date: 'March 23, 2023',
-      time: '5:00 PM',
+      datetime: Timestamp.fromDate(moment('2023-03-23T17:00:00').toDate()),
       gId: '123',
     },
   ] as EventReturn[]);
@@ -100,8 +101,7 @@ test('Renders History Screen - No update', async () => {
       hostId: '123',
       name: 'Event Title',
       location: 'Event Location',
-      date: 'March 23, 2023',
-      time: '5:00 PM',
+      datetime: Timestamp.fromDate(moment('2023-03-23T17:00:00').toDate()),
       gId: '123',
     },
   ] as EventReturn[]);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View, Text, Dimensions, PixelRatio } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import GroupMembers from '../../resources/api/groupMembers';
 import { FB_AUTH } from '../../../firebaseConfig';
@@ -7,7 +7,7 @@ import Groups from '../../resources/api/groups';
 import { GroupMemberModel, GroupReturnModel } from '../../resources/schema/group.model';
 import GroupCard from '../../components/GroupCard';
 import Events from '../../resources/api/events';
-import { UserModel } from '../../resources/schema/user.model';
+import { UserModel, UserReturn } from '../../resources/schema/user.model';
 import Users from '../../resources/api/users';
 import { EventModel, EventReturn } from '../../resources/schema/event.model';
 
@@ -60,21 +60,21 @@ export default function EventGroups({ navigation }: any) {
         const currGroup = await new Groups().get(group.groupId);
 
         // Get the amount of members in the group
-        const members = await new GroupMembers().getAll(group.groupId, 'groupId');
+        const members = (await new GroupMembers().getAll(
+          group.groupId,
+          'groupId'
+        )) as GroupMemberModel[];
 
-        // Get the top 3 members of the group
-        const topMembers: UserModel[] = [];
-        const innerPromise = members.map(async (member, i) => {
-          // Break out of the loop after 4 members
-          if (i > 4) return false;
-
+        // Get the top 4 members of the group
+        const tempMembers = [...members];
+        if (tempMembers.length >= 4) tempMembers.splice(0, members.length - 4);
+        const innerPromise = tempMembers.map(async (member) => {
           const user = await new Users().get(member.userId);
-          topMembers.push(user as UserModel);
-          return true;
+          return user as UserModel;
         });
 
         // Wait for the inner promise to finish
-        await Promise.all(innerPromise);
+        const tempUsers: UserModel[] = await Promise.all(innerPromise);
 
         // Get the amount of events in the group
         const events = await new Events().getAll(group.groupId, 'gId');
@@ -83,7 +83,7 @@ export default function EventGroups({ navigation }: any) {
           group: currGroup as GroupReturnModel,
           navigation,
           events: events as EventReturn[],
-          topMembers,
+          topMembers: tempUsers as UserModel[],
           extraMembers: members.length > 4 ? members.length - 4 : 0,
         });
       });
@@ -107,6 +107,9 @@ export default function EventGroups({ navigation }: any) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.textContainer}>
+        <Text style={styles.header}>Groups</Text>
+      </View>
       <View style={styles.listContainer}>
         <FlatList
           data={groups}
@@ -122,19 +125,33 @@ export default function EventGroups({ navigation }: any) {
   );
 }
 
+const windowWidth = Dimensions.get('window').width;
+const fontScale = PixelRatio.getFontScale();
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFB',
     alignItems: 'center',
+  },
+  textContainer: {
+    width: '100%',
+    margin: 20,
     justifyContent: 'center',
-    paddingTop: 30,
+    alignItems: 'center',
+  },
+  header: {
+    color: '#272222',
+    fontSize: Math.round((windowWidth * 0.15) / fontScale),
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 30,
   },
   listContainer: {
-    width: '100%',
-    height: '100%',
-    paddingLeft: 20,
-    paddingRight: 20,
     display: 'flex',
+    width: '100%',
+    height: '78%',
+    alignSelf: 'center',
+    paddingLeft: 30,
+    paddingRight: 30,
   },
 });
