@@ -16,13 +16,13 @@ function EventCard({ event, navigation }: { event: EventReturn; navigation: any 
   const eventDate = moment(event.datetime.toDate());
 
   const handlePress = () => {
-    navigation.navigate('EventDetail', { event, canVote: true });
+    navigation.navigate('EventDetail', { event, hasConcluded: true });
   };
 
   console.log('event', event);
 
   const checkStatus = (currEvent: EventReturn) => {
-    // check the status of the the user in the event based on their id
+    // check the status of the user in the event based on their id
     const currentUserId = FB_AUTH.currentUser?.uid;
     const { inviteeStatus } = currEvent;
 

@@ -1,15 +1,19 @@
 import React from 'react';
-import {TouchableWithoutFeedback, StyleSheet, View, Dimensions, PixelRatio, Text } from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  StyleSheet,
+  View,
+  Dimensions,
+  PixelRatio,
+  Text,
+} from 'react-native';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
-function HistoryCard({event, navigation}: any) {
-
+function HistoryCard({ event, navigation }: any) {
   const handlePress = () => {
     navigation.navigate('EventDetail', { event });
   };
-  
-  //console.log("bf modified ", event.date)
-  
+
   /*
   
   const MonthConverter = {
@@ -57,30 +61,19 @@ function HistoryCard({event, navigation}: any) {
   {event_date < current_date? 
   */
   return (
-    
-      
-      (
-        <View style={[styles.card, styles.shadowProp]}>
-
-        <TouchableWithoutFeedback onPress={handlePress}>
-          <View>
-            <View style={styles.headingContainer}>
-              <Text style={[styles.heading]}>
-                {''}
-                {event.name} {''}
-              </Text>
-            </View>
-            <Text style={styles.locationtext}>
-              {event.location}
-            </Text>
+    <View style={[styles.card, styles.shadowProp]}>
+      <TouchableWithoutFeedback onPress={handlePress}>
+        <View>
+          <View style={styles.headingContainer}>
+            <Text style={[styles.heading]}>{event.name}</Text>
           </View>
-        </TouchableWithoutFeedback>
-
+          <Text style={styles.locationtext}>{event.location}</Text>
         </View>
-      ) 
+      </TouchableWithoutFeedback>
+    </View>
   );
 }
- 
+
 /*  return (
     <View style={styles.container} key={eventId}>
       <View style={styles.textContainer}>
@@ -97,7 +90,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 322,
     height: 44,
-    // this the card color 
+    // this the card color
     backgroundColor: '#ff7000',
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
@@ -145,16 +138,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#FFFDF8',
   },
-  //Fixed amout of characters
+  // Fixed amout of characters
   locationtext: {
-    //position: 'absolute',
+    // position: 'absolute',
     top: 80,
-    //left: 110,
-    //width: 250,
+    // left: 110,
+    // width: 250,
     fontWeight: '700',
     fontSize: 30,
     textAlign: 'center',
-    //paddingLeft: 70,
+    // paddingLeft: 70,
   },
   card: {
     backgroundColor: '#FFFDF8',

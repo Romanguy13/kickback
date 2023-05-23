@@ -5,7 +5,7 @@ import moment from 'moment';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 
-import HistoryCard from './HistoryCard';
+import HistoryCard from '../../components/HistoryCard';
 import { EventReturn } from '../../resources/schema/event.model';
 
 export default function EventHistory({ navigation }: any) {
@@ -18,17 +18,16 @@ export default function EventHistory({ navigation }: any) {
     console.log('isFocused', isFocused);
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
-      console.log(eventList);
 
       // Filter through the events and only show the ones that have already passed
       // Filter Function is lines 44 to 56
       const filteredEvents = eventList.filter((event: EventReturn) => {
         // Get today's date
         const currentDate = moment();
-        const eventDate = moment(event.date, 'MMMM DD, YYYY');
+        const eventDate = moment(event.datetime.toDate());
 
-        return true
-        //return eventDate.isBefore(currentDate);
+        // return true
+        return eventDate.isBefore(currentDate);
       });
       setEvents(filteredEvents);
       console.log(filteredEvents);

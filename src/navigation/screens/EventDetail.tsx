@@ -7,7 +7,7 @@ import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
 
 function EventDetail({ route, navigation }: any) {
-  const { event, canVote } = route.params;
+  const { event, hasConcluded } = route.params;
 
   const [currentEvent, setCurrentEvent] = useState<any>(event);
 
@@ -103,7 +103,7 @@ function EventDetail({ route, navigation }: any) {
                 .toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
             </Text>
           </View>
-          {canVote && FB_AUTH.currentUser?.uid !== event.hostId && (
+          {hasConcluded && FB_AUTH.currentUser?.uid !== event.hostId && (
             <View style={styles.voteContainer}>
               <Pressable
                 testID="accept-invite"
@@ -121,7 +121,7 @@ function EventDetail({ route, navigation }: any) {
               </Pressable>
             </View>
           )}
-          {!canVote && (
+          {!hasConcluded && (
             <View style={styles.voteContainer}>
               <Pressable style={styles.voteButton}>
                 <Ionicons name="repeat-outline" size={30} color="#FF7000" />

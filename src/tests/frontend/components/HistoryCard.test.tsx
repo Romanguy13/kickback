@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor, screen } from '@testing-library/react-native';
 import { Timestamp } from 'firebase/firestore';
-import HistoryCard from '../../../navigation/screens/HistoryCard';
+import HistoryCard from '../../../components/HistoryCard';
 import { EventReturn } from '../../../resources/schema/event.model';
 
 const event: EventReturn = {
