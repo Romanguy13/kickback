@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableWithoutFeedback, StyleSheet, View, Text } from 'react-native';
-import { EventReturn } from '../../resources/schema/event.model';
+import { EventReturn } from '../resources/schema/event.model';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
 function HistoryCard({ event, navigation }: { event: EventReturn; navigation: any }) {
