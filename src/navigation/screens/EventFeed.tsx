@@ -33,6 +33,19 @@ export default function EventFeed({ navigation }: any) {
         return aDate.isAfter(bDate) ? 1 : -1;
       });
 
+      const sortByStatusEvents = sortedEvents.sort((a: EventReturn, b: EventReturn) => {
+        const aStatus = a.inviteeStatus.find(
+          (invitee: { id: string; status: boolean | null }) =>
+            invitee.id === FB_AUTH.currentUser?.uid
+        );
+        const bStatus = b.inviteeStatus.find( 
+          (invitee: { id: string; status: boolean | null }) =>
+            invitee.id === FB_AUTH.currentUser?.uid
+        );
+        
+        return aStatus?.status === bStatus?.status ? 0 : aStatus?.status ? -1 : 1;
+      });
+
       setEvents(sortedEvents);
     };
 
