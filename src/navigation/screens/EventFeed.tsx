@@ -46,7 +46,7 @@ export default function EventFeed({ navigation }: any) {
         return aStatus?.status === bStatus?.status ? 0 : aStatus?.status ? -1 : 1;
       });
 
-      setEvents(sortedEvents);
+      setEvents(sortByStatusEvents);
     };
 
     if (isFocused) {
