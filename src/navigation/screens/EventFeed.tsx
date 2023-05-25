@@ -27,13 +27,7 @@ export default function EventFeed({ navigation }: any) {
         return eventDate.isSameOrAfter(currentDate);
       });
 
-      const sortedEvents = filteredEvents.sort((a: EventReturn, b: EventReturn) => {
-        const aDate = moment(a.datetime.toDate());
-        const bDate = moment(b.datetime.toDate());
-        return aDate.isAfter(bDate) ? 1 : -1;
-      });
-
-      const sortByStatusEvents = sortedEvents.sort((a: EventReturn, b: EventReturn) => {
+      const sortByStatusEvents = filteredEvents.sort((a: EventReturn, b: EventReturn) => {
         const aStatus = a.inviteeStatus.find(
           (invitee: { id: string; status: boolean | null }) =>
             invitee.id === FB_AUTH.currentUser?.uid
@@ -46,7 +40,13 @@ export default function EventFeed({ navigation }: any) {
         return aStatus?.status === bStatus?.status ? 0 : aStatus?.status ? -1 : 1;
       });
 
-      setEvents(sortByStatusEvents);
+      const sortedEvents = sortByStatusEvents.sort((a: EventReturn, b: EventReturn) => {
+        const aDate = moment(a.datetime.toDate());
+        const bDate = moment(b.datetime.toDate());
+        return aDate.isAfter(bDate) ? 1 : -1;
+      });
+
+      setEvents(sortedEvents);
     };
 
     if (isFocused) {
