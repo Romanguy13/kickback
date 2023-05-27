@@ -105,26 +105,38 @@ export default function EventHistory({ navigation }: any) {
             <View style={styles.modalBody}>
               <View style={styles.modalOptionContainer}>
                 <Text>Paid Status</Text>
-                <NativeBaseProvider>
-                  <Radio.Group name="paidStatus" defaultValue="all">
-                    <Radio value="all">All</Radio>
-                    <Radio value="paid">Paid</Radio>
-                    <Radio value="unpaid">Unpaid</Radio>
-                  </Radio.Group>
-                </NativeBaseProvider>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                  }}
+                >
+                  <NativeBaseProvider>
+                    <Radio.Group name="paidStatus" defaultValue="all">
+                      <Radio value="all">All</Radio>
+                      <Radio value="paid">Paid</Radio>
+                      <Radio value="unpaid">Unpaid</Radio>
+                    </Radio.Group>
+                  </NativeBaseProvider>
+                </View>
               </View>
               <View style={styles.modalOptionContainer}>
-                <Text>Date</Text>
-                <DateTimePickerModal
-                  style={{ width: 200 }}
-                  date={fromDate}
-                  mode="date"
-                  onConfirm={(date) => setFromDate(date)}
-                  onCancel={() => setFromDate(moment().toDate())}
-                />
+                <Text>From</Text>
+                <Pressable style={styles.timeInput} onPress={() => setFromDatePickerVisible(true)}>
+                  <Text style={styles.timeText}>{moment(fromDate).format('MM DD YYYY')}</Text>
+                </Pressable>
+                {fromDatePickerVisible && (
+                  <DateTimePickerModal
+                    style={{ width: 200 }}
+                    date={fromDate}
+                    isVisible={fromDatePickerVisible}
+                    mode="date"
+                    onConfirm={(date) => setFromDate(date)}
+                    onCancel={() => setFromDatePickerVisible(false)}
+                  />
+                )}
                 <Text>To:</Text>
-                <Pressable onPress={() => setToDatePickerVisible(true)}>
-                  <Text>{moment(toDate).format('MM DD YYYY')}</Text>
+                <Pressable style={styles.timeInput} onPress={() => setToDatePickerVisible(true)}>
+                  <Text style={styles.timeText}>{moment(toDate).format('MM DD YYYY')}</Text>
                 </Pressable>
                 {toDatePickerVisible && (
                   <DateTimePickerModal
@@ -244,10 +256,25 @@ const styles = StyleSheet.create({
   },
   modalBody: {
     marginTop: 20,
+    rowGap: 20,
   },
   modalOptionContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     gap: 20,
+  },
+  timeInput: {
+    borderColor: '#272222',
+    backgroundColor: '#272222',
+    color: '#FFFFFB',
+    fontWeight: 'bold',
+    borderWidth: 3,
+    borderRadius: 24,
+    fontSize: 16,
+    padding: 10,
+  },
+  timeText: {
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
