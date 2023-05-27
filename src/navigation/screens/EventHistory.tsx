@@ -27,7 +27,8 @@ export default function EventHistory({ navigation }: any) {
         const currentDate = moment();
         const eventDate = moment(event.date, 'MMMM DD, YYYY');
 
-        return eventDate.isBefore(currentDate);
+        return true
+        //return eventDate.isBefore(currentDate);
       });
       setEvents(filteredEvents);
       console.log(filteredEvents);
