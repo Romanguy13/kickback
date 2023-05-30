@@ -5,7 +5,7 @@ import moment from 'moment';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 
-import HistoryCard from './HistoryCard';
+import HistoryCard from '../../components/HistoryCard';
 import { EventReturn } from '../../resources/schema/event.model';
 
 export default function EventHistory({ navigation }: any) {
@@ -15,7 +15,7 @@ export default function EventHistory({ navigation }: any) {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    console.log('isFocused', isFocused);
+    console.log('isFocused', isFocused)
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
       console.log(eventList);
