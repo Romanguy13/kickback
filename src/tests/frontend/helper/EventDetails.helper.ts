@@ -22,7 +22,7 @@ const groupMemberReturn = [
   },
 ];
 
-export function preLoadData() {
+export default function preLoadData() {
   (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValue(groupMemberReturn);
 
   // Load all users based off groupMemberReturn

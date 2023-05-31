@@ -15,6 +15,7 @@ import EventHistory from './screens/EventHistory';
 import EventCreation from './screens/EventCreation';
 import GroupDetails from './screens/GroupDetails';
 import EventDetail from './screens/EventDetail';
+import UserSettings from './screens/UserSettings';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,16 +49,6 @@ function TabBar() {
         }}
       />
       <Tab.Screen
-        name="Creation"
-        component={EventCreation}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="add" color={color} size={size} style={{ fontSize: 30 }} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="Groups"
         component={EventGroups}
         options={{
@@ -68,12 +59,32 @@ function TabBar() {
         }}
       />
       <Tab.Screen
+        name="Creation"
+        component={EventCreation}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="add" color={color} size={size} style={{ fontSize: 30 }} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="History"
         component={EventHistory}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="time" color={color} size={size} style={{ fontSize: 30 }} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={UserSettings}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings" color={color} size={size} style={{ fontSize: 30 }} />
           ),
         }}
       />
