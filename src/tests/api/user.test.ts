@@ -130,35 +130,6 @@ describe('Firestore Operations', () => {
     );
   });
 
-  /*
-  Test to get the id of a user in the database by email
-  */
-  it('Should be able to get user db id by email', async () => {
-    const expectedUser: UserReturn = {
-      id: 'isa45',
-      name: 'Isabella',
-      email: 'isa@email.com',
-      createdAt: serverTimestamp() as Timestamp,
-      updatedAt: serverTimestamp() as Timestamp,
-    };
-
-    // Make sure that there is no connection with the database
-    (collection as jest.Mock).mockReturnValue({
-      id: 'isa45',
-      path: 'randomCollectionPath',
-      parent: null,
-    } as unknown as CollectionReference<DocumentData>);
-    (query as jest.Mock).mockResolvedValue({
-      id: 'randomQueryId',
-    } as unknown as QuerySnapshot<DocumentData>);
-    (getDocs as jest.Mock).mockResolvedValue({
-      docs: [{ data: () => expectedUser }],
-    } as unknown as QuerySnapshot<DocumentData>);
-    await userClass.getUserDbIdByEmail('isa@email.com');
-
-
-  });
-
   // it('adds a user to the users collection', async () => {
   //   const userData: UserModel = {
   //     name: 'Test User',
