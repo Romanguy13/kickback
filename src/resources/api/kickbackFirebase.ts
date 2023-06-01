@@ -3,6 +3,7 @@ import {
   collection,
   CollectionReference,
   doc,
+  deleteDoc,
   DocumentData,
   DocumentReference,
   Firestore,
@@ -75,6 +76,26 @@ export default class KickbackFirebase {
     return extra && extra.disableId ? '' : id.id;
   }
 
+  // Takes in a event ID and looks for it in the database to delete
+  public async delete(eventId: string): Promise<void> {
+    const eventRef: DocumentReference<DocumentData> = doc(this.database, this.collection, eventId);
+
+    console.log('Event to be deleted: ', eventRef);
+    console.log('Event to be deleted ID: ', eventRef.id);
+
+    try {
+      await deleteDoc(eventRef);
+
+      console.log('Event deleted successfully');
+      return;
+    } catch (error) {
+      console.error('Error deleting event:', error);
+
+      throw new Error('Failed to delete event');
+    }
+  }
+  
+
   public async getAll(userId: string, fieldName: string): Promise<DocumentData[]> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
     const q: Query<DocumentData> = query(dbRef, where(fieldName, '==', userId));
@@ -106,9 +127,4 @@ export default class KickbackFirebase {
     return newData;
   }
 
-  // public async delete(id: string): Promise<void> {
-  //   const database = this.database;
-  //   const dataRef = database.ref(this.collection);
-  //   await dataRef.child(id).remove();
-  // }
 }

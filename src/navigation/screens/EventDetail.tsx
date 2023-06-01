@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View, ScrollView, Button } from 'react-native';
+import { Pressable, StyleSheet, Text, View, ScrollView, Button } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
@@ -17,18 +17,7 @@ function EventDetail({ route, navigation }: any) {
 
   const [topMembers, setTopMembers] = useState<UserReturn[]>([]);
 
-  const [showDeleteButton, setDeleteButton] = useState<boolean>(false);
-
-  const deleteEvent = async () => {
-    try {
-      await new Events().delete(event.id);
-      Alert.alert('Success!', 'Event deleted.');
-      navigation.goBack();
-    } catch (error) {
-      console.log(error);
-      Alert.alert('Error', 'Something went wrong. Please try again later.');
-    }
-  };
+  const  [showDeleteButton, setDeleteButton] = useState<boolean>(false);
 
   const handleInviteeStatus = async (status: boolean) => {
     // edit the event in the database to reflect the new status based on the user's response
@@ -179,7 +168,7 @@ function EventDetail({ route, navigation }: any) {
           </View>
 
           <View style={styles.deleteButton}>
-            {showDeleteButton && <Button title="Delete Event" onPress={deleteEvent} />}
+            {showDeleteButton && <Button title="Delete Event" onPress={() => console.log("deleting event")} />}
           </View>
         </View>
       </View>

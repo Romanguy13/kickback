@@ -24,10 +24,6 @@ export default class Events extends KickbackFirebase {
     return super.create(data);
   }
 
-  async delete(id: string): Promise<void> {
-    return super.delete(id);
-  }
-  
   async edit(id: string, data: UpdatedEvent): Promise<void> {
     return super.edit(id, data);
   }
