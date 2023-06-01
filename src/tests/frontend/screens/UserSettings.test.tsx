@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { updateEmail, updatePassword, reauthenticateWithCredential, signOut } from 'firebase/auth';
 import { Alert } from 'react-native';
 import UserSettings from '../../../navigation/screens/UserSettings';
+import Users from '../../../resources/api/users';
 import { FB_AUTH } from '../../../../firebaseConfig';
 
 // mocks the firebase user object for type checking
@@ -21,6 +22,8 @@ const currentUser: FirebaseUser = {
   displayName: 'John Wick',
   emailVerified: true,
 };
+
+jest.mock('../../../resources/api/users');
 
 // mocks the navigation container passed down from App.tsx
 jest.mock('@react-navigation/native', () => ({
@@ -71,25 +74,47 @@ test('Renders User Settings Screen with signed in user email', async () => {
   expect(screen.getByText('john@wick.com')).toBeTruthy();
 });
 
-/* 
-Test to verify that the user cannot update their email without entering a new email
-that follows the email format. 
-Expects an alert to be called with the error message.
+/*
+Test to verify a user can update their name.
+Expects an alert to be called with the success message.
 */
-test('Change Email - Not email format', async () => {
-  // mocks the updateEmail function to return an error
-  (updateEmail as jest.Mock).mockImplementationOnce(() => Promise.reject(new Error('notEmail')));
+test('Change Name - Success', async () => {
+  // mocks the updateEmail function to return a success
+  (Users.prototype.edit as jest.Mock).mockImplementationOnce(() => Promise.resolve());
 
   // mocks the current user object
-  (FB_AUTH.currentUser as FirebaseUser) = currentUser;
+  (FB_AUTH.currentUser as FirebaseUser) = {
+    ...currentUser,
+    displayName: 'John',
+  };
 
   renderWithNavigation();
-  fireEvent.changeText(screen.getByTestId('new-email-input'), 'notEmail');
+  fireEvent.changeText(screen.getByTestId('new-name-input'), 'John');
   fireEvent.press(screen.getByTestId('update-button'));
   await waitFor(() => expect(Alert.alert).toHaveBeenCalled());
 
-  // verifies that the email was not updated
-  expect(screen.queryByText('notEmail')).toBeFalsy();
+  // verifies that the updateEmail function was called
+  expect(Users.prototype.edit).toHaveBeenCalled();
+});
+
+/*
+Change email unexpected error
+*/
+test('Change Email - Error', async () => {
+  // mocks the updateEmail function to return a success
+  (updateEmail as jest.Mock).mockImplementationOnce(() => Promise.reject(new Error('error')));
+  (Users.prototype.edit as jest.Mock).mockImplementationOnce(() => Promise.resolve());
+
+  // mocks the current user object
+  (FB_AUTH.currentUser as FirebaseUser) = {
+    ...currentUser,
+    email: 'john@wick.com',
+  };
+
+  renderWithNavigation();
+  fireEvent.changeText(screen.getByTestId('new-email-input'), 'john@test.com');
+  fireEvent.press(screen.getByTestId('update-button'));
+  await waitFor(() => expect(Alert.alert).toHaveBeenCalled());
 });
 
 /*
@@ -100,6 +125,7 @@ Expects the email to be updated on the screen.
 test('Change Email - Success', async () => {
   // mocks the updateEmail function to return a success
   (updateEmail as jest.Mock).mockImplementationOnce(() => Promise.resolve());
+  (Users.prototype.edit as jest.Mock).mockImplementationOnce(() => Promise.resolve());
 
   // mocks the current user object
   (FB_AUTH.currentUser as FirebaseUser) = {
@@ -268,6 +294,8 @@ test('Logout - Success', async () => {
   (FB_AUTH.currentUser as FirebaseUser) = currentUser;
   renderWithNavigation();
   fireEvent.press(screen.getByTestId('log-out-button'));
+  await waitFor(() => expect(screen.getByTestId('logout-modal')).toBeTruthy());
+  fireEvent.press(screen.getByTestId('log-out-confirm-button'));
   await waitFor(() => expect(Alert.alert).toHaveBeenCalled());
 });
 

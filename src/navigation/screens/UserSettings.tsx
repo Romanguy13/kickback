@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
@@ -9,16 +9,28 @@ import {
   EmailAuthProvider,
   User,
 } from 'firebase/auth';
+import Users from '../../resources/api/users';
+import { UpdatedUser } from '../../resources/schema/user.model';
 import { FB_AUTH } from '../../../firebaseConfig';
 
 export default function UserSettings({ navigation }: any) {
   // A screen that allows the user to change their email
   const isFocused = useIsFocused();
+  const [modalVisible, setModalVisible] = useState(false);
   const [user, setUser] = useState<User | null>(FB_AUTH?.currentUser);
+  const [userDisplayName, setUserDisplayName] = useState<string>('');
   const [userNewEmail, setUserNewEmail] = useState<string>('');
   const [userCurrentPassword, setUserCurrentPassword] = useState<string>('');
   const [userNewPassword, setUserNewPassword] = useState<string>('');
   const [userConfirmNewPassword, setUserConfirmNewPassword] = useState<string>('');
+
+  const changeModalVisibility = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const handleChangeDisplayName = (text: string) => {
+    setUserDisplayName(text);
+  };
 
   const handleChangeNewEmail = (text: string) => {
     setUserNewEmail(text);
@@ -37,7 +49,21 @@ export default function UserSettings({ navigation }: any) {
   };
 
   const handleUpdate = async () => {
+    if (userDisplayName !== '' && user !== null) {
+      const id = await new Users().getUserDbIdByEmail(user.email as string);
+      const updatedUser: UpdatedUser = {
+        name: userDisplayName,
+      };
+      await new Users().edit(id as string, updatedUser);
+      Alert.alert('Name updated!');
+      console.log('Name updated!');
+    }
     if (userNewEmail !== '' && user !== null) {
+      const id = await new Users().getUserDbIdByEmail(user.email as string);
+      const updatedUser: UpdatedUser = {
+        email: userNewEmail.toLowerCase(),
+      };
+      await new Users().edit(id as string, updatedUser);
       updateEmail(user, userNewEmail)
         .then(() => {
           setUser((prevUser: any) => ({
@@ -80,6 +106,7 @@ export default function UserSettings({ navigation }: any) {
           console.log(error.code, error.message);
         });
     }
+    setUserDisplayName('');
     setUserNewEmail('');
     setUserCurrentPassword('');
     setUserNewPassword('');
@@ -121,7 +148,7 @@ export default function UserSettings({ navigation }: any) {
           accessibilityLabel="Log Out"
           testID="log-out-button"
           onPress={() => {
-            handleLogout();
+            changeModalVisibility();
           }}
           style={styles.logOutButton}
         >
@@ -132,6 +159,19 @@ export default function UserSettings({ navigation }: any) {
       <View style={styles.textContainer}>
         <Text style={styles.header}>User Settings</Text>
         <Text style={styles.subText}>{user?.email}</Text>
+      </View>
+      <View style={styles.textContainer}>
+        <Text style={styles.subText}>Change Name</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            testID="new-name-input"
+            style={styles.input}
+            onChangeText={handleChangeDisplayName}
+            placeholder="New Name"
+            placeholderTextColor="black"
+            value={userDisplayName}
+          />
+        </View>
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.subText}>Change Email</Text>
@@ -199,6 +239,25 @@ export default function UserSettings({ navigation }: any) {
           <Ionicons name="save-outline" size={20} color="#FFFFFB" />
         </Pressable>
       </View>
+      <Modal testID="logout-modal" visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Are you sure you want to log out?</Text>
+            <View style={styles.modalButtonContainer}>
+              <Pressable
+                style={styles.closeButton}
+                onPress={handleLogout}
+                testID="log-out-confirm-button"
+              >
+                <Text style={styles.closeButtonText}>Log Out</Text>
+              </Pressable>
+              <Pressable style={styles.closeButton} onPress={changeModalVisibility}>
+                <Text style={styles.closeButtonText}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -280,5 +339,40 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 10,
     padding: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#272222',
+    width: '80%',
+    padding: 20,
+    borderRadius: 8,
+  },
+  modalText: {
+    textAlign: 'center',
+    fontSize: 18,
+    marginBottom: 10,
+    color: '#FFFFFB',
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  closeButton: {
+    alignSelf: 'center',
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#FF7000',
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFB',
   },
 });
