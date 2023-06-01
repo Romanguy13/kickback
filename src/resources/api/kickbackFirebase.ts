@@ -126,5 +126,4 @@ export default class KickbackFirebase {
     await updateDoc(docRef, newData);
     return newData;
   }
-
 }
