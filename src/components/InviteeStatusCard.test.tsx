@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react-native';
 import { Timestamp } from 'firebase/firestore';
-import InviteeStatusCard from '../../../components/InviteeStatusCard';
-import { UserReturn } from '../../../resources/schema/user.model';
-import { EventReturn } from '../../../resources/schema/event.model';
+import InviteeStatusCard from './InviteeStatusCard';
+import { UserReturn } from '../resources/schema/user.model';
+import { EventReturn } from '../resources/schema/event.model';
 
 const currentMember: UserReturn = {
   id: '075',
