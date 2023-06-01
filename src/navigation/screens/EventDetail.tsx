@@ -59,6 +59,8 @@ function EventDetail({ route, navigation }: any) {
   };
 
   useEffect(() => {
+    checkHostStatus();
+
     const fetchData = async () => {
       const tempMembers = (await new GroupMembers().getAll(
         event.gId,
