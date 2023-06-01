@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as ImagePicker from 'expo-image-picker';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 
@@ -14,11 +16,34 @@ export default function EventHistory({ navigation }: any) {
   const [refresh, setRefresh] = useState<boolean>(false);
   const isFocused = useIsFocused();
 
+  const handleUpload = async () => {
+    try {
+      // Request permission to access the device's photo library
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission denied to access photo library');
+        return;
+      }
+
+      const data = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 1,
+      });
+
+      if (!data.canceled) {
+        console.log(data);
+      } else {
+        alert('You did not select any image.');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
-    console.log('isFocused', isFocused);
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
-      console.log(eventList);
 
       // Filter through the events and only show the ones that have already passed
       // Filter Function is lines 44 to 56
@@ -47,6 +72,7 @@ export default function EventHistory({ navigation }: any) {
     <View style={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.header}>Previous {'\n'}KickBacks </Text>
+        <Button title="upload image" onPress={handleUpload} />
       </View>
       <View style={styles.cardContainer}>
         <FlatList
