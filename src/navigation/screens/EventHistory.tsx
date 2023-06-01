@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as ImagePicker from 'expo-image-picker';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 
@@ -14,18 +16,42 @@ export default function EventHistory({ navigation }: any) {
   const [refresh, setRefresh] = useState<boolean>(false);
   const isFocused = useIsFocused();
 
+  const handleUpload = async () => {
+    try {
+      // Request permission to access the device's photo library
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission denied to access photo library');
+        return;
+      }
+
+      const data = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 1,
+      });
+
+      if (!data.canceled) {
+        console.log(data);
+      } else {
+        alert('You did not select any image.');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
-    console.log('isFocused', isFocused)
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
-      console.log(eventList);
 
       // Filter through the events and only show the ones that have already passed
       // Filter Function is lines 44 to 56
       const filteredEvents = eventList.filter((event: EventReturn) => {
         // Get today's date
         const currentDate = moment();
-        const eventDate = moment(event.date, 'MMMM DD, YYYY');
+        console.log('currentDate', event.datetime.toDate());
+        const eventDate = moment(event.datetime.toDate());
 
         return true
         //return eventDate.isBefore(currentDate);
@@ -46,7 +72,8 @@ export default function EventHistory({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.text}>Previous {'\n'}KickBacks </Text>
+        <Text style={styles.header}>Previous {'\n'}KickBacks </Text>
+        <Button title="upload image" onPress={handleUpload} />
       </View>
       <View style={styles.cardContainer}>
         <FlatList
@@ -69,16 +96,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFB',
     alignItems: 'center',
   },
+  textContainer: {
+    width: '100%',
+    margin: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    color: '#272222',
+    fontSize: Math.round((windowWidth * 0.15) / fontScale),
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 30,
+  },
   cardContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  textContainer: {
-    width: '100%',
-    paddingTop: 20,
-    margin: 20,
-    alignItems: 'center',
   },
   text: {
     color: '#272222',

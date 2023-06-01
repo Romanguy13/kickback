@@ -1,4 +1,4 @@
-import { Pressable, View, Text } from 'react-native';
+import { StyleSheet, Pressable, View, Text, TextProps, StyleProp } from 'react-native';
 import React, { useEffect } from 'react';
 import { GroupCardProps } from '../navigation/screens/EventGroups';
 import { UserModel } from '../resources/schema/user.model';
@@ -7,7 +7,6 @@ export default function GroupCard({ item }: { item: GroupCardProps }) {
   const { group, navigation, events, topMembers, extraMembers } = item;
   const backgroundChipColors = ['#D9D9D9', '#EC9090', '#9BEFE5', '#FFD464'];
   let groupName: string = group.name;
-  console.log('Group name length: ', groupName.length);
 
   // Sets a trimmed version of group name, if larger than 15 characters
   if (groupName.length >= 17) {
@@ -47,7 +46,7 @@ export default function GroupCard({ item }: { item: GroupCardProps }) {
   );
 }
 
-const styles = {
+const styles: StyleProp<any> = {
   pressable: {
     alignSelf: 'center',
     justifySelf: 'center',
@@ -56,6 +55,7 @@ const styles = {
     borderTopColor: '#FF7000',
     borderTopWidth: 15,
     marginTop: 10,
+    marginBottom: 5,
     color: '#272222',
     fontSize: 20,
     fontWeight: 'bold',
