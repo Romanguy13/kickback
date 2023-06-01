@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableWithoutFeedback, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { TouchableWithoutFeedback, StyleSheet, View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { EventReturn } from '../resources/schema/event.model';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FB_AUTH } from '../../firebaseConfig';
@@ -7,7 +7,7 @@ import { FB_AUTH } from '../../firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
-function HistoryCard({ event, navigation }: { event: EventReturn; navigation: any }) {
+function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: EventReturn; navigation: any; setShowModal: any, setReceipt: any }) {
   const handlePress = () => {
     navigation.navigate('EventDetail', { event });
     /*
@@ -15,12 +15,41 @@ function HistoryCard({ event, navigation }: { event: EventReturn; navigation: an
     FB_AUTH.currentUser?.id == event.hostId
   
     */
-
   };
+  const status = 'granted'
+  const handleReceipt = async () => {
+    //If the host
+    if (FB_AUTH.currentUser?.uid == event.hostId && receipt == " ") {
+      //1st time uploading image 
+      try {
+        // Request permission to access the device's photo library
+        //const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          console.log('Permission denied to access photo library');
+          return;
+        }
+        console.log("getting image")
+        const data = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: false,
+          quality: 1,
+        });
+
+        if (!data.canceled) {
+          console.log(data);
+        } else {
+          alert('You did not select any image.');
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
   const host = false
   const paid = true
   const numOfPeople = 7
   const totalPaid = 3
+  const receipt = " "
   return (
     <View style={[styles.card, styles.shadowProp]}>
       <TouchableWithoutFeedback onPress={handlePress}>
@@ -32,21 +61,22 @@ function HistoryCard({ event, navigation }: { event: EventReturn; navigation: an
 
           <View style={styles.bottomHalf}>
             <View style={styles.leftSide}>
-
               {host ? (
-
                 //<TouchableOpacity onPress={handleImageUpload}>
-                <View style={styles.recieptButton}>
-                  <Ionicons name="arrow-up-circle-outline" style={styles.iconPosition} />
-                  <Text style={styles.receiptText}>  Upload Receipt </Text>
-                </View>
-                // </TouchableOpacity>
+                <Pressable onPress={handleReceipt}>
+                  <View style={styles.recieptButton} >
+                    <Ionicons name="arrow-up-circle-outline" style={styles.iconPosition} />
+                    <Text style={styles.receiptText}>  Upload Receipt </Text>
+                  </View>
+                </Pressable>
 
               ) : (
-                <View style={styles.recieptButton}>
-                  <Ionicons name="receipt-outline" style={styles.iconPosition} />
-                  <Text style={styles.receiptText}>  View Receipt </Text>
-                </View>
+                <Pressable onPress={handleReceipt}>
+                  <View style={styles.recieptButton}>
+                    <Ionicons name="receipt-outline" style={styles.iconPosition} />
+                    <Text style={styles.receiptText}>  View Receipt </Text>
+                  </View>
+                </Pressable>
               )}
 
             </View>

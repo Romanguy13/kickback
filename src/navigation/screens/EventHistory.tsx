@@ -16,6 +16,9 @@ export default function EventHistory({ navigation }: any) {
   const [refresh, setRefresh] = useState<boolean>(false);
   const isFocused = useIsFocused();
 
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [receipt, setReceipt] = useState<string>(" ")
+
   const handleUpload = async () => {
     try {
       // Request permission to access the device's photo library
@@ -69,18 +72,18 @@ export default function EventHistory({ navigation }: any) {
   }, [refresh, isFocused]);
 
   // What to showcase on the screen
+  //<Button title="upload image" onPress={handleUpload} />
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.header}>Previous {'\n'}KickBacks </Text>
-        <Button title="upload image" onPress={handleUpload} />
       </View>
       <View style={styles.cardContainer}>
         <FlatList
           style={styles.cardList}
           data={events}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <HistoryCard event={item} navigation={navigation} />}
+          renderItem={({ item }) => <HistoryCard event={item} setShowModal={setShowModal} setReceipt={setReceipt} navigation={navigation} />}
         />
       </View>
     </View>
