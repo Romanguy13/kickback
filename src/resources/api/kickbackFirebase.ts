@@ -106,11 +106,9 @@ export default class KickbackFirebase {
     return newData;
   }
 
-  public async delete(id: string): Promise<void> {
-    const database = this.database;
-    const dataRef = database.ref(this.collection);
-    await dataRef.child(id).remove();
-
-
-  }
+  // public async delete(id: string): Promise<void> {
+  //   const database = this.database;
+  //   const dataRef = database.ref(this.collection);
+  //   await dataRef.child(id).remove();
+  // }
 }
