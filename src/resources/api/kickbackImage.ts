@@ -21,12 +21,23 @@ export default class KickbackImage {
     return url;
   }
 
-  public async uploadImage(file: File, fileName: string): Promise<string> {
+  public async uploadImage(fileUri: string, fileName: string): Promise<string> {
     const storageRef = ref(this.storage, fileName);
+    let file: Blob;
+
+    try {
+      file = await this.convertUriToFile(fileUri);
+    } catch (e) {
+      throw new Error(`Image Service: ${fileUri} gone wrong.`);
+    }
 
     const a = await uploadBytes(storageRef, file);
-    console.log('Upload Result:', a);
+    return a.metadata.fullPath;
+  }
 
-    return '';
+  // eslint-disable-next-line class-methods-use-this
+  private async convertUriToFile(uri: string): Promise<Blob> {
+    const response: Response = await fetch(uri);
+    return response.blob();
   }
 }
