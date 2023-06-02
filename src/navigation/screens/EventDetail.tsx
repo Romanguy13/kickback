@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View, ScrollView, Button } from 'react-native';
+import { Pressable, StyleSheet, Text, View, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
@@ -16,8 +16,6 @@ function EventDetail({ route, navigation }: any) {
   const [currentEvent, setCurrentEvent] = useState<EventReturn>(event);
 
   const [topMembers, setTopMembers] = useState<UserReturn[]>([]);
-
-  const  [showDeleteButton, setDeleteButton] = useState<boolean>(false);
 
   const handleInviteeStatus = async (status: boolean) => {
     // edit the event in the database to reflect the new status based on the user's response
@@ -48,13 +46,6 @@ function EventDetail({ route, navigation }: any) {
       setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
 
       console.log('inviteeStatus - after', currentEvent);
-    }
-  };
-
-  const checkHostStatus = async () => {
-    const currentUserId = FB_AUTH.currentUser?.uid;
-    if (currentUserId === currentEvent.hostId) {
-      setDeleteButton(true);
     }
   };
 
@@ -163,10 +154,6 @@ function EventDetail({ route, navigation }: any) {
                 <InviteeStatusCard event={event} key={member.id} currentMember={member} />
               ))}
             </ScrollView>
-          </View>
-
-          <View style={styles.deleteButton}>
-            {showDeleteButton && <Button title="Delete Event" onPress={() => console.log("deleting event")} />}
           </View>
         </View>
       </View>
@@ -296,16 +283,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     justifyContent: 'flex-end',
-  },
-  deleteButton: {
-    backgroundColor: '#FF7000',
-    width: '100%',
-    height: '10%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    borderRadius: 20,
-    top: 200,
   },
 });
 
