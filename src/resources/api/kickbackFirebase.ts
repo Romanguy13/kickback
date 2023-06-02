@@ -91,6 +91,41 @@ export default class KickbackFirebase {
     return data[0];
   }
 
+  // public async getAllLimit(
+  //   userId: string,
+  //   fieldName: string,
+  //   startAfterDoc: undefined | any = undefined,
+  //   max = 4
+  // ): Promise<DocumentData[]> {
+  //   const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
+  //   let q: Query<DocumentData> = query(
+  //     dbRef,
+  //     where(fieldName, '==', userId),
+  //     orderBy('createdAt', 'asc'),
+  //     limit(max)
+  //   );
+  //
+  //   console.log(
+  //     `getAllLimit: userId: ${userId}, fieldName: ${fieldName}, startAfterDoc: ${startAfterDoc}, max: ${max}`
+  //   );
+  //
+  //   if (startAfterDoc) {
+  //     console.log('startAfterDoc: ', startAfterDoc);
+  //     q = query(q, startAfter(startAfterDoc));
+  //   }
+  //
+  //   const querySnapshot = await getDocs(q);
+  //   const newDocs: DocumentData[] = [];
+  //
+  //   console.log('New data: ', querySnapshot.docs.length);
+  //
+  //   querySnapshot.forEach((curr) => {
+  //     newDocs.push(curr.data());
+  //   });
+  //
+  //   return newDocs;
+  // }
+
   public async edit(id: string, data: any): Promise<any> {
     const newData = {
       ...data,
@@ -100,13 +135,5 @@ export default class KickbackFirebase {
     const docRef: DocumentReference<DocumentData> = doc(this.database, this.collection, id);
     await updateDoc(docRef, newData);
     return newData;
-  }
-
-  public async delete(id: string): Promise<void> {
-    const database = this.database;
-    const dataRef = database.ref(this.collection);
-    await dataRef.child(id).remove();
-
-
   }
 }
