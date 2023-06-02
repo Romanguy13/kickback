@@ -7,7 +7,7 @@ import EventDetail from '../../../navigation/screens/EventDetail';
 import Events from '../../../resources/api/events';
 import GroupMembers from '../../../resources/api/groupMembers';
 import Users from '../../../resources/api/users';
-import { preLoadData } from '../helper/EventDetails.helper';
+import preLoadData from '../helper/EventDetails.helper';
 
 jest.mock('../../../resources/api/events');
 jest.mock('../../../resources/api/groupMembers');

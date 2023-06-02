@@ -55,4 +55,18 @@ export default class Users extends KickbackFirebase {
 
     return user[0].data() as UserReturn;
   }
+
+  async getUserDbIdByEmail(email: string): Promise<string> {
+    const userRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
+    const q: Query<DocumentData> = query(userRef, where('email', '==', email.toLowerCase()));
+    const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
+    const user: QueryDocumentSnapshot<DocumentData>[] = querySnapshot.docs;
+
+    if (!user) {
+      throw new Error(`User with email ${email} does not exist`);
+    }
+
+    return user[0].id;
+  } 
+
 }
