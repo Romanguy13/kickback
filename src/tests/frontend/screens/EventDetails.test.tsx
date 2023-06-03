@@ -2,6 +2,8 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-
 import { Timestamp } from 'firebase/firestore';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import { Alert } from 'react-native';
 import moment from 'moment';
 import EventDetail from '../../../navigation/screens/EventDetail';
 import Events from '../../../resources/api/events';
@@ -23,7 +25,7 @@ jest.mock('@react-navigation/native', () => ({
 }));
 jest.mock('../../../../firebaseConfig');
 jest.mock('firebase/auth');
-
+jest.spyOn(Alert, 'alert');
 interface FirebaseUser {
   uid: string;
   email: string;
@@ -32,7 +34,7 @@ interface FirebaseUser {
 }
 
 const currentUser: FirebaseUser = {
-  uid: '1',
+  uid: '4',
   email: 'john@wick.com',
   displayName: 'John Wick',
   emailVerified: true,
@@ -120,10 +122,23 @@ test('Renders Event Screen', async () => {
 
   await renderWithNavigation(params2);
 
+  const timeLeft = params2.event.datetime.toDate().getTime() - new Date().getTime();
+  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+  expect(screen.getByText('Time Remaining')).toBeTruthy();
+  expect(screen.getByText(`${days}`)).toBeTruthy();
+  expect(screen.getByTestId(`colon-1`)).toBeTruthy();
+  expect(screen.getByText(`${hours}`)).toBeTruthy();
+  expect(screen.getByTestId(`colon-2`)).toBeTruthy();
+  expect(screen.getByText(`${minutes}`)).toBeTruthy();
+  expect(screen.getByText(`DAY`)).toBeTruthy();
+  expect(screen.getByText(`HR`)).toBeTruthy();
+  expect(screen.getByText(`MIN`)).toBeTruthy();
   expect(screen.getByText('Test Event')).toBeTruthy();
   expect(screen.getByText('Test Location')).toBeTruthy();
-  expect(screen.getByText('Fri, July 28, 2023')).toBeTruthy();
-  expect(screen.getByText('12:00 PM')).toBeTruthy();
+  expect(screen.getByText('July 28, 2023')).toBeTruthy();
 
   // Checking to see if all users are there
   await waitFor(() => {
@@ -167,13 +182,13 @@ test('Click decline for status update', async () => {
   preLoadData();
 
   (Events.prototype.edit as jest.Mock).mockResolvedValue({
-    id: '4',
+    id: '1',
     status: false,
   });
 
   preLoadData();
 
-  await renderWithNavigation(params2);
+  await renderWithNavigation(params);
   await waitFor(() => {
     expect(screen.getByText('Test Location')).toBeTruthy();
   });
@@ -181,12 +196,58 @@ test('Click decline for status update', async () => {
   fireEvent.press(screen.getByTestId('decline-invite'));
 });
 
+test('Click Delete Event Button As Host - Success', async () => {
+  preLoadData();
+
+  (Events.prototype.edit as jest.Mock).mockResolvedValue({
+    id: '4',
+    status: null,
+  });
+
+  preLoadData();
+
+  await renderWithNavigation(params2);
+
+  await waitFor(() => {
+    expect(screen.getByTestId('delete-label')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('delete-button'));
+    fireEvent.press(screen.getByTestId('no-modal'));
+    fireEvent.press(screen.getByTestId('delete-button'));
+    fireEvent.press(screen.getByTestId('yes-modal'));
+  });
+  expect(Alert.alert).toHaveBeenCalledWith('Success!', 'Event deleted.');
+});
+
+test('Click Delete Event Button As Host - Fail', async () => {
+  preLoadData();
+  (Events.prototype.delete as jest.Mock).mockRejectedValue(new Error('test error'));
+
+  (Events.prototype.edit as jest.Mock).mockResolvedValue({
+    id: '4',
+    status: null,
+  });
+
+  preLoadData();
+
+  await renderWithNavigation(params2);
+
+  await waitFor(() => {
+    expect(screen.getByTestId('delete-label')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('delete-button'));
+    fireEvent.press(screen.getByTestId('no-modal'));
+    fireEvent.press(screen.getByTestId('delete-button'));
+    fireEvent.press(screen.getByTestId('yes-modal'));
+  });
+  expect(Alert.alert).toHaveBeenCalledWith(
+    'Error',
+    'Something went wrong. Please try again later.'
+  );
+});
+
 test('Click the "Go Back" button', async () => {
   preLoadData();
 
   await renderWithNavigation(params);
 
-  // get the button with accessibility label "Back Button"
-  // const backButton = screen.getByLabelText('Back Button');
   fireEvent.press(screen.getByLabelText('Back Button'));
 });

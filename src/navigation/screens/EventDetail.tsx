@@ -42,8 +42,10 @@ function EventDetail({ route, navigation }: any) {
     try {
       await new Events().delete(event.id);
       Alert.alert('Success!', 'Event deleted.');
+      closeModal();
       navigation.goBack();
     } catch (error) {
+      closeModal();
       console.log(error);
       Alert.alert('Error', 'Something went wrong. Please try again later.');
     }
@@ -173,14 +175,18 @@ function EventDetail({ route, navigation }: any) {
             </View>
             <Text style={styles.timeSubtitileText}>DAY</Text>
           </View>
-          <Text style={{ fontSize: 50, fontWeight: 'bold' }}>:</Text>
+          <Text style={{ fontSize: 50, fontWeight: 'bold' }} testID="colon-1">
+            :
+          </Text>
           <View style={styles.boxContainer}>
             <View style={styles.timeLeftBox}>
               <Text style={styles.timeLeftText}>{hours}</Text>
             </View>
             <Text style={styles.timeSubtitileText}>HR</Text>
           </View>
-          <Text style={{ fontSize: 50, fontWeight: 'bold' }}>:</Text>
+          <Text style={{ fontSize: 50, fontWeight: 'bold' }} testID="colon-2">
+            :
+          </Text>
           <View style={styles.boxContainer}>
             <View style={styles.timeLeftBox}>
               <Text style={styles.timeLeftText}>{minutes}</Text>
@@ -246,9 +252,11 @@ function EventDetail({ route, navigation }: any) {
           )}
           {showDeleteButton && (
             <View style={styles.voteContainer}>
-              <Pressable style={styles.deleteButton} onPress={openModal}>
+              <Pressable style={styles.deleteButton} onPress={openModal} testID="delete-button">
                 <Ionicons name="close-outline" size={90} color="#FFFFFB" />
-                <Text style={styles.deleteText}>Delete Event</Text>
+                <Text style={styles.deleteText} testID="delete-label">
+                  Delete Event
+                </Text>
               </Pressable>
             </View>
           )}
@@ -260,12 +268,12 @@ function EventDetail({ route, navigation }: any) {
             <Text style={styles.modalText}>Are you sure you want to delete this event?</Text>
             <View style={styles.modalButtonContainer}>
               <View style={styles.modalButtonContainer}>
-                <Pressable style={styles.closeButton} onPress={deleteEvent}>
+                <Pressable style={styles.closeButton} onPress={deleteEvent} testID="yes-modal">
                   <Text style={styles.closeButtonText}>Yes </Text>
                 </Pressable>
               </View>
               <View style={styles.modalButtonContainer}>
-                <Pressable style={styles.closeButton} onPress={closeModal}>
+                <Pressable style={styles.closeButton} onPress={closeModal} testID="no-modal">
                   <Text style={styles.closeButtonText}>Close</Text>
                 </Pressable>
               </View>
@@ -418,9 +426,9 @@ const styles = StyleSheet.create({
   usersContainer: {
     display: 'flex',
     backgroundColor: '#272222',
-    width: '50%',
+    width: '55%',
     height: '100%',
-    margin: 2,
+    margin: 4,
     borderRadius: 20,
   },
   buttonsContainer: {
@@ -429,8 +437,7 @@ const styles = StyleSheet.create({
     width: '40%',
     height: '100%',
     borderRadius: 20,
-    margin: 2,
-    marginLeft: 20,
+    margin: 4,
   },
   deleteButton: {
     borderRadius: 20,
