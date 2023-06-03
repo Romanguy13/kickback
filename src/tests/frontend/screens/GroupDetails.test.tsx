@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Modal, View } from 'react-native';
+import { Modal, View, Alert } from 'react-native';
 import { Timestamp } from 'firebase/firestore';
 import moment from 'moment';
 import GroupMembers from '../../../resources/api/groupMembers';
@@ -26,7 +26,7 @@ jest.mock('@react-navigation/native', () => {
     useIsFocused: jest.fn(),
   };
 });
-
+jest.spyOn(Alert, 'alert');
 const Stack = createNativeStackNavigator();
 function EventGroupsMock(): JSX.Element {
   return <View />;
@@ -226,15 +226,72 @@ test('Group Details Modal - Edit', async () => {
   });
 
   const inputName = screen.getByTestId('new-name-input');
-  const closeButton = screen.getByText('Done');
+  const doneButton = screen.getByText('Done');
   fireEvent.changeText(inputName, 'Test Name');
 
   act(() => {
-    fireEvent.press(closeButton);
+    fireEvent.press(doneButton);
   });
 
   await waitFor(() => {
     screen.getByText('Test Name');
+  });
+});
+
+test('Group Details Modal - Edit Less Than 3 Chars', async () => {
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValueOnce([] as GroupMemberModel[]);
+  (Events.prototype.getAll as jest.Mock).mockResolvedValueOnce([]);
+  (Groups.prototype.edit as jest.Mock).mockResolvedValueOnce({});
+
+  render(<GroupDetails navigation={undefined} route={{ params: { group: { id: '12345' } } }} />);
+
+  const groupModal = screen.getByTestId('edit-icon-button');
+
+  act(() => {
+    fireEvent.press(groupModal);
+  });
+
+  const inputName = screen.getByTestId('new-name-input');
+  const doneButton = screen.getByText('Done');
+  fireEvent.changeText(inputName, '');
+
+  act(() => {
+    fireEvent.press(doneButton);
+  });
+
+  await waitFor(() => {
+    expect(Alert.alert).toHaveBeenCalledWith('Group name must be at least 3 characters long');
+  });
+});
+
+test('Group Details Modal - Same Name', async () => {
+  (GroupMembers.prototype.getAll as jest.Mock).mockResolvedValueOnce([] as GroupMemberModel[]);
+  (Events.prototype.getAll as jest.Mock).mockResolvedValueOnce([]);
+  (Groups.prototype.edit as jest.Mock).mockResolvedValueOnce({});
+
+  render(
+    <GroupDetails
+      navigation={undefined}
+      route={{ params: { group: { id: '12345', name: 'Test' } } }}
+    />
+  );
+
+  const groupModal = screen.getByTestId('edit-icon-button');
+
+  act(() => {
+    fireEvent.press(groupModal);
+  });
+
+  const inputName = screen.getByTestId('new-name-input');
+  const doneButton = screen.getByText('Done');
+  fireEvent.changeText(inputName, 'Test');
+
+  act(() => {
+    fireEvent.press(doneButton);
+  });
+
+  await waitFor(() => {
+    expect(Alert.alert).toHaveBeenCalledWith('Group name must be different from current name');
   });
 });
 
