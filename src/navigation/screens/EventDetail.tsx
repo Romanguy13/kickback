@@ -19,6 +19,12 @@ function EventDetail({ route, navigation }: any) {
 
   const [showDeleteButton, setDeleteButton] = useState<boolean>(false);
 
+  // Calculate the time left until the event
+  const timeLeft = event.datetime.toDate().getTime() - new Date().getTime();
+  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
   const deleteEvent = async () => {
     try {
       await new Events().delete(event.id);
@@ -60,6 +66,33 @@ function EventDetail({ route, navigation }: any) {
 
       console.log('inviteeStatus - after', currentEvent);
     }
+  };
+
+  const checkStatus = (currEvent: EventReturn) => {
+    // check the status of the the user in the event based on their id
+    const currentUserId = FB_AUTH.currentUser?.uid;
+    const { inviteeStatus } = currEvent;
+
+    // find the inviteeStatus that corresponds to the current user id
+    const inviteeFound = inviteeStatus.find(
+      (invitee: { id: string; status: boolean | null }) => invitee.id === currentUserId
+    );
+
+    const status = inviteeFound?.status;
+
+    // check if the user is the host
+    if (currentUserId === currEvent.hostId) {
+      return 'Host';
+    }
+
+    // if the user has not responded to the invite, return 'pending'
+    if (status === null) {
+      return 'Pending';
+    }
+    if (status) {
+      return 'Going';
+    }
+    return 'Not going';
   };
 
   const checkHostStatus = async () => {
@@ -110,78 +143,44 @@ function EventDetail({ route, navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <Text style={styles.titleText}>{event.name}</Text>
+        <Pressable
+          accessibilityLabel="Back Button"
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons style={styles.backIcon} name="chevron-back-outline" size={40} color="#FF7000" />
+        </Pressable>
       </View>
-      <View style={styles.bottomContainer}>
-        <View style={styles.datetimeContainer}>
-          <Pressable
-            accessibilityLabel="Back Button"
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Ionicons name="arrow-back-outline" size={40} color="white" />
-          </Pressable>
-          <View style={styles.dateContainer}>
-            <Text style={styles.dateText}>
-              {event.datetime.toDate().toLocaleDateString('en-US', {
-                weekday: 'short',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </Text>
-          </View>
-          <View style={styles.timeContainer}>
-            <Text style={styles.timeText}>
-              {event.datetime
-                .toDate()
-                .toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
-            </Text>
-          </View>
-          {canVote && FB_AUTH.currentUser?.uid !== event.hostId && (
-            <View style={styles.voteContainer}>
-              <Pressable
-                testID="accept-invite"
-                onPress={() => handleInviteeStatus(true)}
-                style={styles.voteButton}
-              >
-                <Ionicons name="person-add-outline" size={30} color="#FF7000" />
-              </Pressable>
-              <Pressable
-                testID="decline-invite"
-                onPress={() => handleInviteeStatus(false)}
-                style={styles.voteButton}
-              >
-                <Ionicons name="person-remove-outline" size={30} color="#FF7000" />
-              </Pressable>
+      <View style={styles.timeLeftContainer}>
+        <Text style={styles.titleText}>Time Remaining</Text>
+        <View style={styles.timeLeftBoxes}>
+          <View style={styles.boxContainer}>
+            <View style={styles.timeLeftBox}>
+              <Text style={styles.timeLeftText}>{days}</Text>
             </View>
-          )}
-          {!canVote && (
-            <View style={styles.voteContainer}>
-              <Pressable style={styles.voteButton}>
-                <Ionicons name="repeat-outline" size={30} color="#FF7000" />
-              </Pressable>
+            <Text style={styles.timeSubtitileText}>DAY</Text>
+          </View>
+          <Text>:</Text>
+          <View style={styles.boxContainer}>
+            <View style={styles.timeLeftBox}>
+              <Text style={styles.timeLeftText}>{hours}</Text>
             </View>
-          )}
-        </View>
-
-        <View style={styles.locationpeopleContainer}>
-          <View style={styles.locationContainer}>
-            <Text style={styles.locationTitleText}>{event.location}</Text>
+            <Text style={styles.timeSubtitileText}>HR</Text>
           </View>
-
-          <View style={styles.usersContainer}>
-            <ScrollView style={styles.usersScroll}>
-              {topMembers.map((member: UserReturn) => (
-                <InviteeStatusCard event={event} key={member.id} currentMember={member} />
-              ))}
-            </ScrollView>
-          </View>
-
-          <View style={styles.deleteButton}>
-            {showDeleteButton && <Button title="Delete Event" onPress={deleteEvent} />}
+          <Text>:</Text>
+          <View style={styles.boxContainer}>
+            <View style={styles.timeLeftBox}>
+              <Text style={styles.timeLeftText}>{minutes}</Text>
+            </View>
+            <Text style={styles.timeSubtitileText}>MIN</Text>
           </View>
         </View>
+      </View>
+      <View style={styles.statusContainer}>
+        <Text style={styles.statusText}>{checkStatus(event)}</Text>
+      </View>
+      <View style={styles.eventContainer}>
+        <Text style={styles.eventText}>{event.name}</Text>
       </View>
     </View>
   );
@@ -193,15 +192,104 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFB',
   },
   topContainer: {
-    backgroundColor: '#FF7000',
-    height: '16%',
     display: 'flex',
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    height: 100,
+    paddingTop: 30,
+  },
+  backButton: {
+    backgroundColor: '#272222',
+    borderColor: '#272222',
+    alignSelf: 'center',
+    borderWidth: 2,
+    borderRadius: 100,
+    margin: 10,
+    width: '20%',
+  },
+  backIcon: {
+    alignSelf: 'center',
+  },
+  timeLeftContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    paddingBottom: 10,
+  },
+  timeLeftBoxes: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  titleText: {
+  boxContainer: {
+    margin: 10,
+    width: '26%',
+    height: 120,
+  },
+  timeLeftBox: {
+    backgroundColor: '#272222',
+    borderRadius: 14,
+    width: '100%',
+    height: '90%',
+    justifyContent: 'center',
+  },
+  timeLeftText: {
     color: '#FFFFFB',
-    fontSize: 40,
+    fontSize: 48,
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'center',
+  },
+  timeSubtitileText: {
+    color: '#272222',
+    fontSize: 26,
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'center',
+  },
+  statusContainer: {
+    display: 'flex',
+    backgroundColor: '#FF7000',
+    width: '80%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    alignContent: 'center',
+    borderRadius: 20,
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  statusText: {
+    color: '#FFFFFB',
+    fontSize: 36,
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'center',
+    alignSelf: 'center',
+    padding: 4,
+  },
+  eventContainer: {
+    backgroundColor: '#FF7000',
+    width: '95%',
+    height: '28%',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignSelf: 'center',
+    borderRadius: 20,
+  },
+  eventText: {
+    color: '#272222',
+    fontSize: 36,
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'left',
+    padding: 4,
+    marginTop: 10,
+    marginLeft: 20,
+  },
+  titleText: {
+    color: '#272222',
+    fontSize: 36,
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
@@ -209,18 +297,6 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flexDirection: 'row',
     height: '84%',
-  },
-  backButton: {
-    borderRadius: 100,
-    borderWidth: 4,
-    borderColor: '#FFFFFB',
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    margin: 20,
-    marginBottom: 2,
   },
   datetimeContainer: {
     backgroundColor: '#272222',
