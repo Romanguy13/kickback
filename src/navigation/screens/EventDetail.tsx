@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View, ScrollView, Button } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View, Image, ScrollView, Modal } from 'react-native';
+import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
@@ -18,6 +19,18 @@ function EventDetail({ route, navigation }: any) {
   const [topMembers, setTopMembers] = useState<UserReturn[]>([]);
 
   const [showDeleteButton, setDeleteButton] = useState<boolean>(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const eventDate = moment(event.datetime.toDate());
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   // Calculate the time left until the event
   const timeLeft = event.datetime.toDate().getTime() - new Date().getTime();
@@ -160,14 +173,14 @@ function EventDetail({ route, navigation }: any) {
             </View>
             <Text style={styles.timeSubtitileText}>DAY</Text>
           </View>
-          <Text>:</Text>
+          <Text style={{ fontSize: 50, fontWeight: 'bold' }}>:</Text>
           <View style={styles.boxContainer}>
             <View style={styles.timeLeftBox}>
               <Text style={styles.timeLeftText}>{hours}</Text>
             </View>
             <Text style={styles.timeSubtitileText}>HR</Text>
           </View>
-          <Text>:</Text>
+          <Text style={{ fontSize: 50, fontWeight: 'bold' }}>:</Text>
           <View style={styles.boxContainer}>
             <View style={styles.timeLeftBox}>
               <Text style={styles.timeLeftText}>{minutes}</Text>
@@ -180,8 +193,86 @@ function EventDetail({ route, navigation }: any) {
         <Text style={styles.statusText}>{checkStatus(event)}</Text>
       </View>
       <View style={styles.eventContainer}>
-        <Text style={styles.eventText}>{event.name}</Text>
+        <Text style={styles.eventNameText}>{event.name}</Text>
+        <Text style={styles.eventLocationText}>{event.location}</Text>
+        <View style={styles.eventDateHandsContainer}>
+          <View
+            style={{
+              display: 'flex',
+              width: '60%',
+              top: 100,
+            }}
+          >
+            <Text style={styles.eventDateText}>{eventDate.format('MMMM DD, YYYY')}</Text>
+          </View>
+          <View
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              width: '40%',
+            }}
+          >
+            <Image source={require('../../../assets/hands.png')} style={styles.handsImage} />
+          </View>
+        </View>
       </View>
+      <View style={styles.listNButtonContainer}>
+        <View style={styles.usersContainer}>
+          <ScrollView style={styles.usersScroll}>
+            {topMembers.map((member: UserReturn) => (
+              <InviteeStatusCard event={event} key={member.id} currentMember={member} />
+            ))}
+          </ScrollView>
+        </View>
+        <View style={styles.buttonsContainer}>
+          {canVote && FB_AUTH.currentUser?.uid !== event.hostId && (
+            <View style={styles.voteContainer}>
+              <Pressable
+                testID="accept-invite"
+                onPress={() => handleInviteeStatus(true)}
+                style={styles.voteButton}
+              >
+                <Ionicons name="person-add-outline" size={30} color="#FF7000" />
+              </Pressable>
+              <Pressable
+                testID="decline-invite"
+                onPress={() => handleInviteeStatus(false)}
+                style={styles.voteButton}
+              >
+                <Ionicons name="person-remove-outline" size={30} color="#FF7000" />
+              </Pressable>
+            </View>
+          )}
+          {showDeleteButton && (
+            <View style={styles.voteContainer}>
+              <Pressable style={styles.deleteButton} onPress={openModal}>
+                <Ionicons name="close-outline" size={90} color="#FFFFFB" />
+                <Text style={styles.deleteText}>Delete Event</Text>
+              </Pressable>
+            </View>
+          )}
+        </View>
+      </View>
+      <Modal testID="edit-modal" visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Are you sure you want to delete this event?</Text>
+            <View style={styles.modalButtonContainer}>
+              <View style={styles.modalButtonContainer}>
+                <Pressable style={styles.closeButton} onPress={deleteEvent}>
+                  <Text style={styles.closeButtonText}>Yes </Text>
+                </Pressable>
+              </View>
+              <View style={styles.modalButtonContainer}>
+                <Pressable style={styles.closeButton} onPress={closeModal}>
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -273,19 +364,142 @@ const styles = StyleSheet.create({
     width: '95%',
     height: '28%',
     flexDirection: 'column',
-    justifyContent: 'space-between',
     alignSelf: 'center',
     borderRadius: 20,
   },
-  eventText: {
+  eventNameText: {
     color: '#272222',
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'left',
     padding: 4,
-    marginTop: 10,
     marginLeft: 20,
+    marginTop: 10,
+  },
+  eventLocationText: {
+    color: '#272222',
+    fontSize: 28,
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'left',
+    padding: 4,
+    marginLeft: 20,
+    marginRight: 20,
+  },
+  eventDateHandsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    position: 'absolute',
+    bottom: 0,
+    paddinBottom: 4,
+  },
+  handsImage: {
+    resizeMode: 'contain',
+    height: '100%',
+    width: '100%',
+    paddingTop: 160,
+    transform: [{ rotate: '-40deg' }],
+    opacity: 0.5,
+  },
+  eventDateText: {
+    color: '#272222',
+    fontSize: 26,
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'left',
+    marginLeft: 20,
+  },
+  listNButtonContainer: {
+    flexDirection: 'row',
+    padding: 10,
+    height: '28%',
+  },
+  usersContainer: {
+    display: 'flex',
+    backgroundColor: '#272222',
+    width: '50%',
+    height: '100%',
+    margin: 2,
+    borderRadius: 20,
+  },
+  buttonsContainer: {
+    display: 'flex',
+    backgroundColor: '#DBDBDB',
+    width: '40%',
+    height: '100%',
+    borderRadius: 20,
+    margin: 2,
+    marginLeft: 20,
+  },
+  deleteButton: {
+    borderRadius: 20,
+    borderColor: '#DE4040',
+    width: '74%',
+    height: '62%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#DE4040',
+    margin: 40,
+  },
+  deleteText: {
+    color: '#FFFFFB',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#272222',
+    width: '80%',
+    padding: 20,
+    borderRadius: 8,
+  },
+  modalText: {
+    fontSize: 26,
+    marginBottom: 10,
+    color: '#FFFFFB',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  closeButton: {
+    alignSelf: 'center',
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#FF7000',
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFB',
+  },
+  modalInputBox: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    backgroundColor: '#EEEEEE',
+    borderRadius: 5,
+    padding: 5,
+  },
+  modalInput: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#272222',
+    backgroundColor: '#EEEEEE',
+    borderRadius: 5,
+    padding: 5,
   },
   titleText: {
     color: '#272222',
@@ -330,18 +544,18 @@ const styles = StyleSheet.create({
   },
   voteContainer: {
     width: '100%',
-    justifyContent: 'center',
   },
   voteButton: {
-    borderRadius: 100,
+    borderRadius: 20,
     borderWidth: 4,
-    borderColor: '#FFFFFB',
-    width: 60,
-    height: 60,
+    borderColor: '#272222',
+    backgroundColor: '#272222',
+    width: '60%',
+    height: '30%',
+    margin: 24,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    margin: 40,
   },
   locationpeopleContainer: {
     backgroundColor: '#FFFFFB',
@@ -367,15 +581,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 40,
   },
-  usersContainer: {
-    display: 'flex',
-    backgroundColor: '#272222',
-    width: '70%',
-    height: '30%',
-    alignSelf: 'center',
-    top: 150,
-    borderRadius: 20,
-  },
   usersScroll: {
     margin: 10,
     height: '100%',
@@ -385,16 +590,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     justifyContent: 'flex-end',
-  },
-  deleteButton: {
-    backgroundColor: '#FF7000',
-    width: '100%',
-    height: '10%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    borderRadius: 20,
-    top: 200,
   },
 });
 
