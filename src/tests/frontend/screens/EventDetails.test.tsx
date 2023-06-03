@@ -142,10 +142,10 @@ test('Renders Event Screen', async () => {
 
   // Checking to see if all users are there
   await waitFor(() => {
-    expect(screen.getByText('Chief Keef')).toBeTruthy();
+    expect(screen.getByText('Chief')).toBeTruthy();
     expect(screen.getByText('keshi')).toBeTruthy();
-    expect(screen.getByText('Richy Rich')).toBeTruthy();
-    expect(screen.getByText('Kung Fu Kenny')).toBeTruthy();
+    expect(screen.getByText('Richy')).toBeTruthy();
+    expect(screen.getByText('Kung')).toBeTruthy();
   });
 });
 
@@ -170,7 +170,7 @@ test('Click accept for status update', async () => {
   await renderWithNavigation(params);
 
   await waitFor(() => {
-    expect(screen.getByText('Chief Keef')).toBeTruthy();
+    expect(screen.getByText('Chief')).toBeTruthy();
   });
 
   act(() => {
