@@ -32,11 +32,11 @@ function EventDetail({ route, navigation }: any) {
     setModalVisible(false);
   };
 
-  // Calculate the time left until the event
-  const timeLeft = event.datetime.toDate().getTime() - new Date().getTime();
-  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+//   // Calculate the time left until the event
+//   const timeLeft = event.datetime.toDate().getTime() - new Date().getTime();
+//   const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+//   const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+//   const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 
   const deleteEvent = async () => {
     try {
@@ -166,38 +166,6 @@ function EventDetail({ route, navigation }: any) {
           <Ionicons style={styles.backIcon} name="chevron-back-outline" size={40} color="#FF7000" />
         </Pressable>
       </View>
-      <View style={styles.timeLeftContainer}>
-        <Text style={styles.titleText}>Time Remaining</Text>
-        <View style={styles.timeLeftBoxes}>
-          <View style={styles.boxContainer}>
-            <View style={styles.timeLeftBox}>
-              <Text style={styles.timeLeftText}>{days}</Text>
-            </View>
-            <Text style={styles.timeSubtitileText}>DAY</Text>
-          </View>
-          <Text style={{ fontSize: 50, fontWeight: 'bold' }} testID="colon-1">
-            :
-          </Text>
-          <View style={styles.boxContainer}>
-            <View style={styles.timeLeftBox}>
-              <Text style={styles.timeLeftText}>{hours}</Text>
-            </View>
-            <Text style={styles.timeSubtitileText}>HR</Text>
-          </View>
-          <Text style={{ fontSize: 50, fontWeight: 'bold' }} testID="colon-2">
-            :
-          </Text>
-          <View style={styles.boxContainer}>
-            <View style={styles.timeLeftBox}>
-              <Text style={styles.timeLeftText}>{minutes}</Text>
-            </View>
-            <Text style={styles.timeSubtitileText}>MIN</Text>
-          </View>
-        </View>
-      </View>
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>{checkStatus(event)}</Text>
-      </View>
       <View style={styles.eventContainer}>
         <Text style={styles.eventNameText}>{event.name}</Text>
         <Text style={styles.eventLocationText}>{event.location}</Text>
@@ -231,35 +199,7 @@ function EventDetail({ route, navigation }: any) {
             ))}
           </ScrollView>
         </View>
-        <View style={styles.buttonsContainer}>
-          {canVote && FB_AUTH.currentUser?.uid !== event.hostId && (
-            <View style={styles.voteContainer}>
-              <Pressable
-                testID="accept-invite"
-                onPress={() => handleInviteeStatus(true)}
-                style={styles.voteButton}
-              >
-                <Ionicons name="checkmark-outline" size={30} color="#FF7000" />
-              </Pressable>
-              <Pressable
-                testID="decline-invite"
-                onPress={() => handleInviteeStatus(false)}
-                style={styles.voteButton}
-              >
-                <Ionicons name="close-outline" size={30} color="#FF7000" />
-              </Pressable>
-            </View>
-          )}
-          {showDeleteButton && (
-            <View style={styles.voteContainer}>
-              <Pressable style={styles.deleteButton} onPress={openModal} testID="delete-button">
-                <Ionicons name="close-outline" size={90} color="#FFFFFB" />
-                <Text style={styles.deleteText} testID="delete-label">
-                  Delete Event
-                </Text>
-              </Pressable>
-            </View>
-          )}
+        <View style={styles.imageContainer}> 
         </View>
       </View>
       <Modal testID="edit-modal" visible={modalVisible} animationType="slide" transparent>
@@ -281,6 +221,13 @@ function EventDetail({ route, navigation }: any) {
           </View>
         </View>
       </Modal>
+      <View style={styles.redoContainer}>
+        <Pressable style={styles.redoButton} onPress={() => navigation.navigate('EditEvent')}>
+            <Text style={styles.statusText}>
+                    Redo Event
+            </Text>
+        </Pressable>
+      </View>  
     </View>
   );
 }
@@ -427,15 +374,15 @@ const styles = StyleSheet.create({
     display: 'flex',
     backgroundColor: '#272222',
     width: '50%',
-    height: '100%',
+    height: '150%',
     borderRadius: 20,
     marginRight: 10,
   },
-  buttonsContainer: {
+  imageContainer: {
     display: 'flex',
     backgroundColor: '#DBDBDB',
     width: '45%',
-    height: '100%',
+    height: '150%',
     borderRadius: 20,
     marginLeft: 10,
   },
@@ -455,6 +402,32 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  redoContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '40%',
+    },
+  redoButton: {
+    display: 'flex',
+    backgroundColor: '#272222',
+    width: '80%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    alignContent: 'center',
+    borderRadius: 20,
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  redoText: {
+    color: '#FFFFFB',
+    fontSize: 36,
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'center',
+    alignSelf: 'center',
+    padding: 4,
   },
   modalContainer: {
     flex: 1,

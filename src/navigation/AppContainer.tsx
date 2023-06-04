@@ -15,6 +15,7 @@ import EventHistory from './screens/EventHistory';
 import EventCreation from './screens/EventCreation';
 import GroupDetails from './screens/GroupDetails';
 import EventDetail from './screens/EventDetail';
+import EventHistoryDetail from './screens/EventHistoryDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -91,6 +92,7 @@ function AppContainer() {
         <Stack.Screen name="GroupDetails" component={GroupDetails} />
         <Stack.Screen name="TabBar" component={TabBar} options={{ headerShown: false }} />
         <Stack.Screen name="EventDetail" component={EventDetail} />
+        <Stack.Screen name="EventHistoryDetail" component={EventHistoryDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );

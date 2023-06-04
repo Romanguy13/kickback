@@ -9,7 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
 function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: EventReturn; navigation: any; setShowModal: any, setReceipt: any }) {
   const handlePress = () => {
-    navigation.navigate('EventDetail', { event });
+    navigation.navigate('EventHistoryDetail', { event });
     /*
     if the current user logged in is == to the event card 
     FB_AUTH.currentUser?.id == event.hostId
