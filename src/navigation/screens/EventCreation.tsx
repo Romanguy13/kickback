@@ -18,7 +18,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import firebase from 'firebase/compat';
 import { Timestamp } from 'firebase/firestore';
-import { EventModel } from '../../resources/schema/event.model';
+import { EventModel, EventReturn } from '../../resources/schema/event.model';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Users from '../../resources/api/users';
 import Events from '../../resources/api/events';
@@ -37,6 +37,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
   const [inviteUserEmail, setInviteUserEmail] = useState('');
   const [invitedUsers, setInvitedUsers] = useState<UserReturn[]>([]); // [email1, email2, ...'
   const isFocused = useIsFocused();
+
 
   // Date Picker Config
   const handleEventDateChange = (selectedDate: Date | undefined) => {
@@ -90,6 +91,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
     console.log(eventDate);
     console.log(eventTime);
     console.log(invitedUsers);
+ 
     if (eventTitle === '' || eventLocation === '' || eventDate === '' || eventTime === '') {
       Alert.alert('Please fill in all fields.');
       return;
@@ -229,10 +231,12 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
   useEffect(() => {
     if (route.params) {
       // top members are the members that are in the group - ALL MEMBERS
-      const { topMembers, groupId } = route.params;
+      const { topMembers, groupId, eventTitle, eventLocation } = route.params;
       // remove current user from topMembers
       const filteredTopMembers = topMembers.filter((member: UserReturn) => member.id !== userId);
       setInvitedUsers(filteredTopMembers);
+      setEventTitle(eventTitle);
+      setEventLocation(eventLocation);
     }
   }, [isFocused, route.params, userId]);
   // Handle the onPress fo the cancel button

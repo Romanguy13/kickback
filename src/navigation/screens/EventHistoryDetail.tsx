@@ -10,6 +10,7 @@ import { UserReturn } from '../../resources/schema/user.model';
 import { GroupMemberModel } from '../../resources/schema/group.model';
 import { EventReturn, InviteeStatus, UpdatedEvent } from '../../resources/schema/event.model';
 import InviteeStatusCard from '../../components/InviteeStatusCard';
+import { GroupCardProps } from './EventGroups';
 
 function EventDetail({ route, navigation }: any) {
   const { event, canVote } = route.params;
@@ -23,6 +24,8 @@ function EventDetail({ route, navigation }: any) {
   const [modalVisible, setModalVisible] = useState(false);
 
   const eventDate = moment(event.datetime.toDate());
+
+  const { group }: GroupCardProps = route.params;
 
   const openModal = () => {
     setModalVisible(true);
@@ -222,7 +225,12 @@ function EventDetail({ route, navigation }: any) {
         </View>
       </Modal>
       <View style={styles.redoContainer}>
-        <Pressable style={styles.redoButton} onPress={() => navigation.navigate('EditEvent')}>
+        <Pressable style={styles.redoButton}  onPress={() => {
+            navigation.navigate('TabBar', {
+              screen: 'Creation',
+              params: { topMembers, groupId: event.gId, eventTitle: event.name, eventLocation: event.location},
+            });
+          }}>
             <Text style={styles.statusText}>
                     Redo Event
             </Text>
