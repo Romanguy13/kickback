@@ -239,14 +239,14 @@ function EventDetail({ route, navigation }: any) {
                 onPress={() => handleInviteeStatus(true)}
                 style={styles.voteButton}
               >
-                <Ionicons name="person-add-outline" size={30} color="#FF7000" />
+                <Ionicons name="checkmark-outline" size={30} color="#FF7000" />
               </Pressable>
               <Pressable
                 testID="decline-invite"
                 onPress={() => handleInviteeStatus(false)}
                 style={styles.voteButton}
               >
-                <Ionicons name="person-remove-outline" size={30} color="#FF7000" />
+                <Ionicons name="close-outline" size={30} color="#FF7000" />
               </Pressable>
             </View>
           )}
