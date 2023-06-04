@@ -1,55 +1,71 @@
-import React from 'react';
-import { TouchableWithoutFeedback, StyleSheet, View, Text, TouchableOpacity, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { TouchableWithoutFeedback, StyleSheet, Modal, Image, View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { EventReturn } from '../resources/schema/event.model';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FB_AUTH } from '../../firebaseConfig';
-//import ImagePicker from 'react-native-image-picker';
+import { IoAlertCircleOutline } from 'react-icons/io5';
+
 import * as ImagePicker from 'expo-image-picker';
+
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
 function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: EventReturn; navigation: any; setShowModal: any, setReceipt: any }) {
+  const [receiptImage, setReceiptImage] = useState(" ")
+  const [modalVisible, setModalVisible] = useState(false);
+  //const iNoRecieptImage = <ion-icon name="alert-circle-outline"></ion-icon>;
+  const NoReceiptIcon = () => <IoAlertCircleOutline />;
+
   const handlePress = () => {
     navigation.navigate('EventDetail', { event });
-    /*
-    if the current user logged in is == to the event card 
-    FB_AUTH.currentUser?.id == event.hostId
-  
-    */
   };
-  const status = 'granted'
-  const handleReceipt = async () => {
-    //If the host
-    if (FB_AUTH.currentUser?.uid == event.hostId && receipt == " ") {
-      //1st time uploading image 
-      try {
-        // Request permission to access the device's photo library
-        //const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          console.log('Permission denied to access photo library');
-          return;
-        }
-        console.log("getting image")
-        const data = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: false,
-          quality: 1,
-        });
 
-        if (!data.canceled) {
-          console.log(data);
-        } else {
-          alert('You did not select any image.');
-        }
-      } catch (e) {
-        console.log(e);
+  //const status = 'granted'
+  const handleUpload = async () => {
+
+    if (FB_AUTH.currentUser?.uid == event.hostId && receiptImage == " ") {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission denied to access photo library');
+        return;
       }
+
+      await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      })
+        .then((result) => {
+          result.assets?.forEach((asset) => {
+            setReceiptImage(asset.uri)
+            console.log("img is =", asset.uri);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      console.log("image is ", receiptImage)
     }
-  }
-  const host = false
+    setModalVisible(true)
+    /*
+    else if (FB_AUTH.currentUser?.uid != event.hostId && receiptImage == " ") {
+      console.log("no receipt");
+    }
+    else {
+      console.log("receipt is ", receiptImage);
+    }
+    */
+
+  };
+
+  const closeModal = () => {
+    setModalVisible(false); // Hide the modal
+  };
+
+  const host = FB_AUTH.currentUser?.uid == event.hostId
+  //const host = false
   const paid = true
   const numOfPeople = 7
   const totalPaid = 3
-  const receipt = " "
   return (
     <View style={[styles.card, styles.shadowProp]}>
       <TouchableWithoutFeedback onPress={handlePress}>
@@ -61,22 +77,43 @@ function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: E
 
           <View style={styles.bottomHalf}>
             <View style={styles.leftSide}>
-              {host ? (
-                //<TouchableOpacity onPress={handleImageUpload}>
-                <Pressable onPress={handleReceipt}>
+              <Pressable onPress={handleUpload}>
+                {host ? (
+                  //<TouchableOpacity onPress={handleImageUpload}>
+                  //<Pressable onPress={handleUpload}>
                   <View style={styles.recieptButton} >
                     <Ionicons name="arrow-up-circle-outline" style={styles.iconPosition} />
                     <Text style={styles.receiptText}>  Upload Receipt </Text>
                   </View>
-                </Pressable>
+                  //</Pressable>
 
-              ) : (
-                <Pressable onPress={handleReceipt}>
+                ) : (
+                  //<Pressable onPress={handleUpload}>
                   <View style={styles.recieptButton}>
                     <Ionicons name="receipt-outline" style={styles.iconPosition} />
                     <Text style={styles.receiptText}>  View Receipt </Text>
                   </View>
-                </Pressable>
+                  //</Pressable>
+                )}
+              </Pressable>
+              {modalVisible && (
+                <Modal visible={modalVisible} onRequestClose={closeModal}>
+                  {/* Modal content */}
+                  {receiptImage != " " ?
+                    (
+                      <Image source={{ uri: receiptImage }} style={styles.modalImage} />
+                    ) : (
+                      <>
+                        <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
+                        <Text style={styles.NoImageText}> NO RECIEPT UPLOADED </Text>
+                      </>
+
+                    )}
+
+                  <Pressable onPress={closeModal} style={styles.closeButton}>
+                    <Text style={styles.closeButtonText}>Close</Text>
+                  </Pressable>
+                </Modal>
               )}
 
             </View>
@@ -234,6 +271,100 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
     textAlign: 'center',
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    padding: 20,
+  },
+  modalImage: {
+    flex: 1,
+    resizeMode: 'contain',
+
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    alignContent: 'center',
+    left: '40%'
+  },
+  closeButton: {
+    backgroundColor: 'black',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 0,
+    bottom: 60
+  },
+  noRecieptImage:
+  {
+    flex: 1,
+    color: 'blue',
+    fontSize: 400,
+    top: 100
+  },
+  NoImageText: {
+    position: 'relative',
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'black',
+    left: '8%',
+    bottom: '30%'
+
+  },
+
 });
 export default HistoryCard;
+
+/*
+ <Modal visible={modalVisible} onRequestClose={closeModal}>
+                <View style={styles.modalContainer}>
+                  <Image source={{ uri: receiptImage }} style={styles.modalImage} />
+                  <Pressable onPress={closeModal} style={styles.closeButton}>
+                    <Text style={styles.closeButtonText}>Close</Text>
+                  </Pressable>
+                </View>
+              </Modal>
+
+
+
+
+/*if (FB_AUTH.currentUser?.uid == event.hostId && receipt == " ") {
+      console.log("im the host")
+      //1st time uploading image 
+      try 
+      {
+       
+      }
+      catch (e) 
+      {
+
+        console.log("error happened")
+        console.log(e);
+      }
+    }
+
+// Request permission to access the device's photo library
+const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+if (status !== 'granted') {
+  console.log('Permission denied to access photo library');
+  return;
+}
+console.log("getting image")
+const data = await ImagePicker.launchImageLibraryAsync({
+  mediaTypes: ImagePicker.MediaTypeOptions.All,
+  //mediaTypes: [ImagePicker.MediaTypeOptions.Images, ImagePicker.MediaTypeOptions.Webp],
+  allowsEditing: false,
+  quality: 1,
+});
+console.log("after getting image", data)
+if (!data.canceled) {
+  console.log("data worked")
+  console.log(data);
+}
+else {
+  alert('You did not select any image.');
+}
+*/
