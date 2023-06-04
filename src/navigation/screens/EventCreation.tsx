@@ -297,6 +297,8 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
                 isVisible={showDatePicker}
                 mode="date"
                 minimumDate={new Date()}
+                textColor='black'
+                accentColor='black'
                 display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                 onConfirm={(date: Date) => {
                   handleEventDateChange(date);

@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as ImagePicker from 'expo-image-picker';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 
-import HistoryCard from './HistoryCard';
+import HistoryCard from '../../components/HistoryCard';
 import { EventReturn } from '../../resources/schema/event.model';
 
 export default function EventHistory({ navigation }: any) {
@@ -14,11 +16,37 @@ export default function EventHistory({ navigation }: any) {
   const [refresh, setRefresh] = useState<boolean>(false);
   const isFocused = useIsFocused();
 
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [receipt, setReceipt] = useState<string>(" ")
+
+  const handleUpload = async () => {
+    try {
+      // Request permission to access the device's photo library
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission denied to access photo library');
+        return;
+      }
+
+      const data = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 1,
+      });
+
+      if (!data.canceled) {
+        console.log(data);
+      } else {
+        alert('You did not select any image.');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
-    console.log('isFocused', isFocused);
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
-      console.log(eventList);
 
       // Filter through the events and only show the ones that have already passed
       // Filter Function is lines 44 to 56
@@ -28,7 +56,8 @@ export default function EventHistory({ navigation }: any) {
         console.log('currentDate', event.datetime.toDate());
         const eventDate = moment(event.datetime.toDate());
 
-        return eventDate.isBefore(currentDate);
+        return true
+        //return eventDate.isBefore(currentDate);
       });
       setEvents(filteredEvents);
       console.log(filteredEvents);
@@ -43,6 +72,7 @@ export default function EventHistory({ navigation }: any) {
   }, [refresh, isFocused]);
 
   // What to showcase on the screen
+  //<Button title="upload image" onPress={handleUpload} />
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
@@ -53,7 +83,7 @@ export default function EventHistory({ navigation }: any) {
           style={styles.cardList}
           data={events}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <HistoryCard event={item} navigation={navigation} />}
+          renderItem={({ item }) => <HistoryCard event={item} setShowModal={setShowModal} setReceipt={setReceipt} navigation={navigation} />}
         />
       </View>
     </View>
