@@ -251,8 +251,8 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
   return (
     <View style={styles.container}>
-      <View>
-        <TouchableOpacity onPress={handleCancel}>
+      <View style={styles.cancelContainer}>
+        <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>
@@ -381,13 +381,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFB',
   },
   cancelText: {
-    color: 'red',
+    color: '#FFFDF8',
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
-    textAlign: 'right',
-    fontSize: 18,
-    paddingRight: 20,
-    paddingTop: 50,
+    //textDecorationLine: 'underline',
+    fontSize: 20,
+    alignSelf: 'center',
+    paddingTop: 7,
+    // paddingTop: 50,
   },
   titleContainer: {
     padding: 20,
@@ -575,4 +575,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     margin: 5,
   },
+  cancelButton: {
+    backgroundColor: '#DE4040',
+    borderColor: '#DE4040',
+    borderWidth: 2,
+    borderRadius: 100,
+    margin: 10,
+    width: '30%',
+    height: '70%',
+  },
+  cancelContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    //paddingRight: 5,
+    paddingTop: 30,
+  },  
 });
