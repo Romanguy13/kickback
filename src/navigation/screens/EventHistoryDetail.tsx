@@ -27,92 +27,6 @@ function EventDetail({ route, navigation }: any) {
 
   const { group }: GroupCardProps = route.params;
 
-  const openModal = () => {
-    setModalVisible(true);
-  };
-
-  const closeModal = () => {
-    setModalVisible(false);
-  };
-
-//   // Calculate the time left until the event
-//   const timeLeft = event.datetime.toDate().getTime() - new Date().getTime();
-//   const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-//   const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-//   const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-
-  const deleteEvent = async () => {
-    try {
-      await new Events().delete(event.id);
-      Alert.alert('Success!', 'Event deleted.');
-      closeModal();
-      navigation.goBack();
-    } catch (error) {
-      closeModal();
-      console.log(error);
-      Alert.alert('Error', 'Something went wrong. Please try again later.');
-    }
-  };
-
-  const handleInviteeStatus = async (status: boolean) => {
-    // edit the event in the database to reflect the new status based on the user's response
-    const currentUserId = FB_AUTH.currentUser?.uid;
-    const { inviteeStatus } = currentEvent;
-
-    // find the inviteeStatus that corresponds to the current user id
-    const inviteeFound = inviteeStatus.find(
-      (invitee: InviteeStatus) => invitee.id === currentUserId
-    );
-    if (inviteeFound) {
-      inviteeFound.status = status;
-
-      // change the inviteeStatus to reflect the user's response
-      const newInviteeStatus = inviteeStatus.map((invitee: InviteeStatus) => {
-        if (invitee.id === currentUserId) {
-          return inviteeFound;
-        }
-        return invitee;
-      });
-
-      // update the event in the database
-      await new Events().edit(event.id, { inviteeStatus: newInviteeStatus });
-
-      console.log('inviteeStatus - before', currentEvent);
-
-      // update the event in the state
-      setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
-
-      console.log('inviteeStatus - after', currentEvent);
-    }
-  };
-
-  const checkStatus = (currEvent: EventReturn) => {
-    // check the status of the the user in the event based on their id
-    const currentUserId = FB_AUTH.currentUser?.uid;
-    const { inviteeStatus } = currEvent;
-
-    // find the inviteeStatus that corresponds to the current user id
-    const inviteeFound = inviteeStatus.find(
-      (invitee: { id: string; status: boolean | null }) => invitee.id === currentUserId
-    );
-
-    const status = inviteeFound?.status;
-
-    // check if the user is the host
-    if (currentUserId === currEvent.hostId) {
-      return 'Host';
-    }
-
-    // if the user has not responded to the invite, return 'pending'
-    if (status === null) {
-      return 'Pending';
-    }
-    if (status) {
-      return 'Going';
-    }
-    return 'Not going';
-  };
-
   const checkHostStatus = async () => {
     const currentUserId = FB_AUTH.currentUser?.uid;
     if (currentUserId === currentEvent.hostId) {
@@ -202,40 +116,26 @@ function EventDetail({ route, navigation }: any) {
             ))}
           </ScrollView>
         </View>
-        <View style={styles.imageContainer}> 
-        </View>
+        <View style={styles.imageContainer}></View>
       </View>
-      <Modal testID="edit-modal" visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Are you sure you want to delete this event?</Text>
-            <View style={styles.modalButtonContainer}>
-              <View style={styles.modalButtonContainer}>
-                <Pressable style={styles.closeButton} onPress={deleteEvent} testID="yes-modal">
-                  <Text style={styles.closeButtonText}>Yes </Text>
-                </Pressable>
-              </View>
-              <View style={styles.modalButtonContainer}>
-                <Pressable style={styles.closeButton} onPress={closeModal} testID="no-modal">
-                  <Text style={styles.closeButtonText}>Close</Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </View>
-      </Modal>
       <View style={styles.redoContainer}>
-        <Pressable style={styles.redoButton}  onPress={() => {
+        <Pressable
+          style={styles.redoButton}
+          onPress={() => {
             navigation.navigate('TabBar', {
               screen: 'Creation',
-              params: { topMembers, groupId: event.gId, eventTitle: event.name, eventLocation: event.location},
+              params: {
+                topMembers,
+                groupId: event.gId,
+                eventTitle: event.name,
+                eventLocation: event.location,
+              },
             });
-          }}>
-            <Text style={styles.statusText}>
-                    Redo Event
-            </Text>
+          }}
+        >
+          <Text style={styles.statusText}>Redo Event</Text>
         </Pressable>
-      </View>  
+      </View>
     </View>
   );
 }
@@ -416,7 +316,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: '40%',
-    },
+  },
   redoButton: {
     display: 'flex',
     backgroundColor: '#272222',
