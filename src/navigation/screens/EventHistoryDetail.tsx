@@ -31,8 +31,31 @@ function EventDetail({ route, navigation }: any) {
     const currentUserId = FB_AUTH.currentUser?.uid;
     if (currentUserId === currentEvent.hostId) {
       setDeleteButton(true);
+      console.log('User is host');
     }
   };
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const deleteEvent = async () => {
+    try {
+      await new Events().delete(event.id);
+      Alert.alert('Success!', 'Event deleted.');
+      closeModal();
+      navigation.goBack();
+    } catch (error) {
+      closeModal();
+      console.log(error);
+      Alert.alert('Error', 'Something went wrong. Please try again later.');
+    }
+  };
+
 
   useEffect(() => {
     checkHostStatus();
@@ -135,7 +158,31 @@ function EventDetail({ route, navigation }: any) {
         >
           <Text style={styles.statusText}>Redo Event</Text>
         </Pressable>
+        {showDeleteButton && ((
+          <Pressable style={styles.deleteButton} onPress={openModal} testID="delete-button">
+            <Text style={styles.statusText}>Delete Event</Text>
+          </Pressable>
+       ))}
       </View>
+       <Modal testID="edit-modal" visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Are you sure you want to delete this event?</Text>
+            <View style={styles.modalButtonContainer}>
+              <View style={styles.modalButtonContainer}>
+                <Pressable style={styles.closeButton} onPress={deleteEvent} testID="yes-modal">
+                  <Text style={styles.closeButtonText}>Yes </Text>
+                </Pressable>
+              </View>
+              <View style={styles.modalButtonContainer}>
+                <Pressable style={styles.closeButton} onPress={closeModal} testID="no-modal">
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -295,15 +342,15 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   deleteButton: {
-    borderRadius: 20,
-    borderColor: '#DE4040',
-    width: '74%',
-    height: '62%',
+    display: 'flex',
+    width: '80%',
     justifyContent: 'center',
-    alignItems: 'center',
     alignSelf: 'center',
+    alignContent: 'center',
+    borderRadius: 20,
+    marginTop: 10,
+    marginBottom: 20,
     backgroundColor: '#DE4040',
-    margin: 40,
   },
   deleteText: {
     color: '#FFFFFB',
@@ -311,11 +358,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  deleteContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    //height: '30%',
+  },
   redoContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '40%',
+    width: '100%',
+    height: '45%',
   },
   redoButton: {
     display: 'flex',
@@ -325,8 +379,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignContent: 'center',
     borderRadius: 20,
-    marginTop: 10,
-    marginBottom: 20,
+    // marginTop: 10,
+    // marginBottom: 20,
   },
   redoText: {
     color: '#FFFFFB',
