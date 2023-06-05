@@ -47,30 +47,26 @@ function HistoryCard({
         return;
       }
 
-      await ImagePicker.launchImageLibraryAsync({
+      const res = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 1,
-      })
-        .then((result) => {
-          result.assets?.forEach(async (asset) => {
-            const uploadedPath = await new KickbackImage().uploadImage(
-              asset.uri,
-              `${event.id}_receipt`
-            );
-            await new Events().edit(event.id, { receipt: uploadedPath });
-            console.log('img is =', uploadedPath);
-            const newUri = await new KickbackImage().downloadImage(uploadedPath);
-            setReceipt(newUri);
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      });
+
+      if (res.assets) {
+        const uploadedPath = await new KickbackImage().uploadImage(
+          res.assets[0].uri,
+          `${event.id}_receipt`
+        );
+
+        await new Events().edit(event.id, { receipt: uploadedPath });
+        const newUri = await new KickbackImage().downloadImage(uploadedPath);
+        setReceipt(newUri);
+        setRefresh(true);
+      }
     } else if (event.receipt) {
       const newUri = await new KickbackImage().downloadImage(event.receipt);
       setReceipt(newUri);
-      setRefresh(true);
     }
 
     setShowModal(true);

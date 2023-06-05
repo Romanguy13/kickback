@@ -81,7 +81,14 @@ export default function EventHistory({ navigation }: any) {
         />
       </View>
       {showModal && (
-        <Modal visible={showModal} onRequestClose={() => setShowModal(false)}>
+        <Modal
+          visible={showModal}
+          onRequestClose={() => {
+            setShowModal(false);
+            setReceipt('');
+          }}
+          animationType="slide"
+        >
           {/* Modal content */}
           {receipt ? (
             <Image source={{ uri: receipt }} style={styles.modalImage} />
@@ -92,7 +99,13 @@ export default function EventHistory({ navigation }: any) {
             </>
           )}
 
-          <Pressable onPress={() => setShowModal(false)} style={styles.closeButton}>
+          <Pressable
+            onPress={() => {
+              setShowModal(false);
+              setReceipt('');
+            }}
+            style={styles.closeButton}
+          >
             <Text style={styles.closeButtonText}>Close</Text>
           </Pressable>
         </Modal>
