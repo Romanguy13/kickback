@@ -83,16 +83,10 @@ export default class KickbackFirebase {
     console.log('Event to be deleted: ', eventRef);
     console.log('Event to be deleted ID: ', eventRef.id);
 
-    try {
-      await deleteDoc(eventRef);
+    await deleteDoc(eventRef);
 
-      console.log('Event deleted successfully');
-      return;
-    } catch (error) {
-      console.error('Error deleting event:', error);
-
-      throw new Error('Failed to delete event');
-    }
+    console.log('Event deleted successfully');
+    return Promise.resolve();
   }
   
 

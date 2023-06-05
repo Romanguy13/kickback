@@ -56,7 +56,6 @@ function EventDetail({ route, navigation }: any) {
     }
   };
 
-
   useEffect(() => {
     checkHostStatus();
 
@@ -139,7 +138,9 @@ function EventDetail({ route, navigation }: any) {
             ))}
           </ScrollView>
         </View>
-        <View style={styles.imageContainer}></View>
+        <View style={styles.imageContainer}>
+          <Text>Image</Text>
+        </View>
       </View>
       <View style={styles.redoContainer}>
         <Pressable
@@ -158,13 +159,15 @@ function EventDetail({ route, navigation }: any) {
         >
           <Text style={styles.statusText}>Redo Event</Text>
         </Pressable>
-        {showDeleteButton && ((
+        {showDeleteButton && (
           <Pressable style={styles.deleteButton} onPress={openModal} testID="delete-button">
-            <Text style={styles.statusText}>Delete Event</Text>
+            <Text style={styles.statusText} testID="delete-label">
+              Delete Event
+            </Text>
           </Pressable>
-       ))}
+        )}
       </View>
-       <Modal testID="edit-modal" visible={modalVisible} animationType="slide" transparent>
+      <Modal testID="edit-modal" visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>Are you sure you want to delete this event?</Text>
@@ -362,7 +365,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    //height: '30%',
   },
   redoContainer: {
     display: 'flex',
@@ -379,8 +381,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignContent: 'center',
     borderRadius: 20,
-    // marginTop: 10,
-    // marginBottom: 20,
   },
   redoText: {
     color: '#FFFFFB',

@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { Alert } from 'react-native';
 import moment from 'moment';
+import Events from '../../../resources/api/events';
 import EventHistoryDetail from '../../../navigation/screens/EventHistoryDetail';
 import EventCreation from '../../../navigation/screens/EventCreation';
 import { preLoadData } from '../helper/EventDetails.helper';
@@ -24,6 +25,7 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('../../../../firebaseConfig');
 jest.mock('firebase/auth');
 jest.spyOn(Alert, 'alert');
+
 interface FirebaseUser {
   uid: string;
   email: string;
@@ -161,4 +163,52 @@ test('Click the "Redo Event" button', async () => {
 
   const redo = screen.getByText('Redo Event');
   fireEvent.press(redo);
+});
+
+test('Click Delete Event Button As Host - Success', async () => {
+  preLoadData();
+
+  (Events.prototype.edit as jest.Mock).mockResolvedValue({
+    id: '4',
+    status: null,
+  });
+
+  preLoadData();
+
+  await renderWithNavigation(params2);
+
+  await waitFor(() => {
+    expect(screen.getByTestId('delete-label')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('delete-button'));
+    fireEvent.press(screen.getByTestId('no-modal'));
+    fireEvent.press(screen.getByTestId('delete-button'));
+    fireEvent.press(screen.getByTestId('yes-modal'));
+  });
+  expect(Alert.alert).toHaveBeenCalledWith('Success!', 'Event deleted.');
+});
+
+test('Click Delete Event Button As Host - Fail', async () => {
+  preLoadData();
+  (Events.prototype.delete as jest.Mock).mockRejectedValue(new Error('test error'));
+
+  (Events.prototype.edit as jest.Mock).mockResolvedValue({
+    id: '4',
+    status: null,
+  });
+
+  preLoadData();
+
+  await renderWithNavigation(params2);
+
+  await waitFor(() => {
+    expect(screen.getByTestId('delete-label')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('delete-button'));
+    fireEvent.press(screen.getByTestId('no-modal'));
+    fireEvent.press(screen.getByTestId('delete-button'));
+    fireEvent.press(screen.getByTestId('yes-modal'));
+  });
+  expect(Alert.alert).toHaveBeenCalledWith(
+    'Error',
+    'Something went wrong. Please try again later.'
+  );
 });

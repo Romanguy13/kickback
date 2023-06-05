@@ -33,6 +33,22 @@ describe('Firestore Operations', () => {
     expect(returnedId).toEqual('something');
   });
 
+  it('should delete a document ', async () => {
+    const data: EventModel = {
+      gId: '201',
+      time: '12:00',
+      hostId: 'something',
+      name: 'Isabella',
+      location: 'Santa Barbara',
+      date: '2021-10-10',
+    };
+
+    (KickbackFirebase.prototype.create as jest.Mock).mockResolvedValue('something');
+
+    const returnedId = await eventClass.delete(data.gId);
+    expect(returnedId).toEqual(undefined);
+  });
+
   it('should get all documents from a collection', async () => {
     // Events hosted by the user
     const expectedData: EventReturn[] = [
