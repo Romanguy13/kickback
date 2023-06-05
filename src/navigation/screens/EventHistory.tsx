@@ -1,9 +1,21 @@
-import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  PixelRatio,
+  FlatList,
+  Button,
+  Modal,
+  Image,
+  Pressable,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as ImagePicker from 'expo-image-picker';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 
@@ -16,33 +28,8 @@ export default function EventHistory({ navigation }: any) {
   const [refresh, setRefresh] = useState<boolean>(false);
   const isFocused = useIsFocused();
 
-  const [showModal, setShowModal] = useState<boolean>(false)
-  const [receipt, setReceipt] = useState<string>(" ")
-
-  const handleUpload = async () => {
-    try {
-      // Request permission to access the device's photo library
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Permission denied to access photo library');
-        return;
-      }
-
-      const data = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
-        quality: 1,
-      });
-
-      if (!data.canceled) {
-        console.log(data);
-      } else {
-        alert('You did not select any image.');
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [receipt, setReceipt] = useState<string>(' ');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,8 +43,8 @@ export default function EventHistory({ navigation }: any) {
         console.log('currentDate', event.datetime.toDate());
         const eventDate = moment(event.datetime.toDate());
 
-        return true
-        //return eventDate.isBefore(currentDate);
+        return true;
+        // return eventDate.isBefore(currentDate);
       });
       setEvents(filteredEvents);
       console.log(filteredEvents);
@@ -72,7 +59,6 @@ export default function EventHistory({ navigation }: any) {
   }, [refresh, isFocused]);
 
   // What to showcase on the screen
-  //<Button title="upload image" onPress={handleUpload} />
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
@@ -83,9 +69,34 @@ export default function EventHistory({ navigation }: any) {
           style={styles.cardList}
           data={events}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <HistoryCard event={item} setShowModal={setShowModal} setReceipt={setReceipt} navigation={navigation} />}
+          renderItem={({ item }) => (
+            <HistoryCard
+              event={item}
+              setShowModal={setShowModal}
+              setReceipt={setReceipt}
+              setRefresh={setRefresh}
+              navigation={navigation}
+            />
+          )}
         />
       </View>
+      {showModal && (
+        <Modal visible={showModal} onRequestClose={() => setShowModal(false)}>
+          {/* Modal content */}
+          {receipt ? (
+            <Image source={{ uri: receipt }} style={styles.modalImage} />
+          ) : (
+            <>
+              <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
+              <Text style={styles.NoImageText}> NO RECIEPT UPLOADED </Text>
+            </>
+          )}
+
+          <Pressable onPress={() => setShowModal(false)} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </Pressable>
+        </Modal>
+      )}
     </View>
   );
 }
@@ -147,5 +158,37 @@ const styles = StyleSheet.create({
     height: '78%',
     paddingLeft: 50,
     paddingRight: 50,
+  },
+  modalImage: {
+    flex: 1,
+    resizeMode: 'contain',
+  },
+  NoImageText: {
+    position: 'relative',
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'black',
+    left: '8%',
+    bottom: '30%',
+  },
+  noRecieptImage: {
+    flex: 1,
+    color: 'blue',
+    fontSize: 400,
+    top: 100,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    alignContent: 'center',
+    left: '40%',
+  },
+  closeButton: {
+    backgroundColor: 'black',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 0,
+    bottom: 60,
   },
 });

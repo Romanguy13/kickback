@@ -1,28 +1,46 @@
 import React, { useState } from 'react';
-import { TouchableWithoutFeedback, StyleSheet, Modal, Image, View, Text, TouchableOpacity, Pressable } from 'react-native';
-import { EventReturn } from '../resources/schema/event.model';
+import {
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Modal,
+  Image,
+  View,
+  Text,
+  Pressable,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { FB_AUTH } from '../../firebaseConfig';
-import { IoAlertCircleOutline } from 'react-icons/io5';
-
 import * as ImagePicker from 'expo-image-picker';
-
+import { FB_AUTH } from '../../firebaseConfig';
+import { EventReturn } from '../resources/schema/event.model';
+import Events from '../resources/api/events';
+import KickbackImage from '../resources/api/kickbackImage';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
-function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: EventReturn; navigation: any; setShowModal: any, setReceipt: any }) {
-  const [receiptImage, setReceiptImage] = useState(" ")
-  const [modalVisible, setModalVisible] = useState(false);
-  //const iNoRecieptImage = <ion-icon name="alert-circle-outline"></ion-icon>;
-  const NoReceiptIcon = () => <IoAlertCircleOutline />;
+function HistoryCard({
+  event,
+  navigation,
+  setShowModal,
+  setReceipt,
+  setRefresh,
+}: {
+  event: EventReturn;
+  navigation: any;
+  setShowModal: any;
+  setReceipt: any;
+  setRefresh: any;
+}) {
+  // const iNoRecieptImage = <ion-icon name="alert-circle-outline"></ion-icon>;
+  // function NoReceiptIcon() {
+  //   return <IoAlertCircleOutline />;
+  // }
 
   const handlePress = () => {
     navigation.navigate('EventDetail', { event });
   };
 
-  //const status = 'granted'
+  // const status = 'granted'
   const handleUpload = async () => {
-
-    if (FB_AUTH.currentUser?.uid == event.hostId && receiptImage == " ") {
+    if (FB_AUTH.currentUser?.uid === event.hostId && !event.receipt) {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         console.log('Permission denied to access photo library');
@@ -35,41 +53,37 @@ function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: E
         quality: 1,
       })
         .then((result) => {
-          result.assets?.forEach((asset) => {
-            setReceiptImage(asset.uri)
-            console.log("img is =", asset.uri);
+          result.assets?.forEach(async (asset) => {
+            const uploadedPath = await new KickbackImage().uploadImage(
+              asset.uri,
+              `${event.id}_receipt`
+            );
+            await new Events().edit(event.id, { receipt: uploadedPath });
+            console.log('img is =', uploadedPath);
+            const newUri = await new KickbackImage().downloadImage(uploadedPath);
+            setReceipt(newUri);
           });
         })
         .catch((error) => {
           console.log(error);
         });
-      console.log("image is ", receiptImage)
+    } else if (event.receipt) {
+      const newUri = await new KickbackImage().downloadImage(event.receipt);
+      setReceipt(newUri);
+      setRefresh(true);
     }
-    setModalVisible(true)
-    /*
-    else if (FB_AUTH.currentUser?.uid != event.hostId && receiptImage == " ") {
-      console.log("no receipt");
-    }
-    else {
-      console.log("receipt is ", receiptImage);
-    }
-    */
 
+    setShowModal(true);
   };
 
-  const closeModal = () => {
-    setModalVisible(false); // Hide the modal
-  };
-
-  const host = FB_AUTH.currentUser?.uid == event.hostId
-  //const host = false
-  const paid = true
-  const numOfPeople = 7
-  const totalPaid = 3
+  const host = FB_AUTH.currentUser?.uid === event.hostId;
+  // const host = false
+  const paid = true;
+  const numOfPeople = 7;
+  const totalPaid = 3;
   return (
     <View style={[styles.card, styles.shadowProp]}>
       <TouchableWithoutFeedback onPress={handlePress}>
-
         <View>
           <View style={styles.headingContainer}>
             <Text style={[styles.heading]}>{event.name}</Text>
@@ -79,71 +93,40 @@ function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: E
             <View style={styles.leftSide}>
               <Pressable onPress={handleUpload}>
                 {host ? (
-                  //<TouchableOpacity onPress={handleImageUpload}>
-                  //<Pressable onPress={handleUpload}>
-                  <View style={styles.recieptButton} >
+                  <View style={styles.recieptButton}>
                     <Ionicons name="arrow-up-circle-outline" style={styles.iconPosition} />
-                    <Text style={styles.receiptText}>  Upload Receipt </Text>
+                    <Text style={styles.receiptText}> Upload Receipt </Text>
                   </View>
-                  //</Pressable>
-
                 ) : (
-                  //<Pressable onPress={handleUpload}>
                   <View style={styles.recieptButton}>
                     <Ionicons name="receipt-outline" style={styles.iconPosition} />
-                    <Text style={styles.receiptText}>  View Receipt </Text>
+                    <Text style={styles.receiptText}> View Receipt </Text>
                   </View>
-                  //</Pressable>
                 )}
               </Pressable>
-              {modalVisible && (
-                <Modal visible={modalVisible} onRequestClose={closeModal}>
-                  {/* Modal content */}
-                  {receiptImage != " " ?
-                    (
-                      <Image source={{ uri: receiptImage }} style={styles.modalImage} />
-                    ) : (
-                      <>
-                        <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
-                        <Text style={styles.NoImageText}> NO RECIEPT UPLOADED </Text>
-                      </>
-
-                    )}
-
-                  <Pressable onPress={closeModal} style={styles.closeButton}>
-                    <Text style={styles.closeButtonText}>Close</Text>
-                  </Pressable>
-                </Modal>
-              )}
-
             </View>
             <View style={styles.rightSide}>
               <Text style={styles.locationtext}> {event.location} </Text>
 
               {host ? (
-
                 <View style={styles.hostPaymentStatus}>
-                  <Text style={styles.paymentText}> {totalPaid} / {numOfPeople} paid </Text>
+                  <Text style={styles.paymentText}>
+                    {' '}
+                    {totalPaid} / {numOfPeople} paid{' '}
+                  </Text>
+                </View>
+              ) : paid ? (
+                <View style={styles.paidStatus}>
+                  <Text style={styles.paymentText}> paid </Text>
                 </View>
               ) : (
-
-                paid ? (
-                  <View style={styles.paidStatus}>
-                    <Text style={styles.paymentText}> paid </Text>
-                  </View>
-                ) : (
-                  <View style={styles.payStatus}>
-                    <Text style={styles.paymentText}> unpaid </Text>
-                  </View>
-                )
+                <View style={styles.payStatus}>
+                  <Text style={styles.paymentText}> unpaid </Text>
+                </View>
               )}
-
             </View>
           </View>
-
         </View>
-
-
       </TouchableWithoutFeedback>
     </View>
   );
@@ -166,8 +149,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#272222',
   },
-  bottomHalf:
-  {
+  bottomHalf: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch',
@@ -178,21 +160,18 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 18,
     borderBottomRightRadius: 18,
   },
-  rightSide:
-  {
+  rightSide: {
     flex: 1,
     height: 132,
     borderBottomRightRadius: 18,
     flexWrap: 'wrap',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
-  leftSide:
-  {
+  leftSide: {
     flex: 1,
     backgroundColor: 'black',
     height: 132,
     borderBottomLeftRadius: 18,
-
   },
   locationtext: {
     position: 'absolute',
@@ -201,7 +180,7 @@ const styles = StyleSheet.create({
     width: 120,
     fontWeight: '800',
     fontSize: 14,
-    //paddingLeft: 50,
+    // paddingLeft: 50,
   },
   card: {
     backgroundColor: '#FFFDF8',
@@ -210,7 +189,7 @@ const styles = StyleSheet.create({
     height: 176,
     marginVertical: 10,
     flexDirection: 'row',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   shadowProp: {
     shadowColor: '#171717',
@@ -218,56 +197,49 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
-  recieptButton:
-  {
+  recieptButton: {
     backgroundColor: 'white',
     height: 90,
     width: 90,
     top: '15%',
     left: '23%',
-    borderRadius: 5
+    borderRadius: 5,
   },
-  iconPosition:
-  {
+  iconPosition: {
     alignContent: 'center',
     height: 50,
     width: 50,
     left: '27%',
     color: 'black',
-    fontSize: 43
+    fontSize: 43,
   },
-  paidStatus:
-  {
+  paidStatus: {
     position: 'absolute',
     top: '70%',
     left: '22%',
     width: 90,
-    backgroundColor: 'green'
+    backgroundColor: 'green',
   },
-  payStatus:
-  {
+  payStatus: {
     position: 'absolute',
     top: '70%',
     left: '22%',
     width: 90,
-    backgroundColor: 'red'
+    backgroundColor: 'red',
   },
-  hostPaymentStatus:
-  {
+  hostPaymentStatus: {
     position: 'absolute',
     top: '70%',
     left: '22%',
     width: 90,
-    backgroundColor: '36A5C8'
+    backgroundColor: '36A5C8',
   },
-  paymentText:
-  {
+  paymentText: {
     fontSize: 16,
     textAlign: 'center',
-    color: 'white'
+    color: 'white',
   },
-  receiptText:
-  {
+  receiptText: {
     fontWeight: 'bold',
     fontSize: 15,
     textAlign: 'center',
@@ -282,28 +254,26 @@ const styles = StyleSheet.create({
   modalImage: {
     flex: 1,
     resizeMode: 'contain',
-
   },
   closeButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
     alignContent: 'center',
-    left: '40%'
+    left: '40%',
   },
   closeButton: {
     backgroundColor: 'black',
     padding: 10,
     borderRadius: 5,
     marginTop: 0,
-    bottom: 60
+    bottom: 60,
   },
-  noRecieptImage:
-  {
+  noRecieptImage: {
     flex: 1,
     color: 'blue',
     fontSize: 400,
-    top: 100
+    top: 100,
   },
   NoImageText: {
     position: 'relative',
@@ -311,10 +281,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     left: '8%',
-    bottom: '30%'
-
+    bottom: '30%',
   },
-
 });
 export default HistoryCard;
 
