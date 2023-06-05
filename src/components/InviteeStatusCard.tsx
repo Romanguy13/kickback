@@ -28,6 +28,11 @@ export default function InviteeStatusCard({
   } else if (isAttending.status === false) {
     icon = <Ionicons name="close" size={25} color="#FF7000" />;
   }
+  // First check to see if the name has a space, if it does splt it and return the first name
+  // If it doesn't have a space, return the name
+  const firstName = currentMember.name.includes(' ')
+    ? currentMember.name.split(' ')[0]
+    : currentMember.name;
 
   return (
     <View
@@ -40,7 +45,7 @@ export default function InviteeStatusCard({
         margin: 10,
       }}
     >
-      <Text style={styles.usersText}>{currentMember.name}</Text>
+      <Text style={styles.usersText}>{firstName}</Text>
       <View
         style={{
           display: 'flex',

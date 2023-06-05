@@ -5,7 +5,7 @@ import moment from 'moment';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 
-import HistoryCard from './HistoryCard';
+import HistoryCard from '../../components/HistoryCard';
 import { EventReturn } from '../../resources/schema/event.model';
 
 export default function EventHistory({ navigation }: any) {

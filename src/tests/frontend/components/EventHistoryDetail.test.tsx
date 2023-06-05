@@ -5,10 +5,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { Alert } from 'react-native';
 import moment from 'moment';
-import EventDetail from '../../../navigation/screens/EventDetail';
 import Events from '../../../resources/api/events';
-import GroupMembers from '../../../resources/api/groupMembers';
-import Users from '../../../resources/api/users';
+import EventHistoryDetail from '../../../navigation/screens/EventHistoryDetail';
+import EventCreation from '../../../navigation/screens/EventCreation';
 import preLoadData from '../helper/EventDetails.helper';
 
 jest.mock('../../../resources/api/events');
@@ -26,6 +25,7 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('../../../../firebaseConfig');
 jest.mock('firebase/auth');
 jest.spyOn(Alert, 'alert');
+
 interface FirebaseUser {
   uid: string;
   email: string;
@@ -54,7 +54,12 @@ const renderWithNavigation = async (params: any) =>
   render(
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="EventDetail" component={EventDetail} initialParams={{ ...params }} />
+        <Stack.Screen
+          name="EventDetail"
+          component={EventHistoryDetail}
+          initialParams={{ ...params }}
+        />
+        <Stack.Screen name="EventCreation" component={EventCreation} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -122,20 +127,6 @@ test('Renders Event Screen', async () => {
 
   await renderWithNavigation(params2);
 
-  const timeLeft = params2.event.datetime.toDate().getTime() - new Date().getTime();
-  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-
-  expect(screen.getByText('Time Remaining')).toBeTruthy();
-  expect(screen.getByText(`${days}`)).toBeTruthy();
-  expect(screen.getByTestId(`colon-1`)).toBeTruthy();
-  expect(screen.getByText(`${hours}`)).toBeTruthy();
-  expect(screen.getByTestId(`colon-2`)).toBeTruthy();
-  expect(screen.getByText(`${minutes}`)).toBeTruthy();
-  expect(screen.getByText(`DAY`)).toBeTruthy();
-  expect(screen.getByText(`HR`)).toBeTruthy();
-  expect(screen.getByText(`MIN`)).toBeTruthy();
   expect(screen.getByText('Test Event')).toBeTruthy();
   expect(screen.getByText('Test Location')).toBeTruthy();
   expect(screen.getByText('July 28, 2023')).toBeTruthy();
@@ -157,43 +148,21 @@ test('Render Long Name', async () => {
   expect(screen.getByText('Test Event wit..')).toBeTruthy();
 });
 
-test('Click accept for status update', async () => {
-  preLoadData();
-
-  (Events.prototype.edit as jest.Mock).mockResolvedValue({
-    id: '1',
-    status: true,
-  });
-
+test('Click the "Go Back" button', async () => {
   preLoadData();
 
   await renderWithNavigation(params);
 
-  await waitFor(() => {
-    expect(screen.getByText('Chief')).toBeTruthy();
-  });
-
-  act(() => {
-    fireEvent.press(screen.getByTestId('accept-invite'));
-  });
+  fireEvent.press(screen.getByLabelText('Back Button'));
 });
 
-test('Click decline for status update', async () => {
+test('Click the "Redo Event" button', async () => {
   preLoadData();
 
-  (Events.prototype.edit as jest.Mock).mockResolvedValue({
-    id: '1',
-    status: false,
-  });
+  await renderWithNavigation(params2);
 
-  preLoadData();
-
-  await renderWithNavigation(params);
-  await waitFor(() => {
-    expect(screen.getByText('Test Location')).toBeTruthy();
-  });
-
-  fireEvent.press(screen.getByTestId('decline-invite'));
+  const redo = screen.getByText('Redo Event');
+  fireEvent.press(redo);
 });
 
 test('Click Delete Event Button As Host - Success', async () => {
@@ -242,12 +211,4 @@ test('Click Delete Event Button As Host - Fail', async () => {
     'Error',
     'Something went wrong. Please try again later.'
   );
-});
-
-test('Click the "Go Back" button', async () => {
-  preLoadData();
-
-  await renderWithNavigation(params);
-
-  fireEvent.press(screen.getByLabelText('Back Button'));
 });
