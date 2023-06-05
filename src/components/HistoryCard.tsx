@@ -1,17 +1,10 @@
 import React from 'react';
-import {
-  TouchableWithoutFeedback,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Pressable,
-} from 'react-native';
-import { EventReturn } from '../resources/schema/event.model';
+import { TouchableWithoutFeedback, StyleSheet, View, Text, Pressable } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { FB_AUTH } from '../../firebaseConfig';
-//import ImagePicker from 'react-native-image-picker';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as ImagePicker from 'expo-image-picker';
+import { EventReturn } from '../resources/schema/event.model';
+import { FB_AUTH } from '../../firebaseConfig';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
 function HistoryCard({
@@ -35,11 +28,11 @@ function HistoryCard({
   };
   const status = 'granted';
   const handleReceipt = async () => {
-    if (FB_AUTH.currentUser?.uid == event.hostId && receipt == ' ') {
-      //1st time uploading image
+    if (FB_AUTH.currentUser?.uid === event.hostId && receipt === ' ') {
+      // 1st time uploading image
       try {
         // Request permission to access the device's photo library
-        //const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
           console.log('Permission denied to access photo library');
           return;
@@ -77,7 +70,7 @@ function HistoryCard({
           <View style={styles.bottomHalf}>
             <View style={styles.leftSide}>
               {host ? (
-                //<TouchableOpacity onPress={handleImageUpload}>
+                // <TouchableOpacity onPress={handleImageUpload}>
                 <Pressable onPress={handleReceipt}>
                   <View style={styles.recieptButton}>
                     <Ionicons name="arrow-up-circle-outline" style={styles.iconPosition} />
@@ -96,14 +89,15 @@ function HistoryCard({
             <View style={styles.rightSide}>
               <Text style={styles.locationtext}> {event.location} </Text>
 
-              {host ? (
+              {host && (
                 <View style={styles.hostPaymentStatus}>
                   <Text style={styles.paymentText}>
                     {' '}
                     {totalPaid} / {numOfPeople} paid{' '}
                   </Text>
                 </View>
-              ) : paid ? (
+              )}
+              {paid ? (
                 <View style={styles.paidStatus}>
                   <Text style={styles.paymentText}> paid </Text>
                 </View>
@@ -168,7 +162,7 @@ const styles = StyleSheet.create({
     width: 120,
     fontWeight: '800',
     fontSize: 14,
-    //paddingLeft: 50,
+    // paddingLeft: 50,
   },
   card: {
     backgroundColor: '#FFFDF8',

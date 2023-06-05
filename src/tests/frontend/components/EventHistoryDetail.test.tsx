@@ -8,7 +8,7 @@ import moment from 'moment';
 import Events from '../../../resources/api/events';
 import EventHistoryDetail from '../../../navigation/screens/EventHistoryDetail';
 import EventCreation from '../../../navigation/screens/EventCreation';
-import { preLoadData } from '../helper/EventDetails.helper';
+import preLoadData from '../helper/EventDetails.helper';
 
 jest.mock('../../../resources/api/events');
 jest.mock('../../../resources/api/groupMembers');
