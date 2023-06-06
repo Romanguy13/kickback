@@ -7,6 +7,7 @@ export interface EventModel {
   datetime: Timestamp;
   gId: string;
   inviteeStatus: { id: string; status: boolean | null }[];
+  receipt?: string;
 }
 
 export interface InviteeStatus {
@@ -24,6 +25,7 @@ export interface EventReturn {
   inviteeStatus: InviteeStatus[];
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  receipt?: string;
 }
 
 export interface UpdatedEvent {
@@ -31,4 +33,5 @@ export interface UpdatedEvent {
   location?: string;
   datetime?: Timestamp;
   inviteeStatus?: InviteeStatus[];
+  receipt?: string;
 }
