@@ -36,6 +36,8 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
   const [invitedUsers, setInvitedUsers] = useState<UserReturn[]>([]); // [email1, email2, ...'
   const isFocused = useIsFocused();
 
+  console.log('route params:', route.params);
+
   // Date Picker Config
   const handleEventDateChange = (selectedDate: Date | undefined) => {
     const currentDate = selectedDate || eventDate;
@@ -214,18 +216,22 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
     const Event = new Events();
     Event.create(event)
       .then(() => {
-        navigation.navigate('Feed');
+        // eslint-disable-next-line no-param-reassign
+        route.params = undefined;
+        // Clear input fields for next Creation
+        setEventTitle('');
+        setEventLocation('');
+        setEventDate(moment().format('MMM DD, YYYY'));
+        setEventTime(moment().format('h:mm A'));
+        setInvitedUsers([]);
+
+        navigation.navigate('Feed', {
+          screen: 'Feed',
+        });
       })
       .catch(() => {
         Alert.alert('Error creating event.');
       });
-
-    // Clear input fields for next Creation
-    setEventTitle('');
-    setEventLocation('');
-    setEventDate(moment().format('MMM DD, YYYY'));
-    setEventTime(moment().format('h:mm A'));
-    setInvitedUsers([]);
   };
 
   const userId = FB_AUTH.currentUser?.uid as string;
@@ -233,7 +239,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
   useEffect(() => {
     if (route.params) {
       // top members are the members that are in the group - ALL MEMBERS
-      const { topMembers, groupId } = route.params;
+      const { topMembers } = route.params;
       // remove current user from topMembers
       const filteredTopMembers = topMembers.filter((member: UserReturn) => member.id !== userId);
       setInvitedUsers(filteredTopMembers);

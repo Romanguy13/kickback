@@ -8,14 +8,8 @@ import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
 import { UserReturn } from '../../resources/schema/user.model';
 import { GroupMemberModel } from '../../resources/schema/group.model';
-import {
-  EventReturn,
-  InviteeStatus,
-  PaidStatus,
-  UpdatedEvent,
-} from '../../resources/schema/event.model';
+import { EventReturn, PaidStatus } from '../../resources/schema/event.model';
 import InviteeStatusCard from '../../components/InviteeStatusCard';
-import { GroupCardProps } from './EventGroups';
 
 export default function EventHistoryDetail({ route, navigation }: any) {
   const { event } = route.params;
