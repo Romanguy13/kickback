@@ -33,21 +33,6 @@ KickBack helps to keep track of plans with friends, making the process simple to
 5. Alternatively, you can run `npm run ios` to run the app on an iOS emulator or `npm run android` to run the app on an Android emulator.
 6. To run the tests, run `npm test` in the root directory.
 
-### Setting up an environment
-
-Before getting started, there are two ways to communicate to the backend: **cloud** and **locally**. This is defined inside of the `.env` file which you can find as `.env.example`. <br>
-
-| Env Variable               | Description                                                                                                                      |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| FIREBASE_API_KEY           | The API key of your Firebase project.                                                                                            |
-| FIREBASE_AUTH_DOMAIN       | The authentication domain of your Firebase project.                                                                              |
-| FIREBASE_PROJECT_ID        | The project ID of your Firebase project.                                                                                         |
-| FIREBASE_STORAGE_BUCKET    | The storage bucket of your Firebase project.                                                                                     |
-| FIREBASE_MESSAGE_SENDER_ID | The ID of the message sender for Firebase Cloud Messaging (FCM).                                                                 |
-| FIREBASE_APP_ID            | The ID of the Firebase app in your project.                                                                                      |
-| FIREBASE_MEASUREMENT_ID    | The measurement ID of your Firebase project for Google Analytics.                                                                |
-| NODE_ENV                   | The environment in which the app is running, either "development" or "production". Used for local Firebase emulator credentials. |
-
 ## Prettier With VSCode
 
 - Step 1;
