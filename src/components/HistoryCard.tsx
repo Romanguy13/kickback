@@ -9,7 +9,7 @@ import Events from '../resources/api/events';
 
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
-function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: EventReturn; navigation: any; setShowModal: any, setReceipt: any }) {
+function HistoryCard({ event, navigation, setShowModal, setReceipt, setRefresh }: { event: EventReturn; setRefresh: any; navigation: any; setShowModal: any, setReceipt: any }) {
   const [receiptImage, setReceiptImage] = useState(" ")
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -34,26 +34,11 @@ function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: E
       // Uploads the image to the backend
       if (data.assets && data.assets[0]) {
         setReceiptImage(data.assets[0].uri);
-        new KickbackImage().uploadImage(data.assets[0].uri, `${event.id}_receipt`);
-        new Events().edit(event.id, { receipt: `${event.id}_receipt` });
+        await new KickbackImage().uploadImage(data.assets[0].uri, `${event.id}_receipt`);
+        await new Events().edit(event.id, { receipt: `${event.id}_receipt` });
+        setRefresh(true);
       }
 
-      // await ImagePicker.launchImageLibraryAsync({
-      //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      //   allowsEditing: true,
-      //   quality: 1,
-      // })
-      //   .then((result) => {
-      //     result.assets?.forEach((asset) => {
-      //       setReceiptImage(asset.uri)
-      //       console.log("img is =", asset.uri);
-      //       new KickbackImage().uploadImage(asset.uri, `${event.id}_receipt`);
-      //       new Events().edit(event.id, { receipt: `${event.id}_receipt` });
-      //     });
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
       console.log("image is ", receiptImage)
     } else if (event.receipt) {
       // Download the image from the backend
@@ -67,7 +52,7 @@ function HistoryCard({ event, navigation, setShowModal, setReceipt }: { event: E
 
   const closeModal = () => {
     setModalVisible(false); // Hide the modal
-  };ß
+  };
 
   const host = FB_AUTH.currentUser?.uid === event.hostId;
   const paid = true;

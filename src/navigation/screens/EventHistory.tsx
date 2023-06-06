@@ -31,8 +31,8 @@ export default function EventHistory({ navigation }: any) {
         console.log('currentDate', event.datetime.toDate());
         const eventDate = moment(event.datetime.toDate());
 
-        return true
-        //return eventDate.isBefore(currentDate);
+        // return true
+        return eventDate.isBefore(currentDate);
       });
       setEvents(filteredEvents);
       console.log(filteredEvents);
@@ -57,7 +57,7 @@ export default function EventHistory({ navigation }: any) {
           style={styles.cardList}
           data={events}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <HistoryCard event={item} setShowModal={setShowModal} setReceipt={setReceipt} navigation={navigation} />}
+          renderItem={({ item }) => <HistoryCard event={item} setRefresh={setRefresh} setShowModal={setShowModal} setReceipt={setReceipt} navigation={navigation} />}
         />
       </View>
     </View>
