@@ -18,11 +18,11 @@ export default function EventFeed({ navigation }: any) {
   useEffect(() => {
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
-      console.log('Event List:', eventList);
+      //console.log('Event List:', eventList);
 
       const filteredEvents = eventList.filter((event: EventReturn) => {
         const currentDate = moment();
-        console.log('Current Date:', event.datetime);
+        //console.log('Current Date:', event.datetime);
         const eventDate = moment(event.datetime.toDate());
         return eventDate.isSameOrAfter(currentDate);
       });

@@ -46,7 +46,7 @@ function EventDetail({ route, navigation }: any) {
       navigation.goBack();
     } catch (error) {
       closeModal();
-      console.log(error);
+      // console.log(error);
       Alert.alert('Error', 'Something went wrong. Please try again later.');
     }
   };
@@ -74,12 +74,12 @@ function EventDetail({ route, navigation }: any) {
       // update the event in the database
       await new Events().edit(event.id, { inviteeStatus: newInviteeStatus });
 
-      console.log('inviteeStatus - before', currentEvent);
+      // console.log('inviteeStatus - before', currentEvent);
 
       // update the event in the state
       setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
 
-      console.log('inviteeStatus - after', currentEvent);
+      // console.log('inviteeStatus - after', currentEvent);
     }
   };
 
@@ -132,7 +132,7 @@ function EventDetail({ route, navigation }: any) {
 
       const tMembers: UserReturn[] = await Promise.all(promises);
 
-      console.log('tMembers', tMembers);
+      // console.log('tMembers', tMembers);
 
       // sort the members so the host is first
       tMembers.sort((a, b) => {

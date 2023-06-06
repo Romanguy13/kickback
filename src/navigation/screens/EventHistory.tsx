@@ -28,14 +28,14 @@ export default function EventHistory({ navigation }: any) {
       const filteredEvents = eventList.filter((event: EventReturn) => {
         // Get today's date
         const currentDate = moment();
-        console.log('currentDate', event.datetime.toDate());
+        //console.log('currentDate', event.datetime.toDate());
         const eventDate = moment(event.datetime.toDate());
 
         // return true
         return eventDate.isBefore(currentDate);
       });
       setEvents(filteredEvents);
-      console.log(filteredEvents);
+      //console.log(filteredEvents);
     };
 
     if (isFocused) {

@@ -36,7 +36,7 @@ export default function InviteeStatusCard({
       (currInvitee: InviteeStatus) => currInvitee.id === currentMember.id
     );
 
-    console.log('has paid', isAttending);
+    // console.log('has paid', isAttending);
 
     if (!isAttending) {
       icon = <Ionicons name="help" size={25} color="#FF7000" />;
