@@ -18,7 +18,7 @@ function HistoryCard({ event, navigation, setShowModal, setReceipt, setRefresh }
   };
 
   const handleUpload = async (forceReupload?: boolean) => {
-    if ((FB_AUTH.currentUser?.uid === event.hostId && !event.receipt) || forceReupload) {
+    if (FB_AUTH.currentUser?.uid === event.hostId && (!event.receipt || forceReupload)) {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         console.log('Permission denied to access photo library');
@@ -103,22 +103,10 @@ function HistoryCard({ event, navigation, setShowModal, setReceipt, setRefresh }
                     <View style={styles.modalContainer}>
                       <View style={styles.modalHeader}>
                         <Text style={styles.modalHeaderText}>Receipt</Text>
-                        <Pressable style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: 'white',
-                          borderRadius: 10,
-                          width: 100,
-                        }} onPress={() => handleUpload(true)}>
+                        {host && (<Pressable style={styles.modalReuploadButton} onPress={() => handleUpload(true)}>
                           <Ionicons name="refresh-outline" style={styles.modalIcon} />
-                          <Text style={{
-                            fontSize: 12,
-                            fontWeight: '700',
-                            textAlign: 'center',
-                            color: '#272222',
-                            fontStyle: 'italic',
-                          }} >Reupload</Text>
-                        </Pressable>
+                          <Text style={styles.modalReuploadText} >Reupload</Text>
+                        </Pressable>)}
                       </View>
                       <Image source={{ uri: receiptImage }} style={styles.modalImage} />
                     </View>
@@ -326,6 +314,19 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: 'black',
   },
-
+  modalReuploadButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    width: 100,
+  },
+  modalReuploadText: {
+    fontSize: 12,
+    fontWeight: '700',
+    textAlign: 'center',
+    color: '#272222',
+    fontStyle: 'italic',
+  },
 });
 export default HistoryCard;
