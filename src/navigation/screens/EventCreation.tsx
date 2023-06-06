@@ -233,6 +233,8 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
       // remove current user from topMembers
       const filteredTopMembers = topMembers.filter((member: UserReturn) => member.id !== userId);
       setInvitedUsers(filteredTopMembers);
+      setEventTitle(route.params.eventTitle);
+      setEventLocation(route.params.eventLocation);
     }
   }, [isFocused, route.params, userId]);
   // Handle the onPress fo the cancel button
