@@ -14,9 +14,7 @@ import {
   Platform,
 } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
-import firebase from 'firebase/compat';
 import { Timestamp } from 'firebase/firestore';
 import { EventModel } from '../../resources/schema/event.model';
 import { FB_AUTH } from '../../../firebaseConfig';
@@ -25,7 +23,7 @@ import Events from '../../resources/api/events';
 import Groups from '../../resources/api/groups';
 import GroupMembers from '../../resources/api/groupMembers';
 import { UserReturn } from '../../resources/schema/user.model';
-import { GroupMemberModel, GroupModel, GroupReturnModel } from '../../resources/schema/group.model';
+import { GroupMemberModel } from '../../resources/schema/group.model';
 
 export default function EventCreation({ navigation, route }: { navigation: any; route: any }) {
   const [eventTitle, setEventTitle] = useState('');
@@ -193,6 +191,8 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
     const tempDateTime: Date = moment(`${eventDate} ${eventTime}`, 'MMM DD, YYYY h:mm A').toDate();
 
+    const allUsers = [userReturned, ...invitedUsers];
+
     // Event Model for later use
     const event: EventModel = {
       hostId: userReturned.id,
@@ -203,6 +203,10 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
       inviteeStatus: invitedUsers.map((invitedUser: UserReturn) => ({
         id: invitedUser.id,
         status: null,
+      })),
+      paidStatus: allUsers.map((invitedUser: UserReturn) => ({
+        id: invitedUser.id,
+        status: false,
       })),
     };
 

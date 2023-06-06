@@ -8,12 +8,17 @@ import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
 import { UserReturn } from '../../resources/schema/user.model';
 import { GroupMemberModel } from '../../resources/schema/group.model';
-import { EventReturn, InviteeStatus, UpdatedEvent } from '../../resources/schema/event.model';
+import {
+  EventReturn,
+  InviteeStatus,
+  PaidStatus,
+  UpdatedEvent,
+} from '../../resources/schema/event.model';
 import InviteeStatusCard from '../../components/InviteeStatusCard';
 import { GroupCardProps } from './EventGroups';
 
 export default function EventHistoryDetail({ route, navigation }: any) {
-  const { event, canVote } = route.params;
+  const { event } = route.params;
 
   const [currentEvent, setCurrentEvent] = useState<EventReturn>(event);
 
@@ -25,13 +30,35 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
   const eventDate = moment(event.datetime.toDate());
 
-  const { group }: GroupCardProps = route.params;
+  const handlePaidStatus = async (status: boolean) => {
+    // edit the event in the database to reflect the new status based on the user's response
+    const currentUserId = FB_AUTH.currentUser?.uid;
+    const { paidStatus } = currentEvent;
+
+    // find the inviteeStatus that corresponds to the current user id
+    const inviteeFound = paidStatus.find((invitee: PaidStatus) => invitee.id === currentUserId);
+    if (inviteeFound) {
+      inviteeFound.status = status;
+
+      // change the inviteeStatus to reflect the user's response
+      const newInviteeStatus = paidStatus.map((invitee: PaidStatus) => {
+        if (invitee.id === currentUserId) {
+          return inviteeFound;
+        }
+        return invitee;
+      });
+
+      // update the event in the database
+      await new Events().edit(event.id, { paidStatus: newInviteeStatus });
+      // update the event in the state
+      setCurrentEvent({ ...currentEvent, paidStatus: newInviteeStatus });
+    }
+  };
 
   const checkHostStatus = async () => {
     const currentUserId = FB_AUTH.currentUser?.uid;
     if (currentUserId === currentEvent.hostId) {
       setDeleteButton(true);
-      console.log('User is host');
     }
   };
 
@@ -70,8 +97,6 @@ export default function EventHistoryDetail({ route, navigation }: any) {
       );
 
       const tMembers: UserReturn[] = await Promise.all(promises);
-
-      console.log('tMembers', tMembers);
 
       // sort the members so the host is first
       tMembers.sort((a, b) => {
@@ -134,12 +159,27 @@ export default function EventHistoryDetail({ route, navigation }: any) {
         <View style={styles.usersContainer}>
           <ScrollView style={styles.usersScroll}>
             {topMembers.map((member: UserReturn) => (
-              <InviteeStatusCard event={event} key={member.id} currentMember={member} />
+              <InviteeStatusCard forPayment event={event} key={member.id} currentMember={member} />
             ))}
           </ScrollView>
         </View>
         <View style={styles.imageContainer}>
-          <Text>Image</Text>
+          <View style={styles.voteContainer}>
+            <Pressable
+              testID="accept-invite"
+              onPress={() => handlePaidStatus(true)}
+              style={styles.voteButton}
+            >
+              <Ionicons name="checkmark-sharp" size={30} color="#FF7000" />
+            </Pressable>
+            <Pressable
+              testID="decline-invite"
+              onPress={() => handlePaidStatus(false)}
+              style={styles.voteButton}
+            >
+              <Ionicons name="close-sharp" size={30} color="#FF7000" />
+            </Pressable>
+          </View>
         </View>
       </View>
       <View style={styles.redoContainer}>

@@ -84,7 +84,7 @@ function EventDetail({ route, navigation }: any) {
   };
 
   const checkStatus = (currEvent: EventReturn) => {
-    // check the status of the the user in the event based on their id
+    // check the status of the user in the event based on their id
     const currentUserId = FB_AUTH.currentUser?.uid;
     const { inviteeStatus } = currEvent;
 
