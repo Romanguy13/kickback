@@ -8,11 +8,11 @@ import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
 import { UserReturn } from '../../resources/schema/user.model';
 import { GroupMemberModel } from '../../resources/schema/group.model';
-import { EventReturn, InviteeStatus, UpdatedEvent } from '../../resources/schema/event.model';
+import { EventReturn, InviteeStatus } from '../../resources/schema/event.model';
 import InviteeStatusCard from '../../components/InviteeStatusCard';
 
 function EventDetail({ route, navigation }: any) {
-  const { event, canVote } = route.params;
+  const { event } = route.params;
 
   const [currentEvent, setCurrentEvent] = useState<EventReturn>(event);
 
@@ -232,7 +232,7 @@ function EventDetail({ route, navigation }: any) {
           </ScrollView>
         </View>
         <View style={styles.buttonsContainer}>
-          {canVote && FB_AUTH.currentUser?.uid !== event.hostId && (
+          {FB_AUTH.currentUser?.uid !== event.hostId && (
             <View style={styles.voteContainer}>
               <Pressable
                 testID="accept-invite"

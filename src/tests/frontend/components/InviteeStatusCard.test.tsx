@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native';
 import { Timestamp } from 'firebase/firestore';
 import InviteeStatusCard from '../../../components/InviteeStatusCard';
 import { UserReturn } from '../../../resources/schema/user.model';
-import { EventReturn } from '../../../resources/schema/event.model';
+import { EventReturn, PaidStatus } from '../../../resources/schema/event.model';
 
 const currentMember: UserReturn = {
   id: '075',
@@ -19,6 +19,13 @@ const event: EventReturn = {
   location: 'Test Location',
   gId: 'group-id',
   inviteeStatus: [],
+  receipt: 'receipt',
+  paidStatus: [
+    {
+      id: '075',
+      status: false,
+    },
+  ],
   hostId: '777',
   createdAt: Timestamp.fromDate(new Date()),
   updatedAt: Timestamp.fromDate(new Date()),
