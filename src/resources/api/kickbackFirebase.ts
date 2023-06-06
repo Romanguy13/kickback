@@ -3,20 +3,17 @@ import {
   collection,
   CollectionReference,
   doc,
+  deleteDoc,
   DocumentData,
   DocumentReference,
   Firestore,
-  limit,
   updateDoc,
   getDocs,
   QuerySnapshot,
   where,
-  orderBy,
-  Timestamp,
   serverTimestamp,
   query,
   Query,
-  startAfter,
   deleteField,
 } from 'firebase/firestore';
 import { FB_DB } from '../../../firebaseConfig';
@@ -75,6 +72,20 @@ export default class KickbackFirebase {
     return extra && extra.disableId ? '' : id.id;
   }
 
+  // Takes in a event ID and looks for it in the database to delete
+  public async delete(eventId: string): Promise<void> {
+    const eventRef: DocumentReference<DocumentData> = doc(this.database, this.collection, eventId);
+
+    console.log('Event to be deleted: ', eventRef);
+    console.log('Event to be deleted ID: ', eventRef.id);
+
+    await deleteDoc(eventRef);
+
+    console.log('Event deleted successfully');
+    return Promise.resolve();
+  }
+  
+
   public async getAll(userId: string, fieldName: string): Promise<DocumentData[]> {
     const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
     const q: Query<DocumentData> = query(dbRef, where(fieldName, '==', userId));
@@ -94,41 +105,6 @@ export default class KickbackFirebase {
 
     return data[0];
   }
-
-  // public async getAllLimit(
-  //   userId: string,
-  //   fieldName: string,
-  //   startAfterDoc: undefined | any = undefined,
-  //   max = 4
-  // ): Promise<DocumentData[]> {
-  //   const dbRef: CollectionReference<DocumentData> = collection(this.database, this.collection);
-  //   let q: Query<DocumentData> = query(
-  //     dbRef,
-  //     where(fieldName, '==', userId),
-  //     orderBy('createdAt', 'asc'),
-  //     limit(max)
-  //   );
-  //
-  //   console.log(
-  //     `getAllLimit: userId: ${userId}, fieldName: ${fieldName}, startAfterDoc: ${startAfterDoc}, max: ${max}`
-  //   );
-  //
-  //   if (startAfterDoc) {
-  //     console.log('startAfterDoc: ', startAfterDoc);
-  //     q = query(q, startAfter(startAfterDoc));
-  //   }
-  //
-  //   const querySnapshot = await getDocs(q);
-  //   const newDocs: DocumentData[] = [];
-  //
-  //   console.log('New data: ', querySnapshot.docs.length);
-  //
-  //   querySnapshot.forEach((curr) => {
-  //     newDocs.push(curr.data());
-  //   });
-  //
-  //   return newDocs;
-  // }
 
   public async edit(id: string, data: any): Promise<any> {
     const newData = {

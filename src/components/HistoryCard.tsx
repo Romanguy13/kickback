@@ -1,19 +1,12 @@
-import React, { useState } from 'react';
-import {
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Modal,
-  Image,
-  View,
-  Text,
-  Pressable,
-} from 'react-native';
+import React from 'react';
+import { TouchableWithoutFeedback, StyleSheet, View, Text, Pressable } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as ImagePicker from 'expo-image-picker';
-import { FB_AUTH } from '../../firebaseConfig';
 import { EventReturn } from '../resources/schema/event.model';
-import Events from '../resources/api/events';
+import { FB_AUTH } from '../../firebaseConfig';
 import KickbackImage from '../resources/api/kickbackImage';
+import Events from '../resources/api/events';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
 function HistoryCard({
@@ -29,16 +22,6 @@ function HistoryCard({
   setReceipt: any;
   setRefresh: any;
 }) {
-  // const iNoRecieptImage = <ion-icon name="alert-circle-outline"></ion-icon>;
-  // function NoReceiptIcon() {
-  //   return <IoAlertCircleOutline />;
-  // }
-
-  const handlePress = () => {
-    navigation.navigate('EventDetail', { event });
-  };
-
-  // const status = 'granted'
   const handleUpload = async () => {
     if (FB_AUTH.currentUser?.uid === event.hostId && !event.receipt) {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -72,11 +55,65 @@ function HistoryCard({
     setShowModal(true);
   };
 
-  const host = FB_AUTH.currentUser?.uid === event.hostId;
-  // const host = false
+  const handlePress = () => {
+    navigation.navigate('EventHistoryDetail', { event });
+  };
+  const status = 'granted';
+  // const handleReceipt = async () => {
+  //   if (FB_AUTH.currentUser?.uid === event.hostId && event.receipt === ' ') {
+  //     // 1st time uploading image
+  //     try {
+  //       // Request permission to access the device's photo library
+  //       // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //       await ImagePicker.launchImageLibraryAsync({
+  //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //         allowsEditing: true,
+  //         quality: 1,
+  //       })
+  //         .then((result) => {
+  //           result.assets?.forEach((asset) => {
+  //             setReceipt(asset.uri)
+  //             console.log("img is =", asset.uri);
+  //           });
+  //         })
+  //         .catch((error) => {
+  //           console.log(error);
+  //         });
+  //       //console.log("image is ", result)
+  //     }
+  //setShowModal(true)
+
+  //Jose's verison 
+  /*
+  if (status !== 'granted') {
+    console.log('Permission denied to access photo library');
+    return;
+  }
+  console.log('getting image');
+  const data = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsEditing: true,
+    quality: 1,
+  });
+  if (!data.canceled) {
+    setReceipt(data)
+    console.log(data);
+  } else {
+    alert('You did not select any image.');
+  }
+  */
+  //     catch (e) {
+  //       console.log(e);
+  //     }
+  //   }
+  //   setShowModal(true)
+  // };
+  //const host = FB_AUTH.currentUser?.uid === event.hostId;
+  const host = true;
   const paid = true;
   const numOfPeople = 7;
   const totalPaid = 3;
+  const receipt = ' ';
   return (
     <View style={[styles.card, styles.shadowProp]}>
       <TouchableWithoutFeedback onPress={handlePress}>
@@ -86,32 +123,37 @@ function HistoryCard({
           </View>
 
           <View style={styles.bottomHalf}>
+            {/*LEFT SIDE OF CARD: uploading or viewing the receipt */}
             <View style={styles.leftSide}>
-              <Pressable onPress={handleUpload}>
-                {host ? (
+              {host ? (
+                <Pressable onPress={handleUpload}>
                   <View style={styles.recieptButton}>
                     <Ionicons name="arrow-up-circle-outline" style={styles.iconPosition} />
                     <Text style={styles.receiptText}> Upload Receipt </Text>
                   </View>
-                ) : (
+                </Pressable>
+              ) : (
+                <Pressable onPress={handleUpload}>
                   <View style={styles.recieptButton}>
                     <Ionicons name="receipt-outline" style={styles.iconPosition} />
                     <Text style={styles.receiptText}> View Receipt </Text>
                   </View>
-                )}
-              </Pressable>
+                </Pressable>
+              )}
             </View>
+            {/*RIGHT SIDE OF CARD: address and payment status*/}
             <View style={styles.rightSide}>
               <Text style={styles.locationtext}> {event.location} </Text>
 
-              {host ? (
+              {host && (
                 <View style={styles.hostPaymentStatus}>
                   <Text style={styles.paymentText}>
                     {' '}
                     {totalPaid} / {numOfPeople} paid{' '}
                   </Text>
                 </View>
-              ) : paid ? (
+              )}
+              {paid ? (
                 <View style={styles.paidStatus}>
                   <Text style={styles.paymentText}> paid </Text>
                 </View>
@@ -240,95 +282,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-    padding: 20,
-  },
-  modalImage: {
-    flex: 1,
-    resizeMode: 'contain',
-  },
-  closeButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
-    alignContent: 'center',
-    left: '40%',
-  },
-  closeButton: {
-    backgroundColor: 'black',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 0,
-    bottom: 60,
-  },
-  noRecieptImage: {
-    flex: 1,
-    color: 'blue',
-    fontSize: 400,
-    top: 100,
-  },
-  NoImageText: {
-    position: 'relative',
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: 'black',
-    left: '8%',
-    bottom: '30%',
-  },
 });
 export default HistoryCard;
-
-/*
- <Modal visible={modalVisible} onRequestClose={closeModal}>
-                <View style={styles.modalContainer}>
-                  <Image source={{ uri: receiptImage }} style={styles.modalImage} />
-                  <Pressable onPress={closeModal} style={styles.closeButton}>
-                    <Text style={styles.closeButtonText}>Close</Text>
-                  </Pressable>
-                </View>
-              </Modal>
-
-
-
-
-/*if (FB_AUTH.currentUser?.uid == event.hostId && receipt == " ") {
-      console.log("im the host")
-      //1st time uploading image 
-      try 
-      {
-       
-      }
-      catch (e) 
-      {
-
-        console.log("error happened")
-        console.log(e);
-      }
-    }
-
-// Request permission to access the device's photo library
-const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-if (status !== 'granted') {
-  console.log('Permission denied to access photo library');
-  return;
-}
-console.log("getting image")
-const data = await ImagePicker.launchImageLibraryAsync({
-  mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //mediaTypes: [ImagePicker.MediaTypeOptions.Images, ImagePicker.MediaTypeOptions.Webp],
-  allowsEditing: false,
-  quality: 1,
-});
-console.log("after getting image", data)
-if (!data.canceled) {
-  console.log("data worked")
-  console.log(data);
-}
-else {
-  alert('You did not select any image.');
-}
-*/

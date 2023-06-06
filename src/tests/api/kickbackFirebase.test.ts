@@ -40,6 +40,28 @@ test('Able to create a document', async () => {
   expect(returnedId).toEqual('randomAddDocId');
 });
 
+test('Able to delete a document', async () => {
+  // Delete a document
+  (collection as jest.Mock).mockReturnValue({
+    id: 'randomCollectionId',
+    path: 'randomCollectionPath',
+    parent: null,
+  } as unknown as CollectionReference<DocumentData>);
+  (doc as jest.Mock).mockReturnValue({
+    id: 'randomDocId',
+  } as DocumentReference<DocumentData>);
+  (getDoc as jest.Mock).mockResolvedValue({
+    id: 'randomGetDocId',
+  } as DocumentSnapshot<DocumentData>);
+  (updateDoc as jest.Mock).mockResolvedValue({
+    id: 'randomUpdateDocId',
+  } as DocumentReference<any>);
+  await kickbackFB.delete('randomId');
+  expect(updateDoc).toBeCalled();
+
+});
+
+
 test('Creating a document - Overriding ID', async () => {
   // Make sure that there is no connection with the database
   (collection as jest.Mock).mockReturnValue({
@@ -64,7 +86,7 @@ test('Creating a document - Overriding ID', async () => {
   expect(returnedId).toEqual('randomAddDocId');
 });
 
-test('Creating a document - Disabling ID', async () => {
+test('Delete a document - Disabling ID', async () => {
   // Make sure that there is no connection with the database
   (collection as jest.Mock).mockReturnValue({
     id: 'randomCollectionId',

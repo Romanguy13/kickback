@@ -10,6 +10,7 @@ import { UserReturn } from '../../resources/schema/user.model';
 import { GroupMemberModel } from '../../resources/schema/group.model';
 import { EventReturn, InviteeStatus, UpdatedEvent } from '../../resources/schema/event.model';
 import InviteeStatusCard from '../../components/InviteeStatusCard';
+import { GroupCardProps } from './EventGroups';
 
 function EventDetail({ route, navigation }: any) {
   const { event, canVote } = route.params;
@@ -24,6 +25,16 @@ function EventDetail({ route, navigation }: any) {
 
   const eventDate = moment(event.datetime.toDate());
 
+  const { group }: GroupCardProps = route.params;
+
+  const checkHostStatus = async () => {
+    const currentUserId = FB_AUTH.currentUser?.uid;
+    if (currentUserId === currentEvent.hostId) {
+      setDeleteButton(true);
+      console.log('User is host');
+    }
+  };
+
   const openModal = () => {
     setModalVisible(true);
   };
@@ -31,12 +42,6 @@ function EventDetail({ route, navigation }: any) {
   const closeModal = () => {
     setModalVisible(false);
   };
-
-  // Calculate the time left until the event
-  const timeLeft = event.datetime.toDate().getTime() - new Date().getTime();
-  const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 
   const deleteEvent = async () => {
     try {
@@ -48,72 +53,6 @@ function EventDetail({ route, navigation }: any) {
       closeModal();
       console.log(error);
       Alert.alert('Error', 'Something went wrong. Please try again later.');
-    }
-  };
-
-  const handleInviteeStatus = async (status: boolean) => {
-    // edit the event in the database to reflect the new status based on the user's response
-    const currentUserId = FB_AUTH.currentUser?.uid;
-    const { inviteeStatus } = currentEvent;
-
-    // find the inviteeStatus that corresponds to the current user id
-    const inviteeFound = inviteeStatus.find(
-      (invitee: InviteeStatus) => invitee.id === currentUserId
-    );
-    if (inviteeFound) {
-      inviteeFound.status = status;
-
-      // change the inviteeStatus to reflect the user's response
-      const newInviteeStatus = inviteeStatus.map((invitee: InviteeStatus) => {
-        if (invitee.id === currentUserId) {
-          return inviteeFound;
-        }
-        return invitee;
-      });
-
-      // update the event in the database
-      await new Events().edit(event.id, { inviteeStatus: newInviteeStatus });
-
-      console.log('inviteeStatus - before', currentEvent);
-
-      // update the event in the state
-      setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
-
-      console.log('inviteeStatus - after', currentEvent);
-    }
-  };
-
-  const checkStatus = (currEvent: EventReturn) => {
-    // check the status of the the user in the event based on their id
-    const currentUserId = FB_AUTH.currentUser?.uid;
-    const { inviteeStatus } = currEvent;
-
-    // find the inviteeStatus that corresponds to the current user id
-    const inviteeFound = inviteeStatus.find(
-      (invitee: { id: string; status: boolean | null }) => invitee.id === currentUserId
-    );
-
-    const status = inviteeFound?.status;
-
-    // check if the user is the host
-    if (currentUserId === currEvent.hostId) {
-      return 'Host';
-    }
-
-    // if the user has not responded to the invite, return 'pending'
-    if (status === null) {
-      return 'Pending';
-    }
-    if (status) {
-      return 'Going';
-    }
-    return 'Not going';
-  };
-
-  const checkHostStatus = async () => {
-    const currentUserId = FB_AUTH.currentUser?.uid;
-    if (currentUserId === currentEvent.hostId) {
-      setDeleteButton(true);
     }
   };
 
@@ -166,38 +105,6 @@ function EventDetail({ route, navigation }: any) {
           <Ionicons style={styles.backIcon} name="chevron-back-outline" size={40} color="#FF7000" />
         </Pressable>
       </View>
-      <View style={styles.timeLeftContainer}>
-        <Text style={styles.titleText}>Time Remaining</Text>
-        <View style={styles.timeLeftBoxes}>
-          <View style={styles.boxContainer}>
-            <View style={styles.timeLeftBox}>
-              <Text style={styles.timeLeftText}>{days}</Text>
-            </View>
-            <Text style={styles.timeSubtitileText}>DAY</Text>
-          </View>
-          <Text style={{ fontSize: 50, fontWeight: 'bold' }} testID="colon-1">
-            :
-          </Text>
-          <View style={styles.boxContainer}>
-            <View style={styles.timeLeftBox}>
-              <Text style={styles.timeLeftText}>{hours}</Text>
-            </View>
-            <Text style={styles.timeSubtitileText}>HR</Text>
-          </View>
-          <Text style={{ fontSize: 50, fontWeight: 'bold' }} testID="colon-2">
-            :
-          </Text>
-          <View style={styles.boxContainer}>
-            <View style={styles.timeLeftBox}>
-              <Text style={styles.timeLeftText}>{minutes}</Text>
-            </View>
-            <Text style={styles.timeSubtitileText}>MIN</Text>
-          </View>
-        </View>
-      </View>
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>{checkStatus(event)}</Text>
-      </View>
       <View style={styles.eventContainer}>
         <Text style={styles.eventNameText}>{event.name}</Text>
         <Text style={styles.eventLocationText}>{event.location}</Text>
@@ -231,36 +138,34 @@ function EventDetail({ route, navigation }: any) {
             ))}
           </ScrollView>
         </View>
-        <View style={styles.buttonsContainer}>
-          {canVote && FB_AUTH.currentUser?.uid !== event.hostId && (
-            <View style={styles.voteContainer}>
-              <Pressable
-                testID="accept-invite"
-                onPress={() => handleInviteeStatus(true)}
-                style={styles.voteButton}
-              >
-                <Ionicons name="checkmark-outline" size={30} color="#FF7000" />
-              </Pressable>
-              <Pressable
-                testID="decline-invite"
-                onPress={() => handleInviteeStatus(false)}
-                style={styles.voteButton}
-              >
-                <Ionicons name="close-outline" size={30} color="#FF7000" />
-              </Pressable>
-            </View>
-          )}
-          {showDeleteButton && (
-            <View style={styles.voteContainer}>
-              <Pressable style={styles.deleteButton} onPress={openModal} testID="delete-button">
-                <Ionicons name="close-outline" size={90} color="#FFFFFB" />
-                <Text style={styles.deleteText} testID="delete-label">
-                  Delete Event
-                </Text>
-              </Pressable>
-            </View>
-          )}
+        <View style={styles.imageContainer}>
+          <Text>Image</Text>
         </View>
+      </View>
+      <View style={styles.redoContainer}>
+        <Pressable
+          style={styles.redoButton}
+          onPress={() => {
+            navigation.navigate('TabBar', {
+              screen: 'Creation',
+              params: {
+                topMembers,
+                groupId: event.gId,
+                eventTitle: event.name,
+                eventLocation: event.location,
+              },
+            });
+          }}
+        >
+          <Text style={styles.statusText}>Redo Event</Text>
+        </Pressable>
+        {showDeleteButton && (
+          <Pressable style={styles.deleteButton} onPress={openModal} testID="delete-button">
+            <Text style={styles.statusText} testID="delete-label">
+              Delete Event
+            </Text>
+          </Pressable>
+        )}
       </View>
       <Modal testID="edit-modal" visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
@@ -427,34 +332,64 @@ const styles = StyleSheet.create({
     display: 'flex',
     backgroundColor: '#272222',
     width: '50%',
-    height: '100%',
+    height: '150%',
     borderRadius: 20,
     marginRight: 10,
   },
-  buttonsContainer: {
+  imageContainer: {
     display: 'flex',
     backgroundColor: '#DBDBDB',
     width: '45%',
-    height: '100%',
+    height: '150%',
     borderRadius: 20,
     marginLeft: 10,
   },
   deleteButton: {
-    borderRadius: 20,
-    borderColor: '#DE4040',
-    width: '74%',
-    height: '62%',
+    display: 'flex',
+    width: '80%',
     justifyContent: 'center',
-    alignItems: 'center',
     alignSelf: 'center',
+    alignContent: 'center',
+    borderRadius: 20,
+    marginTop: 10,
+    marginBottom: 20,
     backgroundColor: '#DE4040',
-    margin: 40,
   },
   deleteText: {
     color: '#FFFFFB',
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  deleteContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  redoContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '45%',
+  },
+  redoButton: {
+    display: 'flex',
+    backgroundColor: '#272222',
+    width: '80%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    alignContent: 'center',
+    borderRadius: 20,
+  },
+  redoText: {
+    color: '#FFFFFB',
+    fontSize: 36,
+    fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'center',
+    alignSelf: 'center',
+    padding: 4,
   },
   modalContainer: {
     flex: 1,

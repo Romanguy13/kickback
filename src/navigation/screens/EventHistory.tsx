@@ -1,23 +1,11 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  PixelRatio,
-  FlatList,
-  Button,
-  Modal,
-  Image,
-  Pressable,
-} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, PixelRatio, FlatList, Modal, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import * as ImagePicker from 'expo-image-picker';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+//import * as ImagePicker from 'expo-image-picker';
 
 import HistoryCard from '../../components/HistoryCard';
 import { EventReturn } from '../../resources/schema/event.model';
@@ -32,8 +20,10 @@ export default function EventHistory({ navigation }: any) {
   const [receipt, setReceipt] = useState<string>(' ');
 
   useEffect(() => {
+    console.log('isFocused', isFocused);
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
+      console.log(eventList);
 
       // Filter through the events and only show the ones that have already passed
       // Filter Function is lines 44 to 56

@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { StyleSheet, Pressable, Text, View, ScrollView, Modal, TextInput } from 'react-native';
+import {
+  StyleSheet,
+  Pressable,
+  Text,
+  View,
+  ScrollView,
+  Modal,
+  TextInput,
+  Alert,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import { GroupCardProps } from './EventGroups';
@@ -31,6 +40,14 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
   };
 
   const changeGroupName = async () => {
+    if (groupName === group.name) {
+      Alert.alert('Group name must be different from current name');
+      return;
+    }
+    if (groupName === '' || groupName.length < 3) {
+      Alert.alert('Group name must be at least 3 characters long');
+      return;
+    }
     await new Groups().edit(group.id, { name: groupName });
     group.name = groupName;
     closeModal();
