@@ -31,8 +31,8 @@ export default class KickbackImage {
       throw new Error(`Image Service: ${fileUri} gone wrong.`);
     }
 
-    const a = await uploadBytes(storageRef, file);
-    return a.metadata.fullPath;
+    const uploadResult = await uploadBytes(storageRef, file);
+    return uploadResult.metadata.fullPath;
   }
 
   // eslint-disable-next-line class-methods-use-this
