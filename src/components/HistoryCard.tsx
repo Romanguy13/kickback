@@ -10,15 +10,15 @@ import Events from '../resources/api/events';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
 function HistoryCard({ event, navigation, setShowModal, setReceipt, setRefresh }: { event: EventReturn; setRefresh: any; navigation: any; setShowModal: any, setReceipt: any }) {
-  const [receiptImage, setReceiptImage] = useState(" ")
-  const [modalVisible, setModalVisible] = useState(false);
+  const [receiptImage, setReceiptImage] = useState<string>(" ")
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const handlePress = () => {
     navigation.navigate('EventDetail', { event });
   };
 
-  const handleUpload = async () => {
-    if (FB_AUTH.currentUser?.uid === event.hostId && !event.receipt) {
+  const handleUpload = async (forceReupload?: boolean) => {
+    if ((FB_AUTH.currentUser?.uid === event.hostId && !event.receipt) || forceReupload) {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         console.log('Permission denied to access photo library');
@@ -43,7 +43,7 @@ function HistoryCard({ event, navigation, setShowModal, setReceipt, setRefresh }
     } else if (event.receipt) {
       // Download the image from the backend
       const image = await new KickbackImage().downloadImage(event.receipt);
-      setReceipt(image);
+      setReceiptImage(image);
     }
 
     setModalVisible(true);
@@ -90,22 +90,43 @@ function HistoryCard({ event, navigation, setShowModal, setReceipt, setRefresh }
 
           <View style={styles.bottomHalf}>
             <View style={styles.leftSide}>
-              <Pressable onPress={handleUpload}>
+              <Pressable onPress={() => handleUpload()}>
                 <View style={styles.recieptButton}>
-                  <Ionicons name={host ? "arrow-up-circle-outline" : "receipt-outline"} style={styles.iconPosition} />
-                  <Text style={styles.receiptText}>{host ? "Upload Receipt" : "View Receipt"}</Text>
+                  <Ionicons name={(host && !event.receipt) ? "arrow-up-circle-outline" : "receipt-outline"} style={styles.iconPosition} />
+                  <Text style={styles.receiptText}>{(host && !event.receipt) ? "Upload Receipt" : "View Receipt"}</Text>
                 </View>
               </Pressable>
               {modalVisible && (
-                <Modal visible={modalVisible} onRequestClose={closeModal}>
+                <Modal visible={modalVisible} onRequestClose={closeModal} animationType='slide'>
                   {/* Modal content */}
                   {receiptImage !== " " ? (
-                    <Image source={{ uri: receiptImage }} style={styles.modalImage} />
+                    <View style={styles.modalContainer}>
+                      <View style={styles.modalHeader}>
+                        <Text style={styles.modalHeaderText}>Receipt</Text>
+                        <Pressable style={{
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'white',
+                          borderRadius: 10,
+                          width: 100,
+                        }} onPress={() => handleUpload(true)}>
+                          <Ionicons name="refresh-outline" style={styles.modalIcon} />
+                          <Text style={{
+                            fontSize: 12,
+                            fontWeight: '700',
+                            textAlign: 'center',
+                            color: '#272222',
+                            fontStyle: 'italic',
+                          }} >Reupload</Text>
+                        </Pressable>
+                      </View>
+                      <Image source={{ uri: receiptImage }} style={styles.modalImage} />
+                    </View>
                   ) : (
-                    <>
+                    <View style={styles.modalContainer}>
                       <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
                       <Text style={styles.NoImageText}>NO RECEIPT UPLOADED</Text>
-                    </>
+                    </View>
                   )}
                   <Pressable onPress={closeModal} style={styles.closeButton}>
                     <Text style={styles.closeButtonText}>Close</Text>
@@ -250,27 +271,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-    padding: 20,
+    // backgroundColor: 'rgba(0, 0, 0, 0.25)', // Semi-transparent background
+    padding: 10,
   },
   modalImage: {
     flex: 1,
+    width: '100%',
     resizeMode: 'contain',
-
   },
   closeButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
-    alignContent: 'center',
-    left: '40%'
+    textAlign: 'center',
   },
   closeButton: {
     backgroundColor: 'black',
-    padding: 10,
+    paddingBottom: 45,
+    paddingTop: 25,
     borderRadius: 5,
     marginTop: 0,
-    bottom: 60
   },
   noRecieptImage:
   {
@@ -286,7 +306,25 @@ const styles = StyleSheet.create({
     color: 'black',
     left: '8%',
     bottom: '30%'
-
+  }, 
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 10,
+    padding: 10,
+    marginTop: 50,
+    backgroundColor: '#FF6701',
+  },
+  modalHeaderText: {
+    fontSize: 25,
+    fontWeight:'bold',
+    color: 'black',
+  },
+  modalIcon: {
+    fontSize: 30,
+    color: 'black',
   },
 
 });
