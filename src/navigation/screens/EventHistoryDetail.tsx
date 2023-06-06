@@ -12,7 +12,7 @@ import { EventReturn, InviteeStatus, UpdatedEvent } from '../../resources/schema
 import InviteeStatusCard from '../../components/InviteeStatusCard';
 import { GroupCardProps } from './EventGroups';
 
-function EventDetail({ route, navigation }: any) {
+export default function EventHistoryDetail({ route, navigation }: any) {
   const { event, canVote } = route.params;
 
   const [currentEvent, setCurrentEvent] = useState<EventReturn>(event);
@@ -480,5 +480,3 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
 });
-
-export default EventDetail;
