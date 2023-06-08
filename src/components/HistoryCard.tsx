@@ -121,6 +121,7 @@ function HistoryCard({
                   </Text>
                 </View>
               </Pressable>
+
               {modalVisible && (
                 <Modal visible={modalVisible} onRequestClose={closeModal} animationType="slide">
                   {/* Modal content */}

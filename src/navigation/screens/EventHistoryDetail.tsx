@@ -10,6 +10,9 @@ import { UserReturn } from '../../resources/schema/user.model';
 import { GroupMemberModel } from '../../resources/schema/group.model';
 import { EventReturn, PaidStatus } from '../../resources/schema/event.model';
 import InviteeStatusCard from '../../components/InviteeStatusCard';
+import KickbackImage from '../../resources/api/kickbackImage';
+
+import * as ImagePicker from 'expo-image-picker';
 
 export default function EventHistoryDetail({ route, navigation }: any) {
   const { event } = route.params;
@@ -22,7 +25,13 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [receiptVisible, setReceiptVisible] = useState(false);
+
+  const [receipt, setReceipt] = useState<string>(' ')
+
   const eventDate = moment(event.datetime.toDate());
+
+  const host = FB_AUTH.currentUser?.uid == event.hostId;
 
   const handlePaidStatus = async (status: boolean) => {
     // edit the event in the database to reflect the new status based on the user's response
@@ -49,12 +58,59 @@ export default function EventHistoryDetail({ route, navigation }: any) {
     }
   };
 
+  const handleUpload = async (forceReupload?: boolean) => {
+    console.log("handling image")
+    if (FB_AUTH.currentUser?.uid === event.hostId && (!event.receipt || forceReupload)) {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Permission denied to access photo library');
+        return;
+      }
+
+      const data = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      // Uploads the image to the backend
+      if (data.assets && data.assets[0]) {
+        setReceipt(data.assets[0].uri);
+        await new KickbackImage().uploadImage(data.assets[0].uri, `${event.id}_receipt`);
+        await new Events().edit(event.id, { receipt: `${event.id}_receipt` });
+      }
+
+    } else if (event.receipt) {
+      // Download the image from the backend
+      const image = await new KickbackImage().downloadImage(event.receipt);
+      setReceipt(image);
+    }
+
+    //setModalVisible(true);
+  };
+
+  //console.log('image is ', const) 
+
+
+
   const checkHostStatus = async () => {
     const currentUserId = FB_AUTH.currentUser?.uid;
     if (currentUserId === currentEvent.hostId) {
       setDeleteButton(true);
     }
   };
+
+  const openReceiptModal = async () => {
+    if (currentEvent.receipt) {
+      const r = await new KickbackImage().downloadImage(currentEvent.receipt)
+      setReceipt(r)
+    }
+    setReceiptVisible(true);
+  }
+
+  const closeReceiptModal = () => {
+    setReceiptVisible(false);
+  }
 
   const openModal = () => {
     setModalVisible(true);
@@ -176,6 +232,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
           </View>
         </View>
       </View>
+      {/* REDO BUTTON */}
       <View style={styles.redoContainer}>
         <Pressable
           style={styles.redoButton}
@@ -193,6 +250,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
         >
           <Text style={styles.statusText}>Redo Event</Text>
         </Pressable>
+        {/* Delete Event */}
         {showDeleteButton && (
           <Pressable style={styles.deleteButton} onPress={openModal} testID="delete-button">
             <Text style={styles.statusText} testID="delete-label">
@@ -200,7 +258,14 @@ export default function EventHistoryDetail({ route, navigation }: any) {
             </Text>
           </Pressable>
         )}
+        {/* View Reciept */}
+        <Pressable style={styles.recieptButton} onPress={openReceiptModal}>
+          <Text style={styles.statusText}> View Reciept </Text>
+
+        </Pressable>
       </View>
+
+      {/* Delete function above will trigger this modal */}
       <Modal testID="edit-modal" visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -220,6 +285,51 @@ export default function EventHistoryDetail({ route, navigation }: any) {
           </View>
         </View>
       </Modal>
+
+      {/* View reciept modal */}
+      <Modal testID="edit-modal" visible={receiptVisible} animationType="slide" transparent>
+        {/* Modal content */}
+        {currentEvent.receipt ? (
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalHeaderText}>Receipt</Text>
+              {host && (
+                <Pressable
+                  style={styles.modalReuploadButton}
+                  onPress={() => handleUpload(true)}
+                >
+                  <Ionicons name="refresh-outline" style={styles.modalIcon} />
+                  <Text style={styles.modalReuploadText}>Reupload</Text>
+                </Pressable>
+              )}
+            </View>
+            <Image source={{ uri: receipt }} style={styles.modalImage} />
+          </View>
+        ) : (
+          <View style={styles.modalContainer}>
+            <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
+            <Text style={styles.NoImageText}>NO RECEIPT UPLOADED</Text>
+          </View>
+        )}
+        <Pressable onPress={closeReceiptModal} style={styles.closeButton}>
+          <Text style={styles.closeButtonText}>Close</Text>
+        </Pressable>
+      </Modal>
+      {/*
+      <Modal testID="edit-modal" visible={receiptVisible} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          {(currentEvent.receipt == " ")
+            <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
+
+          
+          }
+          <Pressable style={styles.closeButton} onPress={closeReceiptModal} testID="no-modal">
+            <Text style={styles.closeButtonText}>Close</Text>
+          </Pressable>
+        </View>
+      </Modal>
+        */}
+
     </View>
   );
 }
@@ -299,7 +409,7 @@ const styles = StyleSheet.create({
   },
   statusText: {
     color: '#FFFFFB',
-    fontSize: 36,
+    fontSize: 30,
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
@@ -385,8 +495,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignContent: 'center',
     borderRadius: 20,
-    marginTop: 10,
-    marginBottom: 20,
+    marginTop: 5,
+    marginBottom: 5,
     backgroundColor: '#DE4040',
   },
   deleteText: {
@@ -424,6 +534,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'center',
     padding: 4,
+  },
+  recieptButton:
+  {
+    display: 'flex',
+    backgroundColor: '#FFA500',
+    width: '80%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    alignContent: 'center',
+    borderRadius: 20,
   },
   modalContainer: {
     flex: 1,
@@ -512,5 +632,58 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     justifyContent: 'flex-end',
+  },
+  //for view receipt details 
+  noRecieptImage: {
+    flex: 1,
+    color: '#FFFFFF',
+    fontSize: 400,
+    top: 100,
+  },
+  NoImageText: {
+    position: 'relative',
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    left: '3%',
+    bottom: '30%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 10,
+    padding: 10,
+    marginTop: 50,
+    backgroundColor: '#FF6701',
+  },
+  modalHeaderText: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  modalIcon: {
+    fontSize: 30,
+    color: 'black',
+  },
+  modalReuploadButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    width: 100,
+  },
+  modalReuploadText: {
+    fontSize: 12,
+    fontWeight: '700',
+    textAlign: 'center',
+    color: '#272222',
+    fontStyle: 'italic',
+  },
+  modalImage: {
+    flex: 1,
+    width: '100%',
+    resizeMode: 'contain',
   },
 });
