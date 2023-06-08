@@ -1,6 +1,6 @@
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import React from 'react';
-import { StyleProp, Text, TextStyle, View } from 'react-native';
+import { StyleProp, Text, View } from 'react-native';
 import { EventReturn, InviteeStatus } from '../resources/schema/event.model';
 import { UserReturn } from '../resources/schema/user.model';
 
