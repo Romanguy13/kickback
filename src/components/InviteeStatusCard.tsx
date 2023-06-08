@@ -1,6 +1,6 @@
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import React from 'react';
-import { StyleProp, Text, TextStyle, View } from 'react-native';
+import { StyleProp, Text, View } from 'react-native';
 import { EventReturn, InviteeStatus } from '../resources/schema/event.model';
 import { UserReturn } from '../resources/schema/user.model';
 
@@ -18,11 +18,13 @@ export default function InviteeStatusCard({
   let icon: JSX.Element | null = null;
 
   if (!forPayment) {
-    isAttending = event.paidStatus.find(
+    console.log('event', event);
+
+    isAttending = event.inviteeStatus.find(
       (currInvitee: InviteeStatus) => currInvitee.id === currentMember.id
     );
 
-    if (currentMember.id === event.hostId && !forPayment) {
+    if (currentMember.id === event.hostId) {
       icon = <Ionicons name="star" size={25} color="#FF7000" />;
     } else if (!isAttending) {
       icon = <Ionicons name="help" size={25} color="#FF7000" />;
@@ -35,8 +37,6 @@ export default function InviteeStatusCard({
     isAttending = event.paidStatus.find(
       (currInvitee: InviteeStatus) => currInvitee.id === currentMember.id
     );
-
-    // console.log('has paid', isAttending);
 
     if (!isAttending) {
       icon = <Ionicons name="help" size={25} color="#FF7000" />;
