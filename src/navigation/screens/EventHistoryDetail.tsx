@@ -25,7 +25,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [receiptVisible, setReceiptVisible] = useState(false);
+  const [receiptModal, setReceiptModal] = useState(false);
 
   const [receipt, setReceipt] = useState<string>(' ')
 
@@ -60,13 +60,14 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
   const handleUpload = async (forceReupload?: boolean) => {
     console.log("handling image")
-    if (FB_AUTH.currentUser?.uid === event.hostId && (!event.receipt || forceReupload)) {
+    if (FB_AUTH.currentUser?.uid == event.hostId && (!event.receipt || forceReupload)) {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         console.log('Permission denied to access photo library');
         return;
       }
 
+      console.log("selecting image")
       const data = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -85,8 +86,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
       const image = await new KickbackImage().downloadImage(event.receipt);
       setReceipt(image);
     }
-
-    //setModalVisible(true);
+    setReceiptModal(true)
   };
 
   //console.log('image is ', const) 
@@ -100,16 +100,22 @@ export default function EventHistoryDetail({ route, navigation }: any) {
     }
   };
 
-  const openReceiptModal = async () => {
-    if (currentEvent.receipt) {
-      const r = await new KickbackImage().downloadImage(currentEvent.receipt)
-      setReceipt(r)
+  /*
+    const openReceiptModal = async () => {
+      console.log("in openReceiptModal")
+      
+      if (currentEvent.receipt) {
+        console.log("uploading image from database")
+        const r = await new KickbackImage().downloadImage(currentEvent.receipt)
+        console.log("after uploading from database")
+        setReceipt(r)
+      }
+      
+      setReceiptVisible(true);
     }
-    setReceiptVisible(true);
-  }
-
+  */
   const closeReceiptModal = () => {
-    setReceiptVisible(false);
+    setReceiptModal(false);
   }
 
   const openModal = () => {
@@ -259,7 +265,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
           </Pressable>
         )}
         {/* View Reciept */}
-        <Pressable style={styles.recieptButton} onPress={openReceiptModal}>
+        <Pressable style={styles.recieptButton} onPress={() => handleUpload()}>
           <Text style={styles.statusText}> View Reciept </Text>
 
         </Pressable>
@@ -286,35 +292,40 @@ export default function EventHistoryDetail({ route, navigation }: any) {
         </View>
       </Modal>
 
-      {/* View reciept modal */}
+      {/* View reciept modal 
       <Modal testID="edit-modal" visible={receiptVisible} animationType="slide" transparent>
-        {/* Modal content */}
-        {currentEvent.receipt ? (
-          <View style={styles.modalContainer}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalHeaderText}>Receipt</Text>
-              {host && (
-                <Pressable
-                  style={styles.modalReuploadButton}
-                  onPress={() => handleUpload(true)}
-                >
-                  <Ionicons name="refresh-outline" style={styles.modalIcon} />
-                  <Text style={styles.modalReuploadText}>Reupload</Text>
-                </Pressable>
-              )}
+       Modal content */}
+      {receiptModal && (
+        <Modal visible={receiptModal} onRequestClose={closeReceiptModal} animationType="slide">
+
+          {receipt !== ' ' ? (
+            <View style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalHeaderText}>Receipt</Text>
+                {host && (
+                  <Pressable
+                    style={styles.modalReuploadButton}
+                    onPress={() => handleUpload(true)}
+                  >
+                    <Ionicons name="refresh-outline" style={styles.modalIcon} />
+                    <Text style={styles.modalReuploadText}>Reupload</Text>
+                  </Pressable>
+                )}
+              </View>
+              <Image source={{ uri: receipt }} style={styles.modalImage} />
             </View>
-            <Image source={{ uri: receipt }} style={styles.modalImage} />
-          </View>
-        ) : (
-          <View style={styles.modalContainer}>
-            <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
-            <Text style={styles.NoImageText}>NO RECEIPT UPLOADED</Text>
-          </View>
-        )}
-        <Pressable onPress={closeReceiptModal} style={styles.closeButton}>
-          <Text style={styles.closeButtonText}>Close</Text>
-        </Pressable>
-      </Modal>
+          ) : (
+            <View style={styles.modalContainer}>
+              <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
+              <Text style={styles.NoImageText}>NO RECEIPT UPLOADED</Text>
+            </View>
+          )}
+          {/*Button to close Modal*/}
+          <Pressable onPress={closeReceiptModal} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </Pressable>
+        </Modal>
+      )}
       {/*
       <Modal testID="edit-modal" visible={receiptVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
