@@ -72,6 +72,16 @@ test('Renders History Screen - With events', async () => {
       location: 'Event Location',
       datetime: Timestamp.fromDate(moment('2023-03-23T17:00:00').toDate()),
       gId: '123',
+      paidStatus: [
+        {
+          id: '12345',
+          status: false,
+        },
+        {
+          id: '123',
+          status: true,
+        },
+      ],
     },
   ] as EventReturn[]);
 
@@ -103,8 +113,18 @@ test('Renders History Screen - No update', async () => {
       location: 'Event Location',
       datetime: Timestamp.fromDate(moment('2023-03-23T17:00:00').toDate()),
       gId: '123',
+      paidStatus: [
+        {
+          id: '12345',
+          status: false,
+        },
+        {
+          id: '123',
+          status: true,
+        },
+      ],
     },
-  ] as EventReturn[]);
+  ] as [EventReturn]);
 
   mockUseIsFocused.mockReturnValue(false);
 

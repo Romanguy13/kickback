@@ -7,6 +7,7 @@ import {
   View,
   Text,
   Pressable,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
@@ -16,19 +17,7 @@ import KickbackImage from '../resources/api/kickbackImage';
 import Events from '../resources/api/events';
 
 // export default function HistoryCard(eventName: string, eventLocation: string, eventID: string)
-function HistoryCard({
-  event,
-  navigation,
-  setShowModal,
-  setReceipt,
-  setRefresh,
-}: {
-  event: EventReturn;
-  setRefresh: any;
-  navigation: any;
-  setShowModal: any;
-  setReceipt: any;
-}) {
+function HistoryCard({ event, navigation }: { event: EventReturn; navigation: any }) {
   const [receiptImage, setReceiptImage] = useState<string>(' ');
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -40,9 +29,10 @@ function HistoryCard({
     if (FB_AUTH.currentUser?.uid === event.hostId && (!event.receipt || forceReupload)) {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        console.log('Permission denied to access photo library');
         return;
       }
+
+      console.log('Uploading receipt');
 
       const data = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -50,15 +40,21 @@ function HistoryCard({
         quality: 1,
       });
 
+      console.log(data);
+
       // Uploads the image to the backend
       if (data.assets && data.assets[0]) {
-        setReceiptImage(data.assets[0].uri);
-        await new KickbackImage().uploadImage(data.assets[0].uri, `${event.id}_receipt`);
-        await new Events().edit(event.id, { receipt: `${event.id}_receipt` });
-        setRefresh(true);
-      }
+        try {
+          await new KickbackImage().uploadImage(data.assets[0].uri, `${event.id}_receipt`);
+          await new Events().edit(event.id, { receipt: `${event.id}_receipt` });
+          setReceiptImage(data.assets[0].uri);
+        } catch (err) {
+          Alert.alert('Error uploading image');
+        }
 
-      console.log('image is ', receiptImage);
+        // eslint-disable-next-line no-param-reassign
+        event.receipt = `${event.id}_receipt`;
+      }
     } else if (event.receipt) {
       // Download the image from the backend
       const image = await new KickbackImage().downloadImage(event.receipt);
@@ -73,7 +69,7 @@ function HistoryCard({
   };
 
   const host = FB_AUTH.currentUser?.uid === event.hostId;
-  const paid = true;
+  const paid = event.paidStatus.find((user) => user.id === FB_AUTH.currentUser?.uid)?.status;
   const numOfPeople = 7;
   const totalPaid = 3;
 
@@ -110,7 +106,11 @@ function HistoryCard({
 
           <View style={styles.bottomHalf}>
             <View style={styles.leftSide}>
-              <Pressable onPress={() => handleUpload()}>
+              <Pressable
+                accessibilityLabel={host && !event.receipt ? 'Upload Receipt' : 'View Receipt'}
+                testID="receiptButton"
+                onPress={() => handleUpload()}
+              >
                 <View style={styles.recieptButton}>
                   <Ionicons
                     name={host && !event.receipt ? 'arrow-up-circle-outline' : 'receipt-outline'}
@@ -131,6 +131,8 @@ function HistoryCard({
                         {host && (
                           <Pressable
                             style={styles.modalReuploadButton}
+                            accessibilityLabel="Reupload Button"
+                            testID="reuploadButton"
                             onPress={() => handleUpload(true)}
                           >
                             <Ionicons name="refresh-outline" style={styles.modalIcon} />
@@ -143,10 +145,14 @@ function HistoryCard({
                   ) : (
                     <View style={styles.modalContainer}>
                       <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
-                      <Text style={styles.NoImageText}>NO RECEIPT UPLOADED</Text>
+                      <Text style={styles.NoImageText}>No Receipt Uploaded</Text>
                     </View>
                   )}
-                  <Pressable onPress={closeModal} style={styles.closeButton}>
+                  <Pressable
+                    accessibilityLabel="Close"
+                    onPress={closeModal}
+                    style={styles.closeButton}
+                  >
                     <Text style={styles.closeButtonText}>Close</Text>
                   </Pressable>
                 </Modal>
