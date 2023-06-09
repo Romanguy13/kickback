@@ -31,4 +31,5 @@ module.exports = {
     '!**/html-report/**',
     '!**/jest-html-reporters-attach/**',
   ],
+  setupFiles: ['./src/tests/setupJest.js'],
 };

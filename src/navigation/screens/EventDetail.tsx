@@ -8,11 +8,11 @@ import Events from '../../resources/api/events';
 import { FB_AUTH } from '../../../firebaseConfig';
 import { UserReturn } from '../../resources/schema/user.model';
 import { GroupMemberModel } from '../../resources/schema/group.model';
-import { EventReturn, InviteeStatus, UpdatedEvent } from '../../resources/schema/event.model';
+import { EventReturn, InviteeStatus } from '../../resources/schema/event.model';
 import InviteeStatusCard from '../../components/InviteeStatusCard';
 
 function EventDetail({ route, navigation }: any) {
-  const { event, canVote } = route.params;
+  const { event } = route.params;
 
   const [currentEvent, setCurrentEvent] = useState<EventReturn>(event);
 
@@ -46,7 +46,7 @@ function EventDetail({ route, navigation }: any) {
       navigation.goBack();
     } catch (error) {
       closeModal();
-      console.log(error);
+      // console.log(error);
       Alert.alert('Error', 'Something went wrong. Please try again later.');
     }
   };
@@ -74,17 +74,17 @@ function EventDetail({ route, navigation }: any) {
       // update the event in the database
       await new Events().edit(event.id, { inviteeStatus: newInviteeStatus });
 
-      console.log('inviteeStatus - before', currentEvent);
+      // console.log('inviteeStatus - before', currentEvent);
 
       // update the event in the state
       setCurrentEvent({ ...currentEvent, inviteeStatus: newInviteeStatus });
 
-      console.log('inviteeStatus - after', currentEvent);
+      // console.log('inviteeStatus - after', currentEvent);
     }
   };
 
   const checkStatus = (currEvent: EventReturn) => {
-    // check the status of the the user in the event based on their id
+    // check the status of the user in the event based on their id
     const currentUserId = FB_AUTH.currentUser?.uid;
     const { inviteeStatus } = currEvent;
 
@@ -132,7 +132,7 @@ function EventDetail({ route, navigation }: any) {
 
       const tMembers: UserReturn[] = await Promise.all(promises);
 
-      console.log('tMembers', tMembers);
+      // console.log('tMembers', tMembers);
 
       // sort the members so the host is first
       tMembers.sort((a, b) => {
@@ -228,7 +228,7 @@ function EventDetail({ route, navigation }: any) {
           </ScrollView>
         </View>
         <View style={styles.buttonsContainer}>
-          {canVote && FB_AUTH.currentUser?.uid !== event.hostId && (
+          {FB_AUTH.currentUser?.uid !== event.hostId && (
             <View style={styles.voteContainer}>
               <Pressable
                 testID="accept-invite"

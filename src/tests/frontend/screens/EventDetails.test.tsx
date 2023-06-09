@@ -8,6 +8,7 @@ import moment from 'moment';
 import EventDetail from '../../../navigation/screens/EventDetail';
 import Events from '../../../resources/api/events';
 import preLoadData from '../helper/EventDetails.helper';
+import { EventModel } from '../../../resources/schema/event.model';
 
 jest.mock('../../../resources/api/events');
 jest.mock('../../../resources/api/groupMembers');
@@ -57,13 +58,31 @@ const renderWithNavigation = async (params: any) =>
     </NavigationContainer>
   );
 
-const params = {
+const params: { event: EventModel } = {
   event: {
     hostId: '2',
     name: 'Test Event with a Longer Name!',
     datetime: Timestamp.fromDate(moment('2023-07-28 12:00:00', 'YYYY-MM-DD hh:mm:ss').toDate()),
     location: 'Test Location',
     gId: '1',
+    paidStatus: [
+      {
+        id: '1',
+        status: true,
+      },
+      {
+        id: '2',
+        status: false,
+      },
+      {
+        id: '3',
+        status: true,
+      },
+      {
+        id: '4',
+        status: false,
+      },
+    ],
     inviteeStatus: [
       {
         id: '1',
@@ -83,10 +102,9 @@ const params = {
       },
     ],
   },
-  canVote: true,
 };
 
-const params2 = {
+const params2: { event: EventModel } = {
   event: {
     hostId: '4',
     name: 'Test Event',
@@ -111,8 +129,25 @@ const params2 = {
         status: null,
       },
     ],
+    paidStatus: [
+      {
+        id: '1',
+        status: true,
+      },
+      {
+        id: '2',
+        status: true,
+      },
+      {
+        id: '3',
+        status: false,
+      },
+      {
+        id: '4',
+        status: true,
+      },
+    ],
   },
-  canVote: true,
 };
 
 test('Renders Event Screen', async () => {

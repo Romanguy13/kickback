@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, PixelRatio, FlatList, Button } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as ImagePicker from 'expo-image-picker';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
 
@@ -14,24 +16,26 @@ export default function EventHistory({ navigation }: any) {
   const [refresh, setRefresh] = useState<boolean>(false);
   const isFocused = useIsFocused();
 
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [receipt, setReceipt] = useState<string>(" ")
+
   useEffect(() => {
-    console.log('isFocused', isFocused);
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
-      console.log(eventList);
 
       // Filter through the events and only show the ones that have already passed
       // Filter Function is lines 44 to 56
       const filteredEvents = eventList.filter((event: EventReturn) => {
         // Get today's date
         const currentDate = moment();
-        console.log('currentDate', event.datetime.toDate());
+        //console.log('currentDate', event.datetime.toDate());
         const eventDate = moment(event.datetime.toDate());
 
+        // return true
         return eventDate.isBefore(currentDate);
       });
       setEvents(filteredEvents);
-      console.log(filteredEvents);
+      //console.log(filteredEvents);
     };
 
     if (isFocused) {
@@ -53,7 +57,7 @@ export default function EventHistory({ navigation }: any) {
           style={styles.cardList}
           data={events}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <HistoryCard event={item} navigation={navigation} />}
+          renderItem={({ item }) => <HistoryCard event={item} setRefresh={setRefresh} setShowModal={setShowModal} setReceipt={setReceipt} navigation={navigation} />}
         />
       </View>
     </View>

@@ -8,7 +8,6 @@ import moment from 'moment';
 import EventFeed from '../../../navigation/screens/EventFeed';
 import { EventReturn } from '../../../resources/schema/event.model';
 import Events from '../../../resources/api/events';
-import GroupMembers from '../../../resources/api/groupMembers';
 
 jest.spyOn(Alert, 'alert');
 
