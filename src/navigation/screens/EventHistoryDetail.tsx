@@ -89,10 +89,6 @@ export default function EventHistoryDetail({ route, navigation }: any) {
     setReceiptModal(true)
   };
 
-  //console.log('image is ', const) 
-
-
-
   const checkHostStatus = async () => {
     const currentUserId = FB_AUTH.currentUser?.uid;
     if (currentUserId === currentEvent.hostId) {
@@ -100,20 +96,6 @@ export default function EventHistoryDetail({ route, navigation }: any) {
     }
   };
 
-  /*
-    const openReceiptModal = async () => {
-      console.log("in openReceiptModal")
-      
-      if (currentEvent.receipt) {
-        console.log("uploading image from database")
-        const r = await new KickbackImage().downloadImage(currentEvent.receipt)
-        console.log("after uploading from database")
-        setReceipt(r)
-      }
-      
-      setReceiptVisible(true);
-    }
-  */
   const closeReceiptModal = () => {
     setReceiptModal(false);
   }
@@ -227,6 +209,9 @@ export default function EventHistoryDetail({ route, navigation }: any) {
               style={styles.voteButton}
             >
               <Ionicons name="checkmark-sharp" size={30} color="#FF7000" />
+              <View style={styles.paymentStatusLocation}>
+                <Text style={styles.paymentStatusText}> paid </Text>
+              </View>
             </Pressable>
             <Pressable
               testID="decline-invite"
@@ -234,6 +219,9 @@ export default function EventHistoryDetail({ route, navigation }: any) {
               style={styles.voteButton}
             >
               <Ionicons name="close-sharp" size={30} color="#FF7000" />
+              <View style={styles.paymentStatusLocation}>
+                <Text style={styles.paymentStatusText}> unpaid </Text>
+              </View>
             </Pressable>
           </View>
         </View>
@@ -292,9 +280,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
         </View>
       </Modal>
 
-      {/* View reciept modal 
-      <Modal testID="edit-modal" visible={receiptVisible} animationType="slide" transparent>
-       Modal content */}
+      {/* View reciept modal  */}
       {receiptModal && (
         <Modal visible={receiptModal} onRequestClose={closeReceiptModal} animationType="slide">
 
@@ -326,21 +312,6 @@ export default function EventHistoryDetail({ route, navigation }: any) {
           </Pressable>
         </Modal>
       )}
-      {/*
-      <Modal testID="edit-modal" visible={receiptVisible} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          {(currentEvent.receipt == " ")
-            <Ionicons name="alert-circle-outline" style={styles.noRecieptImage} />
-
-          
-          }
-          <Pressable style={styles.closeButton} onPress={closeReceiptModal} testID="no-modal">
-            <Text style={styles.closeButtonText}>Close</Text>
-          </Pressable>
-        </View>
-      </Modal>
-        */}
-
     </View>
   );
 }
@@ -586,6 +557,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#FF7000',
     borderRadius: 5,
+    bottom: 59
   },
   closeButtonText: {
     fontSize: 16,
@@ -697,4 +669,17 @@ const styles = StyleSheet.create({
     width: '100%',
     resizeMode: 'contain',
   },
+  paymentStatusText:
+  {
+    color: '#FFFFFB',
+    fontSize: 20,
+    fontWeight: 'bold',
+    justifyContent: 'flex-end',
+  },
+  paymentStatusLocation:
+  {
+    position: 'absolute',
+    top: 55
+  }
+
 });

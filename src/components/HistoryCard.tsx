@@ -296,15 +296,16 @@ const styles = StyleSheet.create({
   closeButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
   },
   closeButton: {
-    backgroundColor: 'black',
-    paddingBottom: 45,
+    backgroundColor: 'orange',
+    paddingBottom: 30,
     paddingTop: 25,
     borderRadius: 5,
-    marginTop: 0,
+    //marginTop: 0,
+    bottom: 60
   },
   noRecieptImage: {
     flex: 1,
