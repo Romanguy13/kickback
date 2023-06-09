@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: 'rgba(0, 0, 0, 0.25)', // Semi-transparent background
+    //backgroundColor: 'rgba(0, 0, 0, 0.25)', // Semi-transparent background
     padding: 10,
   },
   modalImage: {
@@ -294,18 +294,27 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   closeButtonText: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center',
   },
   closeButton: {
-    backgroundColor: 'orange',
+    alignSelf: 'center',
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#FF7000',
+    borderRadius: 5,
+    bottom: 59
+    /*
+    backgroundColor: '#FF6701',
     paddingBottom: 30,
     paddingTop: 25,
     borderRadius: 5,
     //marginTop: 0,
     bottom: 60
+    */
   },
   noRecieptImage: {
     flex: 1,
