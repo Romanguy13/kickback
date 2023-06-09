@@ -490,8 +490,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignContent: 'center',
     borderRadius: 20,
-    marginTop: 5,
-    marginBottom: 5,
+    margin: 5,
+    marginBottom: 10,
     backgroundColor: '#DE4040',
   },
   deleteText: {
@@ -520,6 +520,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignContent: 'center',
     borderRadius: 20,
+    margin: 5,
   },
   redoText: {
     color: '#FFFFFB',

@@ -256,6 +256,7 @@ const styles = StyleSheet.create({
     left: '22%',
     width: 90,
     backgroundColor: 'green',
+    borderRadius: 20,
   },
   payStatus: {
     position: 'absolute',
@@ -263,6 +264,7 @@ const styles = StyleSheet.create({
     left: '22%',
     width: 90,
     backgroundColor: 'red',
+    borderRadius: 20,
   },
   hostPaymentStatus: {
     position: 'absolute',
@@ -285,7 +287,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    //backgroundColor: 'rgba(0, 0, 0, 0.25)', // Semi-transparent background
     padding: 10,
   },
   modalImage: {
