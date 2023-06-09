@@ -7,8 +7,6 @@ import { Alert } from 'react-native';
 import moment from 'moment';
 import EventDetail from '../../../navigation/screens/EventDetail';
 import Events from '../../../resources/api/events';
-import GroupMembers from '../../../resources/api/groupMembers';
-import Users from '../../../resources/api/users';
 import preLoadData from '../helper/EventDetails.helper';
 import { EventModel } from '../../../resources/schema/event.model';
 
@@ -189,7 +187,7 @@ test('Render Long Name', async () => {
 
   await renderWithNavigation(params);
 
-  expect(screen.getByText('Test Event wit..')).toBeTruthy();
+  expect(screen.getByText('Test Event with a Longer Name!')).toBeTruthy();
 });
 
 test('Click accept for status update', async () => {
