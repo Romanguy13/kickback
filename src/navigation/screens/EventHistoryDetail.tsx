@@ -434,7 +434,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'left',
-    padding: 6,
+    padding: 4,
+    paddingRight: 20,
     marginLeft: 20,
     marginRight: 20,
   },
@@ -560,6 +561,7 @@ const styles = StyleSheet.create({
   modalButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    top: 30,
   },
   closeButton: {
     alignSelf: 'center',
@@ -604,6 +606,7 @@ const styles = StyleSheet.create({
   },
   voteContainer: {
     width: '100%',
+    justifyContent: 'center',
   },
   voteButton: {
     borderRadius: 20,
