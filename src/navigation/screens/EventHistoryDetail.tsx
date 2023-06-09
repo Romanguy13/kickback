@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'left',
-    padding: 4,
+    padding: 6,
     marginLeft: 20,
     marginRight: 20,
   },
