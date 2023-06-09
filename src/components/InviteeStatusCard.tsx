@@ -41,9 +41,9 @@ export default function InviteeStatusCard({
     if (!isAttending) {
       icon = <Ionicons name="help" size={25} color="#FF7000" />;
     } else if (isAttending.status) {
-      icon = <Ionicons name="checkmark-sharp" size={25} color="#FF7000" />;
+      icon = <Ionicons name="checkmark-sharp" size={25} color="#FF7000" testID="paid-icon" />;
     } else if (isAttending.status === false) {
-      icon = <Ionicons name="close-sharp" size={25} color="#FF7000" />;
+      icon = <Ionicons name="close-sharp" size={25} color="#FF7000" testID="unpaid-icon" />;
     }
   }
 

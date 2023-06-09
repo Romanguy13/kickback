@@ -228,7 +228,6 @@ test('History Card - Paid Status is False - As Attendee', async () => {
   await waitFor(() => expect(screen.getByText('unpaid')).toBeTruthy());
 });
 
-// Uploading an image caused an error in the KickbackImage class
 test('History Card - Image Modal Reupload - Error', async () => {
   event.receipt = 'test';
 

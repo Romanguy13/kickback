@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View, Image, ScrollView, Modal } from 'react-native';
 import moment from 'moment';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as ImagePicker from 'expo-image-picker';
 import GroupMembers from '../../resources/api/groupMembers';
 import Users from '../../resources/api/users';
 import Events from '../../resources/api/events';
@@ -11,8 +12,6 @@ import { GroupMemberModel } from '../../resources/schema/group.model';
 import { EventReturn, PaidStatus } from '../../resources/schema/event.model';
 import InviteeStatusCard from '../../components/InviteeStatusCard';
 import KickbackImage from '../../resources/api/kickbackImage';
-
-import * as ImagePicker from 'expo-image-picker';
 
 export default function EventHistoryDetail({ route, navigation }: any) {
   const { event } = route.params;
@@ -27,7 +26,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
   const [receiptModal, setReceiptModal] = useState(false);
 
-  const [receipt, setReceipt] = useState<string>(' ')
+  const [receipt, setReceipt] = useState<string>(' ');
 
   const eventDate = moment(event.datetime.toDate());
 
@@ -48,6 +47,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
         if (invitee.id === currentUserId) {
           return inviteeFound;
         }
+        /* istanbul ignore next */
         return invitee;
       });
 
@@ -59,7 +59,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
   };
 
   const handleUpload = async (forceReupload?: boolean) => {
-    console.log("handling image")
+    console.log('handling image');
     if (FB_AUTH.currentUser?.uid == event.hostId && (!event.receipt || forceReupload)) {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
@@ -67,7 +67,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
         return;
       }
 
-      console.log("selecting image")
+      console.log('selecting image');
       const data = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -80,13 +80,12 @@ export default function EventHistoryDetail({ route, navigation }: any) {
         await new KickbackImage().uploadImage(data.assets[0].uri, `${event.id}_receipt`);
         await new Events().edit(event.id, { receipt: `${event.id}_receipt` });
       }
-
     } else if (event.receipt) {
       // Download the image from the backend
       const image = await new KickbackImage().downloadImage(event.receipt);
       setReceipt(image);
     }
-    setReceiptModal(true)
+    setReceiptModal(true);
   };
 
   const checkHostStatus = async () => {
@@ -98,7 +97,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
   const closeReceiptModal = () => {
     setReceiptModal(false);
-  }
+  };
 
   const openModal = () => {
     setModalVisible(true);
@@ -204,7 +203,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
         <View style={styles.imageContainer}>
           <View style={styles.voteContainer}>
             <Pressable
-              testID="accept-invite"
+              testID="accept-payment"
               onPress={() => handlePaidStatus(true)}
               style={styles.voteButton}
             >
@@ -214,7 +213,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
               </View>
             </Pressable>
             <Pressable
-              testID="decline-invite"
+              testID="decline-payment"
               onPress={() => handlePaidStatus(false)}
               style={styles.voteButton}
             >
@@ -229,6 +228,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
       {/* REDO BUTTON */}
       <View style={styles.redoContainer}>
         <Pressable
+          testID="redo-button"
           style={styles.redoButton}
           onPress={() => {
             navigation.navigate('TabBar', {
@@ -253,9 +253,12 @@ export default function EventHistoryDetail({ route, navigation }: any) {
           </Pressable>
         )}
         {/* View Reciept */}
-        <Pressable style={styles.recieptButton} onPress={() => handleUpload()}>
+        <Pressable
+          testID="receipt-button"
+          style={styles.recieptButton}
+          onPress={() => handleUpload()}
+        >
           <Text style={styles.statusText}> View Reciept </Text>
-
         </Pressable>
       </View>
 
@@ -282,14 +285,19 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
       {/* View reciept modal  */}
       {receiptModal && (
-        <Modal visible={receiptModal} onRequestClose={closeReceiptModal} animationType="slide">
-
+        <Modal
+          testID="receipt-modal"
+          visible={receiptModal}
+          onRequestClose={closeReceiptModal}
+          animationType="slide"
+        >
           {receipt !== ' ' ? (
             <View style={styles.modalContainer}>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalHeaderText}>Receipt</Text>
                 {host && (
                   <Pressable
+                    testID="reupload-button"
                     style={styles.modalReuploadButton}
                     onPress={() => handleUpload(true)}
                   >
@@ -306,8 +314,12 @@ export default function EventHistoryDetail({ route, navigation }: any) {
               <Text style={styles.NoImageText}>NO RECEIPT UPLOADED</Text>
             </View>
           )}
-          {/*Button to close Modal*/}
-          <Pressable onPress={closeReceiptModal} style={styles.closeButton}>
+          {/* Button to close Modal */}
+          <Pressable
+            testID="close-receipt-modal"
+            onPress={closeReceiptModal}
+            style={styles.closeButton}
+          >
             <Text style={styles.closeButtonText}>Close</Text>
           </Pressable>
         </Modal>
@@ -517,8 +529,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     padding: 4,
   },
-  recieptButton:
-  {
+  recieptButton: {
     display: 'flex',
     backgroundColor: '#FFA500',
     width: '80%',
@@ -531,7 +542,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    //backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     backgroundColor: '#272222',
@@ -557,7 +568,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#FF7000',
     borderRadius: 5,
-    bottom: 59
+    bottom: 59,
   },
   closeButtonText: {
     fontSize: 16,
@@ -616,7 +627,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     justifyContent: 'flex-end',
   },
-  //for view receipt details 
+  // for view receipt details
   noRecieptImage: {
     flex: 1,
     color: '#FFFFFF',
@@ -669,17 +680,14 @@ const styles = StyleSheet.create({
     width: '100%',
     resizeMode: 'contain',
   },
-  paymentStatusText:
-  {
+  paymentStatusText: {
     color: '#FFFFFB',
     fontSize: 20,
     fontWeight: 'bold',
     justifyContent: 'flex-end',
   },
-  paymentStatusLocation:
-  {
+  paymentStatusLocation: {
     position: 'absolute',
-    top: 55
-  }
-
+    top: 55,
+  },
 });
