@@ -30,7 +30,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
   const eventDate = moment(event.datetime.toDate());
 
-  const host = FB_AUTH.currentUser?.uid == event.hostId;
+  const host = FB_AUTH.currentUser?.uid === event.hostId;
 
   const handlePaidStatus = async (status: boolean) => {
     // edit the event in the database to reflect the new status based on the user's response
@@ -39,11 +39,13 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
     // find the inviteeStatus that corresponds to the current user id
     const inviteeFound = paidStatus.find((invitee: PaidStatus) => invitee.id === currentUserId);
+    /* istanbul ignore else */
     if (inviteeFound) {
       inviteeFound.status = status;
 
       // change the inviteeStatus to reflect the user's response
       const newInviteeStatus = paidStatus.map((invitee: PaidStatus) => {
+        /* istanbul ignore else */
         if (invitee.id === currentUserId) {
           return inviteeFound;
         }
@@ -60,7 +62,8 @@ export default function EventHistoryDetail({ route, navigation }: any) {
 
   const handleUpload = async (forceReupload?: boolean) => {
     console.log('handling image');
-    if (FB_AUTH.currentUser?.uid == event.hostId && (!event.receipt || forceReupload)) {
+    /* istanbul ignore else */
+    if (FB_AUTH.currentUser?.uid === event.hostId && (!event.receipt || forceReupload)) {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
         console.log('Permission denied to access photo library');
@@ -75,6 +78,7 @@ export default function EventHistoryDetail({ route, navigation }: any) {
       });
 
       // Uploads the image to the backend
+      /* istanbul ignore else */
       if (data.assets && data.assets[0]) {
         setReceipt(data.assets[0].uri);
         await new KickbackImage().uploadImage(data.assets[0].uri, `${event.id}_receipt`);

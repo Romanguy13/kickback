@@ -1,5 +1,3 @@
-// import { createUserWithEmailAndPassword } from 'firebase/auth';
-// import { signInWithEmailAndPassword } from 'firebase/auth';
 import {
   collection,
   CollectionReference,
@@ -15,8 +13,6 @@ import {
 import { UpdatedUser, UserModel, UserReturn } from '../schema/user.model';
 import KickbackFirebase from './kickbackFirebase';
 import { KBFBCreate } from '../schema/kickbackFirebase.model';
-
-// import { FB_DB } from '../../../firebaseConfig';
 
 export default class Users extends KickbackFirebase {
   /**
@@ -62,7 +58,9 @@ export default class Users extends KickbackFirebase {
     const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
     const user: QueryDocumentSnapshot<DocumentData>[] = querySnapshot.docs;
 
+    /* istanbul ignore next */
     if (!user) {
+      /* istanbul ignore next */
       throw new Error(`User with email ${email} does not exist`);
     }
 

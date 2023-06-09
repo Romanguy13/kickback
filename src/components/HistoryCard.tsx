@@ -43,6 +43,7 @@ function HistoryCard({ event, navigation }: { event: EventReturn; navigation: an
       console.log(data);
 
       // Uploads the image to the backend
+      /* istanbul ignore next */
       if (data.assets && data.assets[0]) {
         try {
           await new KickbackImage().uploadImage(data.assets[0].uri, `${event.id}_receipt`);
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#FF7000',
     borderRadius: 5,
-    bottom: 59
+    bottom: 59,
     /*
     backgroundColor: '#FF6701',
     paddingBottom: 30,

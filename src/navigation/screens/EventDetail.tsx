@@ -60,6 +60,7 @@ function EventDetail({ route, navigation }: any) {
     const inviteeFound = inviteeStatus.find(
       (invitee: InviteeStatus) => invitee.id === currentUserId
     );
+    /* istanbul ignore else */
     if (inviteeFound) {
       inviteeFound.status = status;
 

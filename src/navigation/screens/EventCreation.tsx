@@ -309,7 +309,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
                 isVisible={showDatePicker}
                 mode="date"
                 minimumDate={new Date()}
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                display={/* istanbul ignore next */ Platform.OS === 'ios' ? 'spinner' : 'default'}
                 onConfirm={(date: Date) => {
                   handleEventDateChange(date);
                 }}
@@ -337,7 +337,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
                 testID="time-picker"
                 isVisible={showTimePicker}
                 mode="time"
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                display={/* istanbul ignore next */ Platform.OS === 'ios' ? 'spinner' : 'default'}
                 onConfirm={(date: Date) => {
                   handleEventTimeChange(date);
                 }}

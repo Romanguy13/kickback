@@ -1,8 +1,6 @@
-/* eslint-disable global-require */
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, Dimensions, PixelRatio, FlatList } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-// import NavBar from '../NavBar';
 import moment from 'moment';
 import { FB_AUTH } from '../../../firebaseConfig';
 import Events from '../../resources/api/events';
@@ -18,11 +16,11 @@ export default function EventFeed({ navigation }: any) {
   useEffect(() => {
     const fetchData = async () => {
       const eventList = await new Events().getAllByUserId(FB_AUTH.currentUser?.uid as string);
-      //console.log('Event List:', eventList);
+      // console.log('Event List:', eventList);
 
       const filteredEvents = eventList.filter((event: EventReturn) => {
         const currentDate = moment();
-        //console.log('Current Date:', event.datetime);
+        // console.log('Current Date:', event.datetime);
         const eventDate = moment(event.datetime.toDate());
         return eventDate.isSameOrAfter(currentDate);
       });
@@ -51,7 +49,6 @@ export default function EventFeed({ navigation }: any) {
       <View style={styles.imageContainer}>
         <Image source={require('../../../assets/hands.png')} style={styles.handsImage} />
       </View>
-      {/* <NavBar navigation={navigation} /> */}
     </View>
   ) : (
     <View style={styles.container}>

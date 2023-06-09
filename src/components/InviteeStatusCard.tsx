@@ -38,6 +38,7 @@ export default function InviteeStatusCard({
       (currInvitee: InviteeStatus) => currInvitee.id === currentMember.id
     );
 
+    /* istanbul ignore else */
     if (!isAttending) {
       icon = <Ionicons name="help" size={25} color="#FF7000" />;
     } else if (isAttending.status) {

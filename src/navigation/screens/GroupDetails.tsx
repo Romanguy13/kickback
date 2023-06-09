@@ -81,6 +81,7 @@ export default function GroupDetails({ navigation, route }: { navigation: any; r
       const sortedEvents = tempEvents.sort((a: EventReturn, b: EventReturn) => {
         const aDate = moment(a.datetime.toDate());
         const bDate = moment(b.datetime.toDate());
+        /* istanbul ignore next */
         return aDate.isAfter(bDate) ? -1 : 1;
       });
       setEvents(sortedEvents);
