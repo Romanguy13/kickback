@@ -251,8 +251,9 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
   const handleCancel = () => {
     setEventTitle('');
     setEventLocation('');
-    setEventDate(moment().format('MMM DD, YYYY'));
-    setEventTime(moment().format('h:mm A'));
+    // clear event date and time
+    setEventDate('');
+    setEventTime('');
     setInvitedUsers([]);
     navigation.navigate('Feed');
   };
@@ -304,19 +305,20 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
 
           <View style={styles.datePicker}>
             {showDatePicker && (
-              <DateTimePickerModal
-                testID="date-picker"
-                isVisible={showDatePicker}
-                mode="date"
-                minimumDate={new Date()}
-                display={/* istanbul ignore next */ Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onConfirm={(date: Date) => {
-                  handleEventDateChange(date);
-                }}
-                onCancel={() => {
-                  setShowDatePicker(false);
-                }}
-              />
+                <DateTimePickerModal
+                  testID="date-picker"
+                  isVisible={showDatePicker}
+                  mode="date"
+                  themeVariant='dark'
+                  minimumDate={new Date()}
+                  display='default'
+                  onConfirm={(date: Date) => {
+                    handleEventDateChange(date);
+                  }}
+                  onCancel={() => {
+                    setShowDatePicker(false);
+                  }}
+                />
             )}
           </View>
           <View style={styles.timeContainer}>
@@ -337,7 +339,7 @@ export default function EventCreation({ navigation, route }: { navigation: any; 
                 testID="time-picker"
                 isVisible={showTimePicker}
                 mode="time"
-                display={/* istanbul ignore next */ Platform.OS === 'ios' ? 'spinner' : 'default'}
+                display='default'
                 onConfirm={(date: Date) => {
                   handleEventTimeChange(date);
                 }}
