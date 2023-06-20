@@ -12,19 +12,21 @@ import { getStorage, connectStorageEmulator, FirebaseStorage } from 'firebase/st
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: 'AIzaSyDfUccImdVEd5SHzXIBs3xN38M_eaD3wtc',
-  authDomain: 'kickback-54b8e.firebaseapp.com',
-  projectId: 'kickback-54b8e',
-  storageBucket: 'kickback-54b8e.appspot.com',
-  messagingSenderId: '976975121634',
-  appId: '1:976975121634:web:a325281a9bf183a0e5e2bb',
-  measurementId: 'G-HB1S3H85WJ',
+  apiKey: "AIzaSyDfUccImdVEd5SHzXIBs3xN38M_eaD3wtc",
+  authDomain: "kickback-54b8e.firebaseapp.com",
+  databaseURL: "https://kickback-54b8e-default-rtdb.firebaseio.com",
+  projectId: "kickback-54b8e",
+  storageBucket: "kickback-54b8e.appspot.com",
+  messagingSenderId: "976975121634",
+  appId: "1:976975121634:web:ddd8643b731aad16e5e2bb",
+  measurementId: "G-J19M9ZF5NC"
 };
+
 export const FB_APP = initializeApp(firebaseConfig, 'Production');
 export const FB_AUTH = getAuth(FB_APP);
 export const FB_DB = getFirestore(FB_APP);
 export const FB_STORAGE = getStorage(FB_APP);
 
-//connectFirestoreEmulator(FB_DB, 'localhost', 8080);
-//connectAuthEmulator(FB_AUTH, 'http://127.0.0.1:9099');
-//connectStorageEmulator(FB_STORAGE, 'localhost', 9199);
+// connectFirestoreEmulator(FB_DB, 'localhost', 8080);
+// connectAuthEmulator(FB_AUTH, 'http://127.0.0.1:9099');
+// connectStorageEmulator(FB_STORAGE, 'localhost', 9199);
